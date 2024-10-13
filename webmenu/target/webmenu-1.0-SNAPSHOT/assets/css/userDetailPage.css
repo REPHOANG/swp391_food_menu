@@ -1,0 +1,102 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Feb 9, 2023, 1:05:47 PM
+    Author     : boyvi
+*/
+.user-detail-container{
+    width: 100%;
+    padding: 10px;
+}
+.profile-items{
+    display: flex;
+}
+.profile-item{
+    padding: 8px;
+    margin: 10px 0;
+    flex-basis: 50%;
+}
+.profile-item input{
+    padding: 10px;
+}
+.profile-modal{
+    display: flex;
+}
+.profile{
+    flex-basis: 70%;
+}
+.current-avatar div{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-position: center;
+    background-size: contain;
+}
+#my-image {
+    cursor: pointer;
+}
+
+
+
+/* CSS */
+button#submit, #submitAddress {
+    background-color: #EA4C89;
+    border-radius: 8px;
+    border-style: none;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 20px;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    padding: 10px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: color 100ms;
+    vertical-align: baseline;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+
+
+
+}
+button#submit:hover,
+button#submit:focus {
+    background-color: #F082AC;
+}
+
+
+.label{
+    display: inline-block;
+    min-width: 170px;
+}
+select{
+    width: 400px;
+
+}
+.address-modal .address-modal-item{
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+}
+.nav-list-item.active a{
+    color: #ff5c00 !important;
+ 
+}
+
+.user-detail.active{
+    display: block;
+}
+.user-detail{
+    display: none;
+}
