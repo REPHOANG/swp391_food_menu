@@ -238,7 +238,8 @@
 <script>
     document.querySelector('form').addEventListener('submit', function (event) {
         // Mảng chứa tên các trường input cần kiểm tra
-        const inputNames = ['name', 'discountPercent', 'maxDiscountValue', 'minDiscountValue', 'startDate', 'endDate', 'quantity', 'rmQuantity'];
+        const inputNames = ['name', 'discountPercent', 'maxDiscountValue', 'minDiscountValue',
+            'startDate', 'endDate', 'quantity', 'rmQuantity'];
         let isValid = true; // Biến theo dõi trạng thái hợp lệ của form
         // Lặp qua tất cả các input trong form
         document.querySelectorAll('input').forEach(function (input) {

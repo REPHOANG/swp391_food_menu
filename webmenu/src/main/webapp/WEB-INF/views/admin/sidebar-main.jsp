@@ -36,28 +36,22 @@
             </a>
         </li>
         <li class="sidebar-list">
-            <a class="sidebar-link sidebar-title link-nav" href="<c:url value="DiscountManagerController"/>">
-                <i class="ri-focus-3-line"></i>
-                <span>Discount</span>
-            </a>
-        </li>
-        <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="<c:url value="CategoryManagerController"/>">
                 <i class="ri-list-check-2"></i>
                 <span>Category</span>
             </a>
-<%--            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">--%>
-<%--                <i class="ri-list-check-2"></i>--%>
-<%--                <span>Category</span>--%>
-<%--            </a>--%>
-<%--            <ul class="sidebar-submenu">--%>
-<%--                <li>--%>
-<%--                    <a href="category.html">Category List</a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <a href="add-new-category.html">Add New Category</a>--%>
-<%--                </li>--%>
-<%--            </ul>--%>
+        </li>
+        <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title link-nav" href="<c:url value="DiscountManagerController"/>">
+                <i class="ri-coupon-3-line"></i>
+                <span>Discount</span>
+            </a>
+        </li>
+        <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title link-nav" href="<c:url value="TableManagerController"/>">
+                <i class="ri-table-line"></i>
+                <span>Tables</span>
+            </a>
         </li>
 <%--        <li class="sidebar-list">--%>
 <%--            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">--%>
