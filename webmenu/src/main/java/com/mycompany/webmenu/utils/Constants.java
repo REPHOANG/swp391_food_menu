@@ -55,4 +55,6 @@ public class Constants {
     public final static String ORDER_DETAIL_MANAGER = "WEB-INF/views/admin/order/order-detail-manager.jsp";
     public final static String LIST_DISCOUNT_MANAGER = "WEB-INF/views/admin/discount/list-discount-manager.jsp";
     public final static String ADD_NEW_DISCOUNT_JSP = "WEB-INF/views/admin/discount/add-new-discount.jsp";
+    public final static String LIST_TABLE_MANAGER = "WEB-INF/views/admin/table/list-table-manager.jsp";
+    public final static String ADD_NEW_TABLE_JSP = "WEB-INF/views/admin/table/add-new-table.jsp";
 }

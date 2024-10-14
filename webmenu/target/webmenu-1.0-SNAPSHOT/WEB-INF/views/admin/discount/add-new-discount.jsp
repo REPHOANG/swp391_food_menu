@@ -169,7 +169,8 @@
                                         <div class="mb-4 row align-items-center">
                                             <label class="form-label-title col-sm-3 mb-0">Description</label>
                                             <div class="col-sm-9">
-                                                <textarea class="form-control" placeholder="Description" name="description">${discount.description}</textarea>
+                                                <textarea class="form-control" placeholder="Description"
+                                                          name="description">${discount.description}</textarea>
                                             </div>
                                         </div>
 
@@ -237,7 +238,8 @@
 <script>
     document.querySelector('form').addEventListener('submit', function (event) {
         // Mảng chứa tên các trường input cần kiểm tra
-        const inputNames = ['name', 'discountPercent', 'maxDiscountValue', 'minDiscountValue', 'startDate', 'endDate', 'quantity', 'rmQuantity'];
+        const inputNames = ['name', 'discountPercent', 'maxDiscountValue', 'minDiscountValue',
+            'startDate', 'endDate', 'quantity', 'rmQuantity'];
         let isValid = true; // Biến theo dõi trạng thái hợp lệ của form
         // Lặp qua tất cả các input trong form
         document.querySelectorAll('input').forEach(function (input) {
