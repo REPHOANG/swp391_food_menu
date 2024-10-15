@@ -2,6 +2,7 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\UserDT
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ImageProductDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ProductDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\CategoryDto.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\TableManagerController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\common\DAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\DiscountDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\DiscountManagerController.java
