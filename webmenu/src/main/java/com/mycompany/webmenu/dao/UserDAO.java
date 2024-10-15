@@ -126,21 +126,17 @@ public class UserDAO {
         Connection conn = DBUtil.getConnection();
         PreparedStatement stm = conn.prepareStatement("INSERT into Users ( role_id ,email  ,avatar,username)"
                 + " values (?,?,?,?)");
-
         stm.setInt(1, 2);
         stm.setString(2, email);
         stm.setString(3, imageUrl);
         stm.setString(4, username);
         stm.executeUpdate();
-
         UserDTO dto = new UserDTO();
         dto.setAvatarUrl(imageUrl);
         dto.setEmail(email);
         dto.setUsername(username);
-
         stm.close();
         return dto;
-
     }
 
     public void updateProfile(String email, String username, String phone, String avatarURL) throws SQLException {

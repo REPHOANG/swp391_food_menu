@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="EcommmercePlatform@localhost" uuid="ac42fe2b-37ba-456d-ae5d-a611fdb204ec">
+    <data-source source="LOCAL" name="EcommmercePlatform@localhost [2]" uuid="9f1cc279-7e74-4946-8ba5-47a950848a45">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>

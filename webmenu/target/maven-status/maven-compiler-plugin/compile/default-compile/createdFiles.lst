@@ -15,8 +15,10 @@ com\mycompany\webmenu\dto\UserDTO.class
 com\mycompany\webmenu\dto\ImageProductDTO$ImageProductDTOBuilder.class
 com\mycompany\webmenu\dao\TableDAO.class
 com\mycompany\webmenu\dao\CategoryDAO.class
+com\mycompany\webmenu\controller\GoogleSignInServlet.class
 com\mycompany\webmenu\dao\DiscountDAO.class
 com\mycompany\webmenu\controller\DiscountManagerController.class
+com\mycompany\webmenu\controller\LoginController.class
 com\mycompany\webmenu\controller\AdminController.class
 com\mycompany\webmenu\utils\Constants.class
 com\mycompany\webmenu\dto\TableDTO$TableDTOBuilder.class
@@ -28,6 +30,7 @@ com\mycompany\webmenu\dto\ImageProductDTO.class
 com\mycompany\webmenu\controller\OrderManagerController.class
 com\mycompany\webmenu\dao\ProductDAO.class
 com\mycompany\webmenu\dto\DiscountDTO.class
+com\mycompany\webmenu\controller\TableManagerController.class
 com\mycompany\webmenu\dto\ProductDTO$ProductDTOBuilder.class
 com\mycompany\webmenu\dto\ShopDTO.class
 com\mycompany\webmenu\dto\ProductDTO.class
