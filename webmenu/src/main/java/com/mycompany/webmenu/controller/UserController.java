@@ -51,7 +51,6 @@ public class UserController extends HttpServlet {
         try {
             if (userAction == null) {
                 throw new IllegalArgumentException("\"action\" parameter is missing");
-
             }
             switch (userAction) {
                 case "login": {
@@ -65,18 +64,15 @@ public class UserController extends HttpServlet {
                             String avatarURL = request.getParameter("picture");
                             String username = request.getParameter("username");
                             user = uDAO.insertNewUser(email, avatarURL, username);
-
                         }
                         session.setAttribute("user", user);
                         out.println(gson.toJson(user));
                     }
-
                     break;
                 }
                 case "logout": {
-                    System.out.println("đã xóa session");
                     session.removeAttribute("user");
-                    response.sendRedirect(Constants.MAIN_CONTROLLER);
+                    response.sendRedirect(Constants.LOGIN_CONTROLLER + "?tableId=" + session.getAttribute("tableId"));
                     break;
                 }
                 case "profile": {

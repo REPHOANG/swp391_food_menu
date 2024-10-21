@@ -11,6 +11,7 @@ public class Constants {
 
     public final static String USER_CONTROLLER = "UserController";
     public final static String MAIN_CONTROLLER = "MainController";
+    public final static String LOGIN_CONTROLLER = "LoginController";
     public final static String SHOW_USER_PROFILE_PAGE = "WEB-INF/views/userDetailPage.jsp";
     //    ------------------
     public final static String ADMIN_CONTROLLER = "AdminController";
@@ -28,4 +29,5 @@ public class Constants {
     public final static String LIST_TABLE_MANAGER = "WEB-INF/views/admin/table/list-table-manager.jsp";
     public final static String ADD_NEW_TABLE_JSP = "WEB-INF/views/admin/table/add-new-table.jsp";
     public final static String HOME_PAGE = "WEB-INF/views/user/home-user.jsp";
+    public final static String LOGIN = "WEB-INF/views/user/login.jsp";
 }
