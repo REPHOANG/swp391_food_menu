@@ -8,6 +8,7 @@ package com.mycompany.webmenu.controller;
 import java.io.IOException;
 
 import com.mycompany.webmenu.dao.ProductDAO;
+import com.mycompany.webmenu.dao.TableDAO;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,10 +35,16 @@ public class MainController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
+        String tableIdStr = request.getParameter("tableId");
+        Integer tableId = (tableIdStr != null && !tableIdStr.isEmpty()) ? Integer.parseInt(tableIdStr) : null;
+        TableDAO tableDao = new TableDAO();
+
         String btnAction = request.getParameter("btnAction");
         String url = "";
         try {
             if (btnAction == null) {
+                request.setAttribute("tableDTO", tableDao.getTableDetail(tableId));
                 url = Constants.HOME_PAGE;
             } else {
                 switch (btnAction) {

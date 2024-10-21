@@ -85,7 +85,6 @@ public class OrderManagerController extends HttpServlet {
             }
             case "orderListUser": {
                 request.setAttribute("orderAction", "orderListUser");
-
                 Integer userId = Integer.parseInt(request.getParameter("userId"));
                 OrderDAO orderDAO = new OrderDAO();
                 int pageNo = 1;

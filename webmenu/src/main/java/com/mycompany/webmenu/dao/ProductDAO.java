@@ -12,6 +12,42 @@ import java.util.stream.Collectors;
 
 public class ProductDAO {
 
+    public List<ProductDTO> getListALlProduct(int page, int pageSize) throws SQLException {
+        int offset = (page - 1) * pageSize;
+        String sql = "select x1.product_id, x1.name, x1.price, x1.description, x2.url as urlImage,x3.category_id as categoryId,x3.name as categoryName\n" +
+                "from Product x1\n" +
+                "left join image_product x2 on x2.product_id = x1.product_id\n" +
+                "join Category x3 on x3.category_id = x1.category_id \n" +
+                "where (x2.image_id is null or x2.is_main_img = 1)\n" +
+                "ORDER BY x1.approve_at desc \n" +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, offset);
+            stm.setInt(2, pageSize);
+            try (ResultSet rs = stm.executeQuery()) { // Tự động đóng result set
+                ArrayList<ProductDTO> list = new ArrayList<>();
+                while (rs.next()) {
+                    ProductDTO dto = new ProductDTO();
+                    dto.setProductId(rs.getInt("product_id"));
+                    dto.setPrice(rs.getDouble("price"));
+                    dto.setName(rs.getString("name"));
+                    dto.setDescription(rs.getString("description"));
+                    dto.setCategoryName(rs.getString("categoryName"));
+                    dto.setCategoryId(rs.getInt("categoryId"));
+                    ImageProductDTO imageProductDTO = new ImageProductDTO();
+                    imageProductDTO.setUrl(rs.getString("urlImage"));
+                    dto.setMainImg(imageProductDTO);
+                    list.add(dto);
+                }
+                return list;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ghi lại lỗi nếu có
+            throw e; // Ném lại lỗi để xử lý ở nơi gọi
+        }
+    }
+
     // Phương thức lấy danh sách sản phẩm cho quản lý
     public ArrayList<ProductDTO> getListProductManager(int page, int pageSize) throws SQLException {
         int offset = (page - 1) * pageSize;

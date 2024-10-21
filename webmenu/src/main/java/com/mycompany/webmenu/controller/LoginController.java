@@ -51,7 +51,7 @@ public class LoginController extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         session.setAttribute("tableId", tableId);
-        response.sendRedirect(Constants.MAIN_CONTROLLER);
+        response.sendRedirect(Constants.MAIN_CONTROLLER + "?tableId=" + tableId);
     }
 
 }

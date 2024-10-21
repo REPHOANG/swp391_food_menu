@@ -15,7 +15,6 @@ com\mycompany\webmenu\dto\UserDTO.class
 com\mycompany\webmenu\dto\ImageProductDTO$ImageProductDTOBuilder.class
 com\mycompany\webmenu\dao\TableDAO.class
 com\mycompany\webmenu\dao\CategoryDAO.class
-com\mycompany\webmenu\controller\GoogleSignInServlet.class
 com\mycompany\webmenu\dao\DiscountDAO.class
 com\mycompany\webmenu\controller\DiscountManagerController.class
 com\mycompany\webmenu\controller\LoginController.class
@@ -25,7 +24,6 @@ com\mycompany\webmenu\dto\TableDTO$TableDTOBuilder.class
 com\mycompany\webmenu\common\DAO.class
 com\mycompany\webmenu\controller\MainController.class
 com\mycompany\webmenu\dto\OrderDTO$OrderDTOBuilder.class
-com\mycompany\webmenu\controller\GoogleLoginServlet.class
 com\mycompany\webmenu\controller\ProductManagerController.class
 com\mycompany\webmenu\dto\ImageProductDTO.class
 com\mycompany\webmenu\controller\OrderManagerController.class
