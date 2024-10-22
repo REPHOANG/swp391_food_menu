@@ -17,4 +17,6 @@ public class UserDTO {
     private String address;
     private String avatarUrl;
     private String username;
+    private String fullName;
+    private String password;
 }

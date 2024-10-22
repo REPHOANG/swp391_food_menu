@@ -164,7 +164,7 @@
             <label>Ghi Chú:</label>
             <textarea></textarea>
         </div>
-        <p id="total-price">Tổng tiền: 0 VND</p>
+        <p>Tổng tiền: <span id="total-price">0</span> VND</p>
         <button id="checkout-btn">Thanh toán</button>
     </div>
 
@@ -181,6 +181,19 @@
         <!-- Nút phân trang sẽ được thêm vào đây -->
     </div>
 </div>
+<script>
+    const userOder = {
+        userID: '${user.userID}',
+        username: '${user.username}',
+        email: '${user.email}'
+    };
+    const tableOder = {
+        tableId: '${tableDTO.tableId}',
+        tableName: ' ${tableDTO.tableName}',
+        status: '${tableDTO.status}',
+        capacity: '${tableDTO.capacity}'
+    };
+</script>
 <script src="<c:url value="/assets/user/home-user.js"/>"></script>
 <script src="<c:url value="/assets/user/cart-user.js"/>"></script>
 </body>

@@ -98,7 +98,7 @@ function updateCart() {
     cartItemsContainer.appendChild(table);
 
     // Cập nhật tổng tiền
-    totalPriceElement.textContent = `Tổng tiền: ${totalPrice} VND`;
+    totalPriceElement.textContent = totalPrice;
 
     // Lưu giỏ hàng vào localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -114,20 +114,34 @@ document.getElementById('checkout-btn').addEventListener('click', function () {
     } else {
         // Lấy thông tin ghi chú từ textarea
         const orderNote = document.querySelector('.note-container textarea').value;
-        // Lấy toàn bộ thông tin sản phẩm trong giỏ hàng
-        let cartDetails = "Thông tin giỏ hàng:\n";
-        cart.forEach(item => {
-            cartDetails += `Sản phẩm: ${item.name}, Số lượng: ${item.quantity}, Giá: ${item.price} VND\n`;
-        });
-        // Lấy tổng tiền từ giao diện
-        const totalPrice = document.getElementById('total-price').textContent;
-        // Thông tin hoàn chỉnh
-        const fullOrderDetails = cartDetails + `\nGhi chú: ${orderNote}\n` + totalPrice;
-        // Hiển thị thông tin đơn hàng
-        alert(fullOrderDetails);
-        // Thực hiện thanh toán hoặc chuyển hướng tới trang thanh toán
-        cart = []; // Xóa giỏ hàng sau khi thanh toán
-        localStorage.removeItem('cart'); // Xóa giỏ hàng khỏi localStorage
-        updateCart(); // Cập nhật lại giỏ hàng (sẽ trống sau khi thanh toán)
+        const totalPrice = document.getElementById("total-price").textContent;
+        // Gửi dữ liệu giỏ hàng đến Servlet
+        fetch('/webmenu/OrderUserController', { // Đường dẫn đến Servlet xử lý thanh toán
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cart: cart, // Dữ liệu giỏ hàng
+                note: orderNote, // Ghi chú của khách hàng
+                totalPrice: totalPrice, // Tổng tiền
+                userId: userOder.userID, // Tổng tiền
+                tableId: tableOder.tableId
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Thanh toán thành công!");
+                    cart = []; // Xóa giỏ hàng
+                    localStorage.removeItem('cart'); // Xóa giỏ hàng khỏi localStorage
+                    updateCart(); // Cập nhật lại giỏ hàng (sẽ trống sau khi thanh toán)
+                } else {
+                    alert("Có lỗi xảy ra, vui lòng thử lại.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 });

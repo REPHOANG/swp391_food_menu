@@ -12,9 +12,11 @@ com\mycompany\webmenu\dao\OrderDAO.class
 com\mycompany\webmenu\dto\CategoryDto.class
 com\mycompany\webmenu\controller\CategoryManagerController.class
 com\mycompany\webmenu\dto\UserDTO.class
+com\mycompany\webmenu\controller\MenuServletController.class
 com\mycompany\webmenu\dto\ImageProductDTO$ImageProductDTOBuilder.class
 com\mycompany\webmenu\dao\TableDAO.class
 com\mycompany\webmenu\dao\CategoryDAO.class
+com\mycompany\webmenu\controller\OrderUserController.class
 com\mycompany\webmenu\dao\DiscountDAO.class
 com\mycompany\webmenu\controller\DiscountManagerController.class
 com\mycompany\webmenu\controller\LoginController.class

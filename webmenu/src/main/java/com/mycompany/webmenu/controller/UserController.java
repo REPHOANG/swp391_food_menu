@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import com.mycompany.webmenu.dao.UserDAO;
 import com.mycompany.webmenu.dto.UserDTO;
 import com.mycompany.webmenu.utils.Constants;
+import com.mycompany.webmenu.utils.RoleUserType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,9 +100,9 @@ public class UserController extends HttpServlet {
                     if (pageParam != null) {
                         pageNo = Integer.parseInt(pageParam);
                     }
-                    int totalProducts = uDAO.getTotalUserCount();
+                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId());
                     int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                    request.setAttribute("users", uDAO.getListCategoryManager(pageNo, pageSize));
+                    request.setAttribute("users", uDAO.getListCategoryManager(pageNo, pageSize, RoleUserType.USER.getId()));
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("currentPage", pageNo);
                     request.getRequestDispatcher(Constants.LIST_USER_MANAGER).forward(request, response);

@@ -10,12 +10,15 @@ package com.mycompany.webmenu.utils;
 public class Constants {
 
     public final static String USER_CONTROLLER = "UserController";
+    public final static String LOGIN_ADMIN_CONTROLLER = "LoginAdminController";
     public final static String MAIN_CONTROLLER = "MainController";
     public final static String LOGIN_CONTROLLER = "LoginController";
     public final static String SHOW_USER_PROFILE_PAGE = "WEB-INF/views/userDetailPage.jsp";
     //    ------------------
     public final static String ADMIN_CONTROLLER = "AdminController";
     public final static String ADMIN_PAGE = "WEB-INF/views/admin/homeAdmin.jsp";
+    public final static String LOGIN_ADMIN = "WEB-INF/views/admin/login-admin.jsp";
+    public final static String SIGN_UP_USER = "WEB-INF/views/user/sign-up.jsp";
     public final static String LIST_PRODUCT_MANAGER_JSP = "WEB-INF/views/admin/product/list-product-manager.jsp";
     public final static String ADD_NEW_PRODUCT_JSP = "WEB-INF/views/admin/product/add-new-product.jsp";
 
@@ -28,6 +31,9 @@ public class Constants {
     public final static String ADD_NEW_DISCOUNT_JSP = "WEB-INF/views/admin/discount/add-new-discount.jsp";
     public final static String LIST_TABLE_MANAGER = "WEB-INF/views/admin/table/list-table-manager.jsp";
     public final static String ADD_NEW_TABLE_JSP = "WEB-INF/views/admin/table/add-new-table.jsp";
+    public final static String LIST_STAFF = "WEB-INF/views/admin/staff/list-staff.jsp";
+    public final static String ADD_NEW_STAFF_JSP = "WEB-INF/views/admin/staff/add-new-staff.jsp";
     public final static String HOME_PAGE = "WEB-INF/views/user/home-user.jsp";
     public final static String LOGIN = "WEB-INF/views/user/login.jsp";
+    public final static String CHANGE_PASSWORD_STAFF = "WEB-INF/views/admin/change-password-staff.jsp";
 }

@@ -45,6 +45,7 @@ public class MainController extends HttpServlet {
         try {
             if (btnAction == null) {
                 request.setAttribute("tableDTO", tableDao.getTableDetail(tableId));
+                request.setAttribute("user", request.getAttribute("user"));
                 url = Constants.HOME_PAGE;
             } else {
                 switch (btnAction) {

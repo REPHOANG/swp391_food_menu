@@ -14,38 +14,53 @@
                         <img class="user-profile rounded-circle"
                              src="<c:url value='/assets/admin/images/logo/1-white.png' />" alt="user">
                         <div class="user-name-hide media-body">
-                            <span>${sessionScope.user.email}</span>
-                            <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                            <span>${user.email}</span>
+                            <%-- Lấy roleID từ đối tượng user --%>
+                            <c:choose>
+                                <c:when test="${user.roleID == 1}">
+                                    <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                                </c:when>
+                                <c:when test="${user.roleID == 2}">
+                                    <p class="mb-0 font-roboto">User<i class="middle ri-arrow-down-s-line"></i></p>
+                                </c:when>
+                                <c:when test="${user.roleID == 3}">
+                                    <p class="mb-0 font-roboto">Staff<i class="middle ri-arrow-down-s-line"></i></p>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="mb-0 font-roboto">Unknown Role<i class="middle ri-arrow-down-s-line"></i>
+                                    </p>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
+                        <%--                        <li>--%>
+                        <%--                            <a href="">--%>
+                        <%--                                <i data-feather="usezrs"></i>--%>
+                        <%--                                <c:choose>--%>
+                        <%--                                    <c:when test="${user.roleID == 1}">--%>
+                        <%--                                        <span>Admin</span>--%>
+                        <%--                                    </c:when>--%>
+                        <%--                                    <c:when test="${user.roleID == 2}">--%>
+                        <%--                                        <span>User</span>--%>
+                        <%--                                    </c:when>--%>
+                        <%--                                    <c:when test="${user.roleID == 3}">--%>
+                        <%--                                        <span>Staff</span>--%>
+                        <%--                                    </c:when>--%>
+                        <%--                                    <c:otherwise>--%>
+                        <%--                                        <span>Unknown Role</span>--%>
+                        <%--                                    </c:otherwise>--%>
+                        <%--                                </c:choose>--%>
+                        <%--                            </a>--%>
+                        <%--                        </li>--%>
                         <li>
-                            <a href="all-users.html">
-                                <i data-feather="users"></i>
-                                <span>Users</span>
+                            <a href="<c:url value="/ChangePasswordStaffController"></c:url>">
+                                <i data-feather="log-out"></i>
+                                <span>Change Password</span>
                             </a>
                         </li>
                         <li>
-                            <a href="order-list.html">
-                                <i data-feather="archive"></i>
-                                <span>Orders</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="support-ticket.html">
-                                <i data-feather="phone"></i>
-                                <span>Spports Tickets</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="profile-setting.html">
-                                <i data-feather="settings"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                               href="javascript:void(0)">
+                            <a href="<c:url value="/LoginAdminController?loginAction=logout"></c:url>">
                                 <i data-feather="log-out"></i>
                                 <span>Log out</span>
                             </a>

@@ -91,7 +91,7 @@
                                         <div class="mb-4 row align-items-center">
                                             <label class="form-label-title col-sm-3 mb-0">Category Name</label>
                                             <div class="col-sm-9">
-                                                <input class="form-control" type="text" placeholder="Product Name"
+                                                <input class="form-control" type="text" placeholder="Category Name"
                                                        name="name" value="${category.name}">
                                             </div>
                                         </div>

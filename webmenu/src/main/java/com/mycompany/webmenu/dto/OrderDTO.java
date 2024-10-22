@@ -15,10 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDTO {
     private Integer orderId;
+    private Integer tableId;
     private Integer userId;
     private String userName;
     private Date orderDate;
     private String address;
+    private String note;
     private Integer status;
     private Double total;
     private Double shipping;

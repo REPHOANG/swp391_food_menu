@@ -24,6 +24,12 @@
             </a>
         </li>
         <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title link-nav" href="<c:url value="StaffController"/>">
+                <i class="ri-user-3-line"></i>
+                <span>Staffs</span>
+            </a>
+        </li>
+        <li class="sidebar-list">
             <a class="sidebar-link sidebar-title link-nav" href="<c:url value="OrderManagerController"/>">
                 <i class="ri-archive-line"></i>
                 <span>Orders</span>
