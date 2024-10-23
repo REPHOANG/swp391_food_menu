@@ -19,7 +19,8 @@
             rel="stylesheet">
 
     <!-- bootstrap css -->
-    <link id="rtl-link" rel="stylesheet" type="text/css" href="<c:url value="/assets/user/css/vendors/bootstrap.css"/>"/>
+    <link id="rtl-link" rel="stylesheet" type="text/css"
+          href="<c:url value="/assets/user/css/vendors/bootstrap.css"/>"/>
 
     <!-- font-awesome css -->
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/user/css/vendors/font-awesome.css"/>"/>
@@ -32,6 +33,22 @@
 </head>
 
 <body>
+<header class="pb-md-4 pb-0">
+    <div class="top-nav top-header sticky-header">
+        <jsp:include page="/WEB-INF/views/user/top-header.jsp"/>
+    </div>
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="header-nav">
+                    <div class="header-nav-middle">
+                        <jsp:include page="/WEB-INF/views/user/header-nav-middle.jsp"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 <!-- log in section start -->
 <section class="log-in-section section-b-space">
     <div class="container-fluid-lg w-100">
@@ -54,19 +71,22 @@
                         <form class="row g-4" action="SignUpUserController" method="post">
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating">
-                                    <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Full Name" required>
+                                    <input type="text" class="form-control" id="fullname" name="fullname"
+                                           placeholder="Full Name" required>
                                     <label for="fullname">Full Name</label>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating">
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                           placeholder="Email Address" required>
                                     <label for="email">Email Address</label>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           placeholder="Password" required>
                                     <label for="password">Password</label>
                                 </div>
                             </div>
@@ -75,46 +95,19 @@
                             </div>
                         </form>
                     </div>
-
-<%--                    <div class="other-log-in">--%>
-<%--                        <h6>or</h6>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="log-in-button">--%>
-<%--                        <ul>--%>
-<%--                            <li>--%>
-<%--                                <a href="https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin"--%>
-<%--                                   class="btn google-button w-100">--%>
-<%--                                    <img src="../assets/images/inner-page/google.png" class="blur-up lazyload"--%>
-<%--                                         alt="">--%>
-<%--                                    Sign up with Google--%>
-<%--                                </a>--%>
-<%--                            </li>--%>
-<%--                            <li>--%>
-<%--                                <a href="https://www.facebook.com/" class="btn google-button w-100">--%>
-<%--                                    <img src="../assets/images/inner-page/facebook.png" class="blur-up lazyload"--%>
-<%--                                         alt=""> Sign up with Facebook--%>
-<%--                                </a>--%>
-<%--                            </li>--%>
-<%--                        </ul>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="other-log-in">--%>
-<%--                        <h6></h6>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="sign-up-box">--%>
-<%--                        <h4>Already have an account?</h4>--%>
-<%--                        <a href="<c:url value="LoginAdminController"/>">Log In</a>--%>
-<%--                    </div>--%>
                 </div>
             </div>
-
             <div class="col-xxl-7 col-xl-6 col-lg-6"></div>
         </div>
     </div>
 </section>
 <!-- log in section end -->
+
+<!-- Footer Section Start -->
+<footer class="section-t-space">
+    <jsp:include page="/WEB-INF/views/user/footer-section.jsp"/>
+</footer>
+<!-- Footer Section End -->
 
 <!-- Tap to top start -->
 <div class="theme-option">

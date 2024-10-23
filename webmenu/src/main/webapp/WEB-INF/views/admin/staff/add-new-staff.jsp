@@ -79,7 +79,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <c:if test="${not empty message}">
-                                        <p>${message}</p>
+                                        <p style="color: red; font-size: 18px;">${message}</p>
                                     </c:if>
                                     <div class="card-header-2">
                                         <h5>Staff Information</h5>

@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="<c:url value="/LoginAdminController?loginAction=logout"></c:url>">
+                            <a href="<c:url value="/LoginWebController?loginAction=logout"></c:url>">
                                 <i data-feather="log-out"></i>
                                 <span>Log out</span>
                             </a>

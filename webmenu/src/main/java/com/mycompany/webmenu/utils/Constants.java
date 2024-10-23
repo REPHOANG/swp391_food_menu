@@ -9,8 +9,10 @@ package com.mycompany.webmenu.utils;
  */
 public class Constants {
 
+    public final static String SENDER_EMAIL = "trongdat465@gmail.com";
+    public final static String SENDER_PASSWORD = "trongdat98";
     public final static String USER_CONTROLLER = "UserController";
-    public final static String LOGIN_ADMIN_CONTROLLER = "LoginAdminController";
+    public final static String LOGIN_WEB_CONTROLLER = "LoginWebController";
     public final static String MAIN_CONTROLLER = "MainController";
     public final static String LOGIN_CONTROLLER = "LoginController";
     public final static String SHOW_USER_PROFILE_PAGE = "WEB-INF/views/userDetailPage.jsp";
@@ -34,6 +36,10 @@ public class Constants {
     public final static String LIST_STAFF = "WEB-INF/views/admin/staff/list-staff.jsp";
     public final static String ADD_NEW_STAFF_JSP = "WEB-INF/views/admin/staff/add-new-staff.jsp";
     public final static String HOME_PAGE = "WEB-INF/views/user/home-user.jsp";
+    public final static String HOME_INDEX_USER = "WEB-INF/views/user/home-index-user.jsp";
     public final static String LOGIN = "WEB-INF/views/user/login.jsp";
     public final static String CHANGE_PASSWORD_STAFF = "WEB-INF/views/admin/change-password-staff.jsp";
+    public final static String FORGOT_PASSWORD_JSP = "WEB-INF/views/user/forgot-password.jsp";
+    public final static String RESET_PASSWORD_JSP = "WEB-INF/views/user/reset-password.jsp";
+    public final static String FORGOT_PASSWORD_CONTROLLER = "ForgotPasswordController";
 }

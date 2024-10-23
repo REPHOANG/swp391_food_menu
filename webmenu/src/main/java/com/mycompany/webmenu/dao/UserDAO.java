@@ -1,17 +1,19 @@
 package com.mycompany.webmenu.dao;
 
 import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.utils.Constants;
 import com.mycompany.webmenu.utils.DBUtil;
 import com.mycompany.webmenu.utils.RoleUserType;
 import lombok.SneakyThrows;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class UserDAO {
 
@@ -102,7 +104,7 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDTO login(String email) {
-        String sql = "SELECT user_id, email, phone, address, avatar,username FROM Users WHERE email = ?";
+        String sql = "SELECT user_id, email, phone, address, avatar,username,role_id,full_name FROM Users WHERE email = ?";
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -113,11 +115,13 @@ public class UserDAO {
             if (rs.next()) {
                 UserDTO user = new UserDTO();
                 user.setUserID(rs.getInt("user_id"));
+                user.setRoleID(rs.getInt("role_id"));
                 user.setEmail(rs.getString("email"));
                 user.setPhone(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setAvatarUrl(rs.getString("avatar"));
                 user.setUsername(rs.getString("username"));
+                user.setFullName(rs.getString("full_name"));
                 return user;
             }
         } catch (SQLException e) {
@@ -131,7 +135,7 @@ public class UserDAO {
         Connection conn = DBUtil.getConnection();
         PreparedStatement stm = conn.prepareStatement("INSERT into Users (role_id,email,avatar,username)"
                 + " values (?,?,?,?)");
-        stm.setInt(1, 2);
+        stm.setInt(1, RoleUserType.USER.getId());
         stm.setString(2, email);
         stm.setString(3, imageUrl);
         stm.setString(4, username);
@@ -282,36 +286,62 @@ public class UserDAO {
 
     public Boolean saveOrUpdateStaff(UserDTO staff) throws SQLException {
         String query;
-        // Kiểm tra nếu userID đã tồn tại (cập nhật), nếu không thì thêm mới
-        if (staff.getUserID() != null) {
+        Boolean isUpdate = staff.getUserID() != null ? true : false;
+
+        if (isUpdate) {
             // Truy vấn cập nhật
             query = "UPDATE Users SET role_id = ?, email = ?, username = ?, full_name = ?, phone = ?, address = ? WHERE user_id = ?";
         } else {
             // Truy vấn thêm mới
             query = "INSERT INTO Users (role_id, email, username, full_name, phone, address, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         }
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            // Thiết lập các giá trị chung cho cả cập nhật và thêm mới
-            stmt.setInt(1, RoleUserType.STAFF.getId());  // role_id
-            stmt.setString(2, staff.getEmail());  // email
-            stmt.setString(3, staff.getUsername());  // username
-            stmt.setString(4, staff.getFullName());  // full_name
-            stmt.setString(5, staff.getPhone());  // phone
-            stmt.setString(6, staff.getAddress());  // address
-            if (staff.getUserID() != null) {
-                // Nếu là cập nhật, thiết lập giá trị cho userID (tham số cuối cùng)
-                stmt.setInt(7, staff.getUserID());
-            } else {
-                // Nếu là thêm mới, thiết lập mật khẩu
-                stmt.setString(7, generatePassword(8));  // password
+
+        // Bắt đầu giao dịch
+        try (Connection conn = DBUtil.getConnection()) {
+            conn.setAutoCommit(false); // Tắt chế độ auto-commit để điều khiển giao dịch thủ công
+
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                // Thiết lập các giá trị chung cho cả cập nhật và thêm mới
+                stmt.setInt(1, RoleUserType.STAFF.getId());  // role_id
+                stmt.setString(2, staff.getEmail());  // email
+                stmt.setString(3, staff.getUsername());  // username
+                stmt.setString(4, staff.getFullName());  // full_name
+                stmt.setString(5, staff.getPhone());  // phone
+                stmt.setString(6, staff.getAddress());  // address
+
+                if (isUpdate) {
+                    // Nếu là cập nhật, thiết lập giá trị cho userID (tham số cuối cùng)
+                    stmt.setInt(7, staff.getUserID());
+                } else {
+                    // Nếu là thêm mới, tạo và hash mật khẩu
+                    String generatedPassword = this.generatePassword(8);
+                    stmt.setString(7, generatedPassword);
+
+                    // Chưa gửi email ở đây, chờ lưu thành công trước
+                    staff.setPassword(generatedPassword); // Lưu mật khẩu chưa mã hóa để gửi email sau
+                }
+
+                // Thực thi truy vấn
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows > 0) {
+                    conn.commit(); // Chỉ commit nếu lưu vào DB thành công
+
+                    // Nếu thành công và thêm mới, gửi email
+                    if (!isUpdate) {
+                        sendEmail(staff);
+                    }
+                    return true;
+                } else {
+                    conn.rollback(); // Rollback nếu không có dòng nào bị ảnh hưởng
+                    return false;
+                }
+            } catch (Exception e) {
+                conn.rollback(); // Rollback tất cả các thay đổi nếu có bất kỳ lỗi nào xảy ra
+                e.printStackTrace();
+                throw new SQLException("Lỗi khi lưu thông tin nhân viên: " + e.getMessage(), e);
             }
-            // Thực thi truy vấn
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0; // Nếu thêm hoặc cập nhật thành công thì trả về true
         }
     }
-
 
     public static String generatePassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
@@ -335,4 +365,153 @@ public class UserDAO {
             return rowsUpdated > 0; // Nếu cập nhật thành công
         }
     }
+
+    // Hàm gửi email
+    public void sendEmail(UserDTO staff) {
+        // Email người gửi
+        String senderEmail = Constants.SENDER_EMAIL;  // Email người gửi
+        String senderPassword = Constants.SENDER_PASSWORD;      // Mật khẩu email người gửi
+        // Cấu hình thuộc tính email (SMTP server)
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+        // Tạo session với thông tin xác thực
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
+        try {
+            // Tạo đối tượng MimeMessage
+            MimeMessage message = new MimeMessage(session);
+            // Cài đặt thông tin cho email
+            message.setFrom(new InternetAddress(senderEmail));                // Địa chỉ người gửi
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(staff.getEmail())); // Địa chỉ người nhận
+            message.setSubject("Thông Báo Tạo Tài Khoản", "utf-8");                                      // Tiêu đề email
+
+            // Nội dung HTML cho email
+            String content = "<h3>Xin chào " + staff.getFullName() + ",</h3>"
+                    + "<p>Bạn đã được tạo một tài khoản. Dưới đây là thông tin đăng nhập của bạn:</p>"
+                    + "<p><strong>Tên đăng nhập: </strong>" + staff.getEmail() + "</p>"
+                    + "<p><strong>Mật khẩu: </strong>" + staff.getPassword() + "</p>"
+                    + "<p>Vui lòng đăng nhập và thay đổi mật khẩu của bạn sau khi đăng nhập lần đầu.</p>"
+                    + "<br><p>Trân trọng,</p>"
+                    + "<p>Đội ngũ quản lý</p>";
+
+            // Cài đặt nội dung email với định dạng HTML
+            message.setContent(content, "text/html; charset=UTF-8");
+            message.setText(content, "utf-8", "html");                                         // Nội dung email
+            // Gửi email
+            Transport.send(message);
+            System.out.println("Email đã được gửi thành công!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.out.println("Gửi email thất bại.");
+        }
+    }
+
+    public void forgotPassword(String email) {
+        UserDTO staff = this.login(email);
+        System.out.println("staff " + staff);
+        final String user = "anhndph09827@fpt.edu.vn";
+        final String pass = "osas qszb tcic rzer";
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "465");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        //
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(user, pass);
+            }
+        });
+        // đăng nhập được email
+        String emailTo = staff.getEmail();//mail nhận
+        String emailSubject = "Thông Báo Quân Mật Khẩu";//tiêu đề
+        String token = UUID.randomUUID().toString();
+        String resetLink = "http://localhost:8080/webmenu/ForgotPasswordController?token=" + token;
+        // Nội dung HTML cho email
+        String emailContent = "<h3>Xin chào " + staff.getFullName() + ",</h3>"
+                + "<p>Vui lòng truy cập vào link dưới đây để đặt lại mật khẩu của bạn:</p>"
+                + "<p><a href='" + resetLink + "'>Đặt lại mật khẩu</a></p>";
+        try {
+            MimeMessage messge = new MimeMessage(session);
+            messge.setFrom(new InternetAddress(user));
+            messge.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailTo));
+            messge.setSubject(emailSubject);
+            messge.setText(emailContent, "utf-8", "html");
+            messge.setReplyTo(messge.getFrom());
+            Transport.send(messge);
+            this.updateTokenResetPassword(staff.getUserID(), token);
+            System.out.println("Gửi email thành công.");
+        } catch (Exception e) {
+            System.out.println("Gửi email thất bại.");
+            System.err.println(e);
+        }
+    }
+
+    public void resetPassword(Integer userId, String password) throws SQLException {
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement stm = conn.prepareStatement("update Users set password = ? where user_id = ?");
+        stm.setString(1, password);
+        stm.setInt(2, userId);
+        stm.executeUpdate();
+        stm.close();
+    }
+
+    public void updateTokenResetPassword(Integer userId, String token) throws SQLException {
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement stm = conn.prepareStatement("update Users set token_reset_password = ? where user_id = ?");
+        stm.setString(1, token);
+        stm.setInt(2, userId);
+        stm.executeUpdate();
+        stm.close();
+    }
+
+    @SneakyThrows
+    public UserDTO getUserByToken(String token) {
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement stm = conn.prepareStatement("SELECT "
+                + "user_id \n"
+                + "      ,ward_id \n"
+                + "      ,role_id \n"
+                + "      ,email \n"
+                + "      ,phone \n"
+                + "      ,yob \n"
+                + "      ,address \n"
+                + "      ,avatar \n"
+                + "      ,username \n"
+                + "      ,full_name \n"
+                + "  FROM Users \n"
+                + " where token_reset_password = ?");
+        stm.setString(1, token);
+        ResultSet rs = stm.executeQuery();
+        UserDTO u = new UserDTO();
+        if (rs.next()) {
+            u.setUserID(rs.getInt("user_id"));
+            u.setWardID(rs.getString("ward_id"));
+            u.setRoleID(rs.getInt("role_id"));
+            u.setEmail(rs.getString("email"));
+            String phone = rs.getString("phone");
+            if (phone != null) {
+                phone = phone.trim();
+            }
+            u.setPhone(phone);
+            u.setYob(rs.getDate("yob"));
+            u.setAddress(rs.getString("address"));
+            u.setAvatarUrl(rs.getString("avatar"));
+            u.setUsername(rs.getString("username"));
+            u.setFullName(rs.getString("full_name"));
+
+        }
+        rs.close();
+        stm.close();
+        return u;
+    }
+
 }

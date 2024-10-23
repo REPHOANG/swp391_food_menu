@@ -97,7 +97,22 @@
                                                 <tr>
                                                     <td>${order.userName}</td>
                                                     <td>${order.orderDate}</td>
-                                                    <td>${order.status}</td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${order.status == 1}">
+                                                                Pending
+                                                            </c:when>
+                                                            <c:when test="${order.status == 2}">
+                                                                Preparing
+                                                            </c:when>
+                                                            <c:when test="${order.status == 3}">
+                                                                Transaction executed
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                Unknown
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
                                                     <td>${order.address}</td>
                                                     <td>
                                                         <ul>

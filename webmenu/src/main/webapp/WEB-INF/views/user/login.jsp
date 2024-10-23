@@ -143,7 +143,7 @@
         }).then(res =>
             res.json()
         ).then(res => {
-                window.location.href = "/webmenu/MainController?tableId=${tableId}";
+                <%--window.location.href = "/webmenu/MainController?tableId=${tableId}";--%>
             }
         )
     }

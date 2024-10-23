@@ -6,7 +6,6 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -62,7 +61,7 @@ public class ChangePasswordStaffController extends HttpServlet {
             }
             // Cập nhật mật khẩu mới
             if (userDAO.updatePassword(user.getUserID(), newPassword)) {
-                response.sendRedirect(Constants.LOGIN_ADMIN_CONTROLLER + "?message=Password changed successfully.");
+                response.sendRedirect(Constants.LOGIN_WEB_CONTROLLER + "?message=Password changed successfully.");
                 return;
             } else {
                 request.setAttribute("message", "Password change failed. Please try again.");
