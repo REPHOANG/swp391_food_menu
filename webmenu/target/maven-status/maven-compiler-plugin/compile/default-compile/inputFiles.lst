@@ -1,7 +1,9 @@
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\UserDTO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\StaffController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ImageProductDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\OrderUserController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ProductDTO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\RoleUserType.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\CategoryDto.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\TableManagerController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\common\DAO.java
@@ -12,6 +14,7 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ShopDT
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\MenuServletController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\common\AbstractDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\OrderDetailDTO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\LoginAdminController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\ProductDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\AdminController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ProductManagerController.java
@@ -21,6 +24,7 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\Catego
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\Constants.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\MainController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\DBUtil.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\SignUpUserController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\OrderDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\TableDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\DiscountDAO.java
@@ -28,3 +32,4 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\UserDA
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\OrderDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\CategoryManagerController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\OrderManagerController.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ChangePasswordStaffController.java

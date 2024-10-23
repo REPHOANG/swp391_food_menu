@@ -33,7 +33,12 @@ public class StaffController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        // Thiết lập mã hóa UTF-8 cho request
+        request.setCharacterEncoding("UTF-8");
+        // Thiết lập mã hóa UTF-8 cho response
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         String staffAction = request.getParameter("staffAction");
         String message = request.getParameter("message");
         if (staffAction == null) {
@@ -49,9 +54,8 @@ public class StaffController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                int totalProducts = userDao.getTotalUserCount(RoleUserType.STAFF.getId());
-                System.out.println("totalProducts " + totalProducts);
-                int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+                int totalStaffs = userDao.getTotalUserCount(RoleUserType.STAFF.getId());
+                int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
                 request.setAttribute("staffs", userDao.getListCategoryManager(pageNo, pageSize, RoleUserType.STAFF.getId()));
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("currentPage", pageNo);
@@ -98,7 +102,13 @@ public class StaffController extends HttpServlet {
         staff.setAddress(address);
 
         UserDAO userDao = new UserDAO();
-
+        UserDTO userMail = userDao.login(staff.getEmail());
+        if (userMail != null && !Objects.equals(userMail.getUserID(), staff.getUserID())) {
+            request.setAttribute("message", "Email already exists.");
+            request.setAttribute("staff", staff);
+            request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
+            return;
+        }
         Boolean isNewProduct = staff.getUserID() == null ? true : false;
         Boolean isAdded = userDao.saveOrUpdateStaff(staff);
         if (isAdded) {
@@ -116,7 +126,7 @@ public class StaffController extends HttpServlet {
             } else {
                 request.setAttribute("message", "Failed to update staff.");
             }
-            request.setAttribute("category", new CategoryDto());
+            request.setAttribute("staff", staff);
             request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
         }
     }

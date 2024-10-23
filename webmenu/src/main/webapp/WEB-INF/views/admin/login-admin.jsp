@@ -33,6 +33,22 @@
 </head>
 
 <body>
+<header class="pb-md-4 pb-0">
+    <div class="top-nav top-header sticky-header">
+        <jsp:include page="/WEB-INF/views/user/top-header.jsp"/>
+    </div>
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="header-nav">
+                    <div class="header-nav-middle">
+                        <jsp:include page="/WEB-INF/views/user/header-nav-middle.jsp"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 <!-- log in section start -->
 <section class="log-in-section background-image-2 section-b-space">
     <div class="container-fluid-lg w-100">
@@ -46,11 +62,11 @@
                 <div class="log-in-box">
                     <div class="log-in-title">
                         <h3>Welcome To Fastkart</h3>
-                        <%--                        <h4>Log In Your Account</h4>--%>
+                        <h4>Log In Your Account</h4>
                     </div>
                     <div class="input-box">
-                        <span style="color: red;">${message}</span>
-                        <form class="row g-4" action="./LoginAdminController" method="post">
+                        <span style="color: red;font-size: 18px;">${message}</span>
+                        <form class="row g-4" action="./LoginWebController" method="post">
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating log-in-form">
                                     <input type="text" class="form-control" id="username" name="username"
@@ -71,22 +87,22 @@
                             </div>
                         </form>
                     </div>
-<%--                    <div class="other-log-in">--%>
-<%--                        <h6>or</h6>--%>
-<%--                    </div>--%>
-<%--                    <div class="log-in-button">--%>
-<%--                        <!-- Google Identity Services - không cần dùng data-login_uri -->--%>
-<%--                        <div id="g_id_onload"--%>
-<%--                             data-client_id="1091790792976-ks6ah0826cgh92qtm3qo1k5n6cpov2mg.apps.googleusercontent.com"--%>
-<%--                             data-context="signin" data-ux_mode="popup"--%>
-<%--                             data-callback="loginByGoogle"--%>
-<%--                             data-itp_support="true">--%>
-<%--                        </div>--%>
-<%--                        <div class="g_id_signin" data-type="button" data-shape="circle"--%>
-<%--                             data-theme="outline" data-text="signin_with"--%>
-<%--                             data-size="medium">--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
+                    <%--                    <div class="other-log-in">--%>
+                    <%--                        <h6>or</h6>--%>
+                    <%--                    </div>--%>
+                    <%--                    <div class="log-in-button">--%>
+                    <%--                        <!-- Google Identity Services - không cần dùng data-login_uri -->--%>
+                    <%--                        <div id="g_id_onload"--%>
+                    <%--                             data-client_id="1091790792976-ks6ah0826cgh92qtm3qo1k5n6cpov2mg.apps.googleusercontent.com"--%>
+                    <%--                             data-context="signin" data-ux_mode="popup"--%>
+                    <%--                             data-callback="loginByGoogle"--%>
+                    <%--                             data-itp_support="true">--%>
+                    <%--                        </div>--%>
+                    <%--                        <div class="g_id_signin" data-type="button" data-shape="circle"--%>
+                    <%--                             data-theme="outline" data-text="signin_with"--%>
+                    <%--                             data-size="medium">--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                 </div>
             </div>
         </div>
@@ -96,6 +112,7 @@
 
 <!-- Footer Section Start -->
 <footer class="section-t-space">
+    <jsp:include page="/WEB-INF/views/user/footer-section.jsp"/>
 </footer>
 <!-- Footer Section End -->
 

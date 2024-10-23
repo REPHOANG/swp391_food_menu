@@ -55,7 +55,6 @@ public class UserController extends HttpServlet {
             switch (userAction) {
                 case "login": {
                     String email = request.getParameter("email");
-
                     if (email == null || email.isEmpty()) {
                         throw new IllegalArgumentException("\"email\" parameter is missing");
                     } else {
