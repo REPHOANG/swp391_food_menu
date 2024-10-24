@@ -87,22 +87,22 @@
                             </div>
                         </form>
                     </div>
-                    <%--                    <div class="other-log-in">--%>
-                    <%--                        <h6>or</h6>--%>
-                    <%--                    </div>--%>
-                    <%--                    <div class="log-in-button">--%>
-                    <%--                        <!-- Google Identity Services - không cần dùng data-login_uri -->--%>
-                    <%--                        <div id="g_id_onload"--%>
-                    <%--                             data-client_id="1091790792976-ks6ah0826cgh92qtm3qo1k5n6cpov2mg.apps.googleusercontent.com"--%>
-                    <%--                             data-context="signin" data-ux_mode="popup"--%>
-                    <%--                             data-callback="loginByGoogle"--%>
-                    <%--                             data-itp_support="true">--%>
-                    <%--                        </div>--%>
-                    <%--                        <div class="g_id_signin" data-type="button" data-shape="circle"--%>
-                    <%--                             data-theme="outline" data-text="signin_with"--%>
-                    <%--                             data-size="medium">--%>
-                    <%--                        </div>--%>
-                    <%--                    </div>--%>
+                    <div class="other-log-in">
+                        <h6>or</h6>
+                    </div>
+                    <div class="log-in-button">
+                        <!-- Google Identity Services - không cần dùng data-login_uri -->
+                        <div id="g_id_onload"
+                             data-client_id="1091790792976-ks6ah0826cgh92qtm3qo1k5n6cpov2mg.apps.googleusercontent.com"
+                             data-context="signin" data-ux_mode="popup"
+                             data-callback="loginByGoogle"
+                             data-itp_support="true">
+                        </div>
+                        <div class="g_id_signin" data-type="button" data-shape="circle"
+                             data-theme="outline" data-text="signin_with"
+                             data-size="medium">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

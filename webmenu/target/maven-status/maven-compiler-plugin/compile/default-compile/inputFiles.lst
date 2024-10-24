@@ -30,7 +30,9 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\DBUt
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\SignUpUserController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\OrderDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\TableDAO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ViewCartController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\DiscountDAO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ViewProfileController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\UserDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\OrderDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\CategoryManagerController.java
