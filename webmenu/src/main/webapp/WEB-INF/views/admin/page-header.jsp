@@ -11,11 +11,11 @@
             <ul class="nav-menus">
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
-                        <img class="user-profile rounded-circle"
-                             src="<c:url value='/assets/admin/images/logo/1-white.png' />" alt="user">
+                        <div class="delivery-icon">
+                            <i data-feather="user"></i>
+                        </div>
                         <div class="user-name-hide media-body">
                             <span>${user.email}</span>
-                            <%-- Lấy roleID từ đối tượng user --%>
                             <c:choose>
                                 <c:when test="${user.roleID == 1}">
                                     <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
@@ -34,36 +34,16 @@
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
-                        <%--                        <li>--%>
-                        <%--                            <a href="">--%>
-                        <%--                                <i data-feather="usezrs"></i>--%>
-                        <%--                                <c:choose>--%>
-                        <%--                                    <c:when test="${user.roleID == 1}">--%>
-                        <%--                                        <span>Admin</span>--%>
-                        <%--                                    </c:when>--%>
-                        <%--                                    <c:when test="${user.roleID == 2}">--%>
-                        <%--                                        <span>User</span>--%>
-                        <%--                                    </c:when>--%>
-                        <%--                                    <c:when test="${user.roleID == 3}">--%>
-                        <%--                                        <span>Staff</span>--%>
-                        <%--                                    </c:when>--%>
-                        <%--                                    <c:otherwise>--%>
-                        <%--                                        <span>Unknown Role</span>--%>
-                        <%--                                    </c:otherwise>--%>
-                        <%--                                </c:choose>--%>
-                        <%--                            </a>--%>
-                        <%--                        </li>--%>
-                        <li>
-                            <a href="<c:url value="/ChangePasswordStaffController"></c:url>">
-                                <i data-feather="log-out"></i>
-                                <span>Change Password</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<c:url value="/LoginWebController?loginAction=logout"></c:url>">
-                                <i data-feather="log-out"></i>
-                                <span>Log out</span>
-                            </a>
+                        <c:if test="${user != null}">
+                            <li class="product-box-contain">
+                                <a href="<c:url value="/ViewProfileController?viewProfileAction=profileActionAdmin"></c:url>">Profile</a>
+                            </li>
+                            <li class="product-box-contain">
+                                <a href="<c:url value="/LoginWebController?loginAction=logout"></c:url>">Log out</a>
+                            </li>
+                        </c:if>
+                        <li class="product-box-contain">
+                            <a href="<c:url value="/ChangePasswordStaffController"></c:url>">Change Password</a>
                         </li>
                     </ul>
                 </li>

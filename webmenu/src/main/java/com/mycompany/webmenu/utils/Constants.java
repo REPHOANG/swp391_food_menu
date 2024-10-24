@@ -9,8 +9,8 @@ package com.mycompany.webmenu.utils;
  */
 public class Constants {
 
-    public final static String SENDER_EMAIL = "trongdat465@gmail.com";
-    public final static String SENDER_PASSWORD = "trongdat98";
+    public final static String SENDER_EMAIL = "4foodweb@gmail.com";
+    public final static String SENDER_PASSWORD = "scvc qzoa elbo wsbm";
     public final static String USER_CONTROLLER = "UserController";
     public final static String LOGIN_WEB_CONTROLLER = "LoginWebController";
     public final static String MAIN_CONTROLLER = "MainController";
@@ -42,4 +42,7 @@ public class Constants {
     public final static String FORGOT_PASSWORD_JSP = "WEB-INF/views/user/forgot-password.jsp";
     public final static String RESET_PASSWORD_JSP = "WEB-INF/views/user/reset-password.jsp";
     public final static String FORGOT_PASSWORD_CONTROLLER = "ForgotPasswordController";
+    public final static String VIEW_PROFILE_USER_JSP = "WEB-INF/views/user/view-profile-user.jsp";
+    public final static String VIEW_PROFILE_ADMIN_JSP = "WEB-INF/views/admin/view-profile-admin.jsp";
+    public final static String VIEW_CART_JSP = "WEB-INF/views/user/view-cart-user.jsp";
 }

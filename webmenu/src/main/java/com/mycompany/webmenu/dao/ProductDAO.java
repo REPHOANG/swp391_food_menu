@@ -19,7 +19,7 @@ public class ProductDAO {
                 "left join image_product x2 on x2.product_id = x1.product_id\n" +
                 "join Category x3 on x3.category_id = x1.category_id \n" +
                 "where (x2.image_id is null or x2.is_main_img = 1)\n" +
-                "ORDER BY x1.approve_at desc \n" +
+                "ORDER BY x1.product_id desc \n" +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
              PreparedStatement stm = conn.prepareStatement(sql)) {

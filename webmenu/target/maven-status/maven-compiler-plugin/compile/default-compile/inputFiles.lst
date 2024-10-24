@@ -13,12 +13,15 @@ G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ShopDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\MenuServletController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\common\AbstractDAO.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ResetPasswordController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\OrderDetailDTO.java
-G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\LoginAdminController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\ProductDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\AdminController.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\StatusOrderType.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ProductManagerController.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\ForgotPasswordController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\LoginController.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\LoginWebController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\TableDTO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dao\CategoryDAO.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\utils\Constants.java

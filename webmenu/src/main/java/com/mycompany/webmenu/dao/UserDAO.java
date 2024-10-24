@@ -416,8 +416,8 @@ public class UserDAO {
     public void forgotPassword(String email) {
         UserDTO staff = this.login(email);
         System.out.println("staff " + staff);
-        final String user = "anhndph09827@fpt.edu.vn";
-        final String pass = "osas qszb tcic rzer";
+        String user = Constants.SENDER_EMAIL;
+        String pass = Constants.SENDER_PASSWORD;
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -512,6 +512,21 @@ public class UserDAO {
         rs.close();
         stm.close();
         return u;
+    }
+
+    public Boolean updateProfile(UserDTO userDto) {
+        String query = "update Users set full_name = ?,phone = ?,address = ? where user_id = ? ";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, userDto.getFullName()); // Nên mã hóa mật khẩu nếu cần
+            stmt.setString(2, userDto.getPhone()); // Nên mã hóa mật khẩu nếu cần
+            stmt.setString(3, userDto.getAddress()); // Nên mã hóa mật khẩu nếu cần
+            stmt.setInt(4, userDto.getUserID());
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0; // Nếu cập nhật thành công
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
 }
