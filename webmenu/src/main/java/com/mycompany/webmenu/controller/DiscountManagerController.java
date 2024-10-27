@@ -6,14 +6,12 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.List;
 
-import com.mycompany.webmenu.dao.CategoryDAO;
+import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.DiscountDAO;
-import com.mycompany.webmenu.dto.CategoryDto;
-import com.mycompany.webmenu.dto.DiscountDTO;
+import com.mycompany.webmenu.dto.DiscountDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,41 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "DiscountManagerController", urlPatterns = {"/DiscountManagerController"})
 public class DiscountManagerController extends HttpServlet {
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet DiscountManagerController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet DiscountManagerController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -80,7 +44,7 @@ public class DiscountManagerController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                List<DiscountDTO> discountList = discountDAO.getListDiscountManager(pageNo, pageSize);
+                List<DiscountDto> discountList = discountDAO.getListDiscountManager(pageNo, pageSize);
                 int totalProducts = discountDAO.getTotalDiscountCount();
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
                 request.setAttribute("discounts", discountList);
@@ -91,7 +55,7 @@ public class DiscountManagerController extends HttpServlet {
                 break;
             }
             case "addDiscount": {
-                request.setAttribute("discount", new DiscountDTO());
+                request.setAttribute("discount", new DiscountDto());
                 request.getRequestDispatcher(Constants.ADD_NEW_DISCOUNT_JSP).forward(request, response);
                 break;
             }
@@ -101,19 +65,38 @@ public class DiscountManagerController extends HttpServlet {
                 request.getRequestDispatcher(Constants.ADD_NEW_DISCOUNT_JSP).forward(request, response);
                 break;
             }
+            case "discountUser": {
+                // Lấy danh sách các Discount
+                List<DiscountDto> discountList = discountDAO.getListDiscountUser();
+                // Thiết lập kiểu phản hồi là JSON và mã hóa UTF-8
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                Gson gson = new Gson();
+                // Chuyển đổi danh sách thành JSON
+                String jsonResponse = gson.toJson(discountList);
+                // Ghi JSON vào phản hồi
+                response.getWriter().write(jsonResponse);
+                return;
+            }
+            case "checkDiscountByCode": {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                String discountCode = request.getParameter("discountCode");
+                // Lấy danh sách các Discount
+                DiscountDto discount = discountDAO.checkDiscountByCode(discountCode);
+                // Thiết lập kiểu phản hồi là JSON và mã hóa UTF-8
+                // Chuyển đổi danh sách thành JSON
+                Gson gson = new Gson();
+                String jsonResponse = gson.toJson(discount);
+                // Ghi JSON vào phản hồi
+                response.getWriter().write(jsonResponse);
+                return;
+            }
             default:
                 throw new AssertionError();
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -122,6 +105,7 @@ public class DiscountManagerController extends HttpServlet {
         Integer id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : null;
 
         String name = request.getParameter("name");
+        String discountCode = request.getParameter("discountCode");
         String description = request.getParameter("description");
 
         String discountPercentStr = request.getParameter("discountPercent");
@@ -145,19 +129,18 @@ public class DiscountManagerController extends HttpServlet {
         String rmQuantityStr = request.getParameter("rmQuantity");
         Integer rmQuantity = (rmQuantityStr != null && !rmQuantityStr.isEmpty()) ? Integer.parseInt(rmQuantityStr) : null;
         // Tạo đối tượng DiscountDTO và gán các giá trị
-        DiscountDTO discountDTO = DiscountDTO.builder()
-                .id(id)
-                .name(name)
-                .description(description)
-                .discountPercent(discountPercent)
-                .maxDiscountValue(maxDiscountValue)
-                .minDiscountValue(minDiscountValue)
-                .startDate(startDate)
-                .endDate(endDate)
-                .quantity(quantity)
-                .rmQuantity(rmQuantity)
-                .build();
-        System.out.println("discountDTO " + discountDTO);
+        DiscountDto discountDTO = new DiscountDto();
+        discountDTO.setId(id);
+        discountDTO.setName(name);
+        discountDTO.setDiscountCode(discountCode);
+        discountDTO.setDescription(description);
+        discountDTO.setDiscountPercent(discountPercent);
+        discountDTO.setMaxDiscountValue(maxDiscountValue);
+        discountDTO.setMinDiscountValue(minDiscountValue);
+        discountDTO.setStartDate(startDate);
+        discountDTO.setEndDate(endDate);
+        discountDTO.setQuantity(quantity);
+        discountDTO.setRmQuantity(rmQuantity);
         Boolean isNewProduct = discountDTO.getId() == null ? true : false;
 
         DiscountDAO discountDAO = new DiscountDAO();
@@ -181,15 +164,5 @@ public class DiscountManagerController extends HttpServlet {
             request.getRequestDispatcher(Constants.ADD_NEW_DISCOUNT_JSP).forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

@@ -6,10 +6,9 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,7 +31,7 @@ public class ForgotPasswordController extends HttpServlet {
         String token = request.getParameter("token");
         if (token != null) {
             UserDAO userDao = new UserDAO();
-            UserDTO userDto = userDao.getUserByToken(token);
+            UserDto userDto = userDao.getUserByToken(token);
             session.setAttribute("userReset", userDto);
             request.getRequestDispatcher(Constants.RESET_PASSWORD_JSP).forward(request, response);
         }

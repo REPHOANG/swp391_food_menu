@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -77,13 +78,12 @@
                                     <div class="card-order-section">
                                         <ul>
                                             ${orderDetail.orderDate}
-<%--                                            <li>6 items</li>--%>
-                                            <li>Total ${orderDetail.total}</li>
+                                            <li>Total <span id="order-total">${orderDetail.orderTotal}</span></li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="bg-inner cart-section order-details-table">
-                                    <div class="row g-4">
+                                    <div class="row g-1">
                                         <div class="col-xl-8">
                                             <div class="table-responsive table-details">
                                                 <table class="table cart-table table-borderless">
@@ -92,21 +92,38 @@
                                                         <tr class="table-order">
                                                             <td>
                                                                 <a href="javascript:void(0)">
-                                                                    <img src="<c:url value='${order.url}' />"
+                                                                    <img src="<c:url value='${order.productUrl}' />"
                                                                          class="img-fluid blur-up lazyload" alt="">
                                                                 </a>
                                                             </td>
                                                             <td>
                                                                 <p>Product Name</p>
-                                                                <h5 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">${order.productName}</h5>
+                                                                <h5 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
+                                                                        ${order.productName}
+                                                                </h5>
+                                                            </td>
+                                                            <td>
+                                                                <p>Price</p>
+                                                                <h5>
+                                                                    <fmt:formatNumber value="${order.productPrice}"
+                                                                                      type="currency" currencySymbol="₫"
+                                                                                      minFractionDigits="2"
+                                                                                      maxFractionDigits="2"/>
+                                                                </h5>
                                                             </td>
                                                             <td>
                                                                 <p>Quantity</p>
                                                                 <h5>${order.quantity}</h5>
                                                             </td>
                                                             <td>
-                                                                <p>Price</p>
-                                                                <h5>${order.price}</h5>
+                                                                <p>Total</p>
+                                                                <h5>
+                                                                    <fmt:formatNumber
+                                                                            value="${order.productPrice * order.quantity}"
+                                                                            type="currency" currencySymbol="₫"
+                                                                            minFractionDigits="2"
+                                                                            maxFractionDigits="2"/>
+                                                                </h5>
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
@@ -117,34 +134,24 @@
                                                             <h5>Subtotal :</h5>
                                                         </td>
                                                         <td>
-                                                            <h4>$55.00</h4>
+                                                            <h4 id="total-price-product">$55.00fb </h4>
                                                         </td>
                                                     </tr>
-
                                                     <tr class="table-order">
                                                         <td colspan="3">
-                                                            <h5>Shipping :</h5>
+                                                            <h5>Coupon Discount</h5>
                                                         </td>
                                                         <td>
-                                                            <h4>${orderDetail.shipping}</h4>
+                                                            <h4 id="max-discount-value">${orderDetail.maxDiscountValue}</h4>
                                                         </td>
                                                     </tr>
-
-                                                    <tr class="table-order">
-                                                        <td colspan="3">
-                                                            <h5>Tax(GST) :</h5>
-                                                        </td>
-                                                        <td>
-                                                            <h4>$10.00</h4>
-                                                        </td>
-                                                    </tr>
-
                                                     <tr class="table-order">
                                                         <td colspan="3">
                                                             <h4 class="theme-color fw-bold">Total Price :</h4>
                                                         </td>
                                                         <td>
-                                                            <h4 class="theme-color fw-bold">$6935.00</h4>
+                                                            <h4 class="theme-color fw-bold" id="total-price-order">
+                                                                $6935.00</h4>
                                                         </td>
                                                     </tr>
                                                     </tfoot>
@@ -155,30 +162,8 @@
                                         <div class="col-xl-4">
                                             <div class="order-success">
                                                 <div class="row g-4">
-<%--                                                    <h4>summery</h4>--%>
-<%--                                                    <ul class="order-details">--%>
-<%--                                                        <li>Order ID: 5563853658932</li>--%>
-<%--                                                        <li>Order Date: October 22, 2018</li>--%>
-<%--                                                        <li>Order Total: $907.28</li>--%>
-<%--                                                    </ul>--%>
-
-                                                    <h4>shipping address</h4>
-                                                    <ul class="order-details">
-                                                        <li>${orderDetail.address}</li>
-                                                    </ul>
-
-<%--                                                    <div class="payment-mode">--%>
-<%--                                                        <h4>payment method</h4>--%>
-<%--                                                        <p>Pay on Delivery (Cash/Card). Cash on delivery (COD)--%>
-<%--                                                            available. Card/Net banking acceptance subject to device--%>
-<%--                                                            availability.</p>--%>
-<%--                                                    </div>--%>
-
-<%--                                                    <div class="delivery-sec">--%>
-<%--                                                        <h3>expected date of delivery: <span>october 22, 2018</span>--%>
-<%--                                                        </h3>--%>
-<%--                                                        <a href="order-tracking.html">track order</a>--%>
-<%--                                                    </div>--%>
+                                                    <h4>Order Note</h4>
+                                                    <textarea readonly>${orderDetail.orderNote}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,6 +223,29 @@
 <!-- sidebar effect -->
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
+<script type="application/javascript">
+    const orderTotal = ${orderDetail.orderTotal};
+    const orderDetailDtoList = JSON.parse('${orderDetailDtoList}');
+    const orderDetails = []
+    let totalPriceProduct = 0;
+    orderDetailDtoList.forEach((item, index) => {
+        totalPriceProduct += item.quantity * item.productPrice;
+        orderDetails.push({
+            quantity: item.quantity,
+            productId: item.productId,
+            productPrice: item.productPrice
+        })
+    });
+
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+    }
+
+    document.getElementById("order-total").textContent = formatCurrency(orderTotal);
+    document.getElementById("total-price-product").textContent = formatCurrency(totalPriceProduct);
+    document.getElementById("max-discount-value").textContent = formatCurrency(${orderDetail.maxDiscountValue});
+    document.getElementById("total-price-order").textContent = formatCurrency(${orderDetail.orderTotal});
+</script>
 </body>
 
 </html>

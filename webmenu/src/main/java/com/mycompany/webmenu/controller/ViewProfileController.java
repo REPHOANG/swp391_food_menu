@@ -6,11 +6,10 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Objects;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,9 +33,9 @@ public class ViewProfileController extends HttpServlet {
         if (viewProfileAction == null) {
             viewProfileAction = "profileActionUser";
         }
-        UserDTO user = (UserDTO) session.getAttribute("user");
+        UserDto user = (UserDto) session.getAttribute("user");
         UserDAO userDao = new UserDAO();
-        session.setAttribute("profileUser", userDao.getUserById(user.getUserID()));
+        session.setAttribute("profileUser", userDao.getUserById(user.getUserId()));
         switch (viewProfileAction) {
             case "profileActionAdmin": {
                 request.getRequestDispatcher(Constants.VIEW_PROFILE_ADMIN_JSP).forward(request, response);
@@ -72,9 +71,9 @@ public class ViewProfileController extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
-        UserDTO staff = new UserDTO();
+        UserDto staff = new UserDto();
         if (!Objects.equals(userID, "") && userID != null) {
-            staff.setUserID(Integer.valueOf(userID));
+            staff.setUserId(Integer.valueOf(userID));
         }
         staff.setFullName(fullName);
         staff.setPhone(phone);

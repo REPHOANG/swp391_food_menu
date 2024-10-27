@@ -104,14 +104,14 @@
                                             <label class="form-label-title col-sm-3 mb-0">Status</label>
                                             <div class="col-sm-9">
                                                 <select class="form-control" name="status">
-                                                    <option value="Available" ${tableDTO.status == 'Available' ? 'selected' : ''}>
+                                                    <option value="0" ${tableDTO.status == 0 ? 'selected' : ''}>
                                                         Available
                                                     </option>
-                                                    <option value="Reserved" ${tableDTO.status == 'Reserved' ? 'selected' : ''}>
-                                                        Reserved
+                                                    <option value="1" ${tableDTO.status == 1 ? 'selected' : ''}>
+                                                        In Use
                                                     </option>
-                                                    <option value="Occupied" ${tableDTO.status == 'Occupied' ? 'selected' : ''}>
-                                                        Occupied
+                                                    <option value="2" ${tableDTO.status == 2 ? 'selected' : ''}>
+                                                        Reserved
                                                     </option>
                                                 </select>
                                             </div>
@@ -122,7 +122,7 @@
                                             <label class="form-label-title col-sm-3 mb-0">Capacity</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="number" placeholder="Capacity"
-                                                       name="capacity" value="${tableDTO.capacity}">
+                                                       name="capacity" value="${tableDTO.capacity}" min="1" step="1">
                                             </div>
                                         </div>
 

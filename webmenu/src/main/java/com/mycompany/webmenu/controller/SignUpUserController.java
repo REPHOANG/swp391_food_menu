@@ -6,10 +6,9 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,18 +33,18 @@ public class SignUpUserController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String fullname = request.getParameter("fullname");
+        String fullName = request.getParameter("fullname");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         UserDAO uDAO = new UserDAO();
-        UserDTO user = null;
+        UserDto user = null;
         user = uDAO.login(email);
         if (user != null) {
             request.setAttribute("messageFailed", "Email already exists.");
             // Chuyển hướng đến trang SIGN_UP_USER để hiển thị thông báo
             request.getRequestDispatcher(Constants.SIGN_UP_USER).forward(request, response);
         }
-        user = uDAO.signUpUser(email, fullname, password);
+        user = uDAO.signUpUser(email, fullName, password);
         if (user != null) {
             request.setAttribute("messageSuccessful", "Registration Successful.");
         } else {

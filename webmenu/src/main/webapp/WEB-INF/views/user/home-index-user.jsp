@@ -55,22 +55,11 @@
     <div class="top-nav top-header sticky-header">
         <jsp:include page="top-header.jsp"/>
     </div>
-
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="header-nav">
-                    <div class="header-nav-middle">
-                        <jsp:include page="header-nav-middle.jsp"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
 <!-- Header End -->
 
 <!-- mobile fix menu start -->
+<jsp:include page="menu-section.jsp"/>
 <!-- mobile fix menu end -->
 
 <!-- Shop Section Start -->
@@ -128,32 +117,6 @@
                             </div>
 
                             <div class="grid-option grid-option-2">
-                                <%--                                <ul>--%>
-                                <%--                                    <li class="three-grid">--%>
-                                <%--                                        <a href="javascript:void(0)">--%>
-                                <%--                                            <img src="<c:url value='/assets/user/svg/grid-3.svg'/>"--%>
-                                <%--                                                 class="blur-up lazyload" alt="">--%>
-                                <%--                                        </a>--%>
-                                <%--                                    </li>--%>
-                                <%--                                    <li class="grid-btn five-grid d-xxl-inline-block d-none">--%>
-                                <%--                                        <a href="javascript:void(0)">--%>
-                                <%--                                            <img src="<c:url value='/assets/user/svg/grid-4.svg'/>"--%>
-                                <%--                                                 class="blur-up lazyload d-lg-inline-block d-none" alt="">--%>
-                                <%--                                        </a>--%>
-                                <%--                                    </li>--%>
-                                <%--                                    <li class="five-grid d-xxl-inline-block d-none active">--%>
-                                <%--                                        <a href="javascript:void(0)">--%>
-                                <%--                                            <img src="<c:url value='/assets/user/svg/grid-5.svg'/>"--%>
-                                <%--                                                 class="blur-up lazyload d-lg-inline-block d-none" alt="">--%>
-                                <%--                                        </a>--%>
-                                <%--                                    </li>--%>
-                                <%--                                    <li class="list-btn">--%>
-                                <%--                                        <a href="javascript:void(0)">--%>
-                                <%--                                            <img src="<c:url value='/assets/user/svg/list.svg'/>"--%>
-                                <%--                                                 class="blur-up lazyload" alt="">--%>
-                                <%--                                        </a>--%>
-                                <%--                                    </li>--%>
-                                <%--                                </ul>--%>
                             </div>
                         </div>
                     </div>
@@ -583,62 +546,6 @@
 
                 <div class="row g-sm-4 g-3 row-cols-xxl-5 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section"
                      id="product-list-section">
-                    <div class="product-footer">
-                        <div class="product-detail">
-                            <span class="span-name">Vegetable</span>
-                            <a href="product-left-thumbnail.html">
-                                <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
-                            </a>
-                            <p class="text-content mt-1 mb-2 product-content">Cheesy feet cheesy grin brie.
-                                Mascarpone cheese and wine hard cheese the big cheese everyone loves smelly
-                                cheese macaroni cheese croque monsieur.</p>
-                            <div class="product-rating mt-2">
-                                <ul class="rating">
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star"></i>
-                                    </li>
-                                </ul>
-                                <span>(4.0)</span>
-                            </div>
-                            <h6 class="unit">250 ml</h6>
-                            <h5 class="price"><span class="theme-color">$08.02</span>
-                                <del>$15.15</del>
-                            </h5>
-                            <div class="add-to-cart-box bg-white">
-                                <button class="btn btn-add-cart addcart-button">Add
-                                    <span class="add-icon bg-light-gray">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </span>
-                                </button>
-                                <div class="cart_qty qty-box">
-                                    <div class="input-group bg-white">
-                                        <button type="button" class="qty-left-minus bg-gray"
-                                                data-type="minus" data-field="">
-                                            <i class="fa fa-minus" aria-hidden="true"></i>
-                                        </button>
-                                        <input class="form-control input-number qty-input" type="text"
-                                               name="quantity" value="0">
-                                        <button type="button" class="qty-right-plus bg-gray"
-                                                data-type="plus" data-field="">
-                                            <i class="fa fa-plus" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <nav class="custome-pagination" id="custome-pagination">
@@ -998,8 +905,8 @@
 <script src="<c:url value="/assets/user/js/custom-wow.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
-<script src="<c:url value="/assets/user/load-products.js"/>"></script>
-<script src="<c:url value="/assets/user/view-cart.js"/>"></script>
+<script type="module" src="<c:url value="/assets/user/load-products.js"/>"></script>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 
 </html>

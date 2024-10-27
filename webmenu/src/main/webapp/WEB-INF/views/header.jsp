@@ -191,13 +191,13 @@
                                 <a href="#" class="cart-button"><i class="fa-solid fa-cart-shopping cart-icon"></i></a>
                             </div>
                             <div class="header-bottom-admin">
-                                <c:if test="${sessionScope.user.roleID == 4}">
+                                <c:if test="${sessionScope.user.roleId == 4}">
                                     <a href="<c:url value="MainController?btnAction=admin"/>" class="cart-button">ad<i
                                             class="fa-solid fa-user-shield"></i></a>
                                 </c:if>
                             </div>
                             <div class="header-bottom-shop">
-                                <c:if test="${sessionScope.user.roleID == 3}">
+                                <c:if test="${sessionScope.user.roleId == 3}">
                                     <a href="MainController?btnAction=manageProduct" class="cart-button"><i
                                             class="fa-solid fa-shop"></i></a>
                                 </c:if>
@@ -205,7 +205,7 @@
 
 
                             <div class="header-bottom-register">
-                                <c:if test="${sessionScope.user.roleID == 2}">
+                                <c:if test="${sessionScope.user.roleId == 2}">
 
                                     <a href="<c:url value="MainController?btnAction=shop&shopAction=register" />"
                                        class="register-shop"><i class="fa-solid fa-store"></i>Đăng ký cửa hàng</a>
@@ -229,7 +229,7 @@
         if (${empty sessionScope.user}) {
             swal("", "Vui lòng đăng nhập", "warning");
             e.preventDefault();
-        } else if (${sessionScope.user.roleID ==3} || ${sessionScope.user.roleID ==4}) {
+        } else if (${sessionScope.user.roleId ==3} || ${sessionScope.user.roleId ==4}) {
             swal("", "Hãy chuyển sang tài khoản người mua", "warning");
             e.preventDefault();
         }
@@ -286,15 +286,15 @@
                                       </li>`;
                 document.querySelector('.email-need-split').innerHTML = res.email.substring(0, res.email.lastIndexOf("@"));
                 document.querySelector('#my-avatar-header').style.backgroundImage = "url('" + resUrl + "')";
-                if (res.roleID == 4) {
+                if (res.roleId == 4) {
                     console.log("4")
 
                     document.querySelector(".header-bottom-admin").innerHTML = ` <a href="<c:url value="MainController?btnAction=admin&adminAction=show" />" class="cart-button"><i class="fa-solid fa-user-shield"></i></a>`
 
-                } else if (res.roleID == 3) {
+                } else if (res.roleId == 3) {
                     console.log(3)
                     document.querySelector(".header-bottom-shop").innerHTML = `<a href="MainController?btnAction=manageProduct" class="cart-button"><i class="fa-solid fa-shop"></i></a>`
-                } else if (res.roleID == 2) {
+                } else if (res.roleId == 2) {
                     document.querySelector(".header-bottom-register").innerHTML = `<a href="<c:url value="MainController?btnAction=shop&shopAction=register" />" class="register-shop"><i class="fa-solid fa-store"></i>Đăng ký cửa hàng</a>`
                 }
                 user = 2;

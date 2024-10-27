@@ -102,7 +102,9 @@
                                             <c:forEach var="table" items="${tables}">
                                                 <tr>
                                                     <td>${table.tableName}</td>
-                                                    <td>${table.status}</td>
+                                                    <td>
+                                                            ${table.status == 0 ? 'Available' : table.status == 1 ? 'In Use' : table.status == 2 ? 'Reserved' : 'Unknown'}
+                                                    </td>
                                                     <td>${table.capacity}</td>
                                                     <td>
                                                         <ul>

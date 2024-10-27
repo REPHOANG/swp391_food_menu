@@ -1,7 +1,7 @@
 package com.mycompany.webmenu.dao;
 
-import com.mycompany.webmenu.dto.ImageProductDTO;
-import com.mycompany.webmenu.dto.ProductDTO;
+import com.mycompany.webmenu.dto.ImageProductDto;
+import com.mycompany.webmenu.dto.ProductDto;
 import com.mycompany.webmenu.utils.DBUtil;
 import lombok.SneakyThrows;
 
@@ -12,71 +12,44 @@ import java.util.stream.Collectors;
 
 public class ProductDAO {
 
-    public List<ProductDTO> getListALlProduct(int page, int pageSize) throws SQLException {
+    public List<ProductDto> getListAllProduct(int page, int pageSize) throws SQLException {
         int offset = (page - 1) * pageSize;
-        String sql = "select x1.product_id, x1.name, x1.price, x1.description, x2.url as urlImage,x3.category_id as categoryId,x3.name as categoryName\n" +
-                "from Product x1\n" +
-                "left join image_product x2 on x2.product_id = x1.product_id\n" +
-                "join Category x3 on x3.category_id = x1.category_id \n" +
-                "where (x2.image_id is null or x2.is_main_img = 1)\n" +
-                "ORDER BY x1.product_id desc \n" +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-            stm.setInt(1, offset);
-            stm.setInt(2, pageSize);
-            try (ResultSet rs = stm.executeQuery()) { // Tự động đóng result set
-                ArrayList<ProductDTO> list = new ArrayList<>();
-                while (rs.next()) {
-                    ProductDTO dto = new ProductDTO();
-                    dto.setProductId(rs.getInt("product_id"));
-                    dto.setPrice(rs.getDouble("price"));
-                    dto.setName(rs.getString("name"));
-                    dto.setDescription(rs.getString("description"));
-                    dto.setCategoryName(rs.getString("categoryName"));
-                    dto.setCategoryId(rs.getInt("categoryId"));
-                    ImageProductDTO imageProductDTO = new ImageProductDTO();
-                    imageProductDTO.setUrl(rs.getString("urlImage"));
-                    dto.setMainImg(imageProductDTO);
-                    list.add(dto);
-                }
-                return list;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Ghi lại lỗi nếu có
-            throw e; // Ném lại lỗi để xử lý ở nơi gọi
-        }
-    }
-
-    // Phương thức lấy danh sách sản phẩm cho quản lý
-    public ArrayList<ProductDTO> getListProductManager(int page, int pageSize) throws SQLException {
-        int offset = (page - 1) * pageSize;
-        String sql = "select x1.product_id, x1.name, x1.price, x1.description, x2.url as urlImage,x3.category_id as categoryId,x3.name as categoryName\n" +
-                "from Product x1\n" +
-                "left join image_product x2 on x2.product_id = x1.product_id\n" +
-                "join Category x3 on x3.category_id = x1.category_id \n" +
-                "where (x2.image_id is null or x2.is_main_img = 1)\n" +
-                "ORDER BY x1.approve_at desc \n" +
+        String sql = "SELECT x1.product_id AS productId, x1.name, x1.price, x1.description, " +
+                "x1.created_by AS createdBy, x1.created_at AS createAt, " +
+                "x2.url AS urlImage, x3.category_id AS categoryId, x3.name AS categoryName " +
+                "FROM Products x1 " +
+                "LEFT JOIN ImageProducts x2 ON (x2.product_id = x1.product_id AND x2.is_main_image = 1) " +
+                "JOIN Categories x3 ON x3.category_id = x1.category_id " +
+                "ORDER BY x1.product_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, offset);
             stm.setInt(2, pageSize);
-            try (ResultSet rs = stm.executeQuery()) { // Tự động đóng result set
-                ArrayList<ProductDTO> list = new ArrayList<>();
+
+            try (ResultSet rs = stm.executeQuery()) {
+                List<ProductDto> list = new ArrayList<>();
+
+                // Lặp qua kết quả truy vấn
                 while (rs.next()) {
-                    ProductDTO dto = new ProductDTO();
-                    dto.setProductId(rs.getInt("product_id"));
-                    dto.setPrice(rs.getDouble("price"));
-                    dto.setName(rs.getString("name"));
-                    dto.setDescription(rs.getString("description"));
-                    dto.setCategoryName(rs.getString("categoryName"));
-                    dto.setCategoryId(rs.getInt("categoryId"));
-                    ImageProductDTO imageProductDTO = new ImageProductDTO();
+                    ProductDto dto = new ProductDto();
+                    dto.setProductId(rs.getInt("productId"));             // ID sản phẩm
+                    dto.setPrice(rs.getDouble("price"));                  // Giá sản phẩm
+                    dto.setName(rs.getString("name"));                    // Tên sản phẩm
+                    dto.setDescription(rs.getString("description"));      // Mô tả sản phẩm
+                    dto.setCreatedBy(rs.getInt("createdBy"));             // ID người tạo
+                    dto.setCreateAt(rs.getDate("createAt"));              // Ngày tạo
+                    dto.setCategoryId(rs.getInt("categoryId"));           // ID danh mục
+                    dto.setCategoryName(rs.getString("categoryName"));    // Tên danh mục
+
+                    // Tạo đối tượng ImageProductDTO cho ảnh chính
+                    ImageProductDto imageProductDTO = new ImageProductDto();
                     imageProductDTO.setUrl(rs.getString("urlImage"));
-                    dto.setMainImg(imageProductDTO);
-                    list.add(dto);
+                    dto.setMainImg(imageProductDTO);                      // Đặt ảnh chính vào ProductDTO
+
+                    list.add(dto); // Thêm đối tượng ProductDTO vào danh sách
                 }
                 return list;
             }
@@ -88,7 +61,7 @@ public class ProductDAO {
 
     // Phương thức để đếm tổng số sản phẩm
     public int getTotalProductCount() throws SQLException {
-        String query = "SELECT COUNT(product_id) AS total FROM [EcommmercePlatform].[dbo].[Product]";
+        String query = "SELECT COUNT(product_id) AS total FROM Products";
         try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
@@ -103,82 +76,101 @@ public class ProductDAO {
     }
 
     @SneakyThrows
-    public ProductDTO getProductDetail(Integer productId) {
-        String sql = "select x1.product_id, x1.name, x1.price, x1.description,x1.category_id from Product x1 where x1.product_id = ?";
-        try (Connection conn = DBUtil.getConnection(); // Try-with-resources to auto-close
+    public ProductDto getProductDetail(Integer productId) {
+        String sql = "SELECT x1.product_id AS productId, x1.category_id AS categoryId, x1.name, " +
+                "x1.price, x1.description, x1.created_by AS createdBy, x1.created_at AS createAt " +
+                "FROM Products x1 " +
+                "WHERE x1.product_id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
-            stm.setInt(1, productId); // Set productId parameter
-            try (ResultSet rs = stm.executeQuery()) { // Execute the query and get the result
+
+            stm.setInt(1, productId); // Đặt tham số productId
+
+            try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
-                    // Build and return the ProductDTO from the result set
-                    return ProductDTO.builder()
-                            .productId(rs.getInt("product_id"))
-                            .categoryId(rs.getInt("category_id"))
-                            .name(rs.getString("name"))
-                            .price(rs.getDouble("price"))
-                            .description(rs.getString("description"))
-                            .mainImg(this.getMainImage(conn, productId)) // Fetch main image
-                            .imgs(this.getAllImages(conn, productId)) //
-                            .build();
+                    // Tạo và trả về ProductDTO từ kết quả truy vấn
+                    // Tạo đối tượng ProductDto và thiết lập các giá trị bằng setter
+                    ProductDto product = new ProductDto();
+                    product.setProductId(rs.getInt("productId"));               // ID sản phẩm
+                    product.setCategoryId(rs.getInt("categoryId"));             // ID danh mục
+                    product.setName(rs.getString("name"));                      // Tên sản phẩm
+                    product.setPrice(rs.getDouble("price"));                    // Giá sản phẩm
+                    product.setDescription(rs.getString("description"));        // Mô tả sản phẩm
+                    product.setCreatedBy(rs.getInt("createdBy"));               // ID người tạo
+                    product.setCreateAt(rs.getDate("createAt"));                // Ngày tạo
+                    product.setMainImg(this.getMainImage(conn, productId));     // Lấy ảnh chính
+                    product.setImgs(this.getAllImages(conn, productId));        // Lấy tất cả các ảnh của sản phẩm
+
+                    return product;
+
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log the error
-            throw e; // Re-throw the exception for handling elsewhere
+            e.printStackTrace(); // Ghi lại lỗi nếu có
+            throw e; // Ném lại lỗi để xử lý ở nơi gọi
         }
-        return null; // Return null if no product is found
+        return null; // Trả về null nếu không tìm thấy sản phẩm
     }
 
     // Method to retrieve the main image
-    private ImageProductDTO getMainImage(Connection conn, Integer productId) throws SQLException {
-        String sqlMainImg = "select x1.image_id as imageId,x1.url from image_product x1 where x1.is_main_img = 1 and x1.product_id = ?";
+    private ImageProductDto getMainImage(Connection conn, Integer productId) throws SQLException {
+        String sqlMainImg = "SELECT x1.image_id AS imageId, x1.product_id AS productId, x1.url, x1.is_main_image AS isMainImage " +
+                "FROM ImageProducts x1 " +
+                "WHERE x1.is_main_image = 1 AND x1.product_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sqlMainImg)) {
-            stmt.setInt(1, productId);
+            stmt.setInt(1, productId); // Đặt tham số productId cho truy vấn
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return ImageProductDTO.builder()
-                            .imageId(rs.getInt("imageId"))
-                            .url(rs.getString("url"))
+                    return ImageProductDto.builder()
+                            .imageId(rs.getInt("imageId"))              // ID hình ảnh
+                            .productId(rs.getInt("productId"))          // ID sản phẩm
+                            .url(rs.getString("url"))                   // URL hình ảnh
+                            .isMainImage(rs.getBoolean("isMainImage"))  // Đánh dấu ảnh chính
                             .build();
                 }
             }
         }
-        return null; // Return null if no main image is found
+        return null; // Trả về null nếu không tìm thấy ảnh chính
     }
 
-    // Method to retrieve all images
-    private List<ImageProductDTO> getAllImages(Connection conn, Integer productId) throws SQLException {
-        List<ImageProductDTO> images = new ArrayList<>();
-        String sqlImgs = "select x1.image_id as imageId,x1.url from image_product x1 where x1.is_main_img = 0 and x1.product_id = ?";
+    // Method to retrieve all images except the main image
+    private List<ImageProductDto> getAllImages(Connection conn, Integer productId) throws SQLException {
+        List<ImageProductDto> images = new ArrayList<>();
+        String sqlImgs = "SELECT x1.image_id AS imageId, x1.product_id AS productId, x1.url, x1.is_main_image AS isMainImage " +
+                "FROM ImageProducts x1 " +
+                "WHERE x1.is_main_image = 0 AND x1.product_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sqlImgs)) {
-            stmt.setInt(1, productId);
+            stmt.setInt(1, productId); // Đặt tham số productId cho truy vấn
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    ImageProductDTO img = ImageProductDTO.builder()
-                            .imageId(rs.getInt("imageId"))
-                            .url(rs.getString("url"))
+                    ImageProductDto img = ImageProductDto.builder()
+                            .imageId(rs.getInt("imageId"))              // ID hình ảnh
+                            .productId(rs.getInt("productId"))          // ID sản phẩm
+                            .url(rs.getString("url"))                   // URL hình ảnh
+                            .isMainImage(rs.getBoolean("isMainImage"))  // Đánh dấu là ảnh phụ
                             .build();
-                    images.add(img);
+                    images.add(img); // Thêm ảnh vào danh sách
                 }
             }
         }
-        return images; // Return the list of images
+        return images; // Trả về danh sách các ảnh phụ
     }
 
     @SneakyThrows
-    public boolean insertProductAndImages(ProductDTO product) {
+    public boolean insertProductAndImages(ProductDto product) {
         Connection conn = null;
         PreparedStatement productStmt = null;
         PreparedStatement imageStmt = null;
-        boolean success = false; // Biến để theo dõi kết quả
+        boolean success = false;
 
-        String productSQL = "INSERT INTO Product (category_id, price, name, description, user_admin_id, create_at, approve_at) " +
+        String productSQL = "INSERT INTO Products (category_id, price, name, description, created_by, created_at, approved_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String imageSQL = "INSERT INTO image_product (product_id, url, is_main_img) VALUES (?, ?, ?)";
+        String imageSQL = "INSERT INTO ImageProducts (product_id, url, is_main_image) VALUES (?, ?, ?)";
 
         try {
             conn = DBUtil.getConnection();
-//            conn.setAutoCommit(false); // Bắt đầu transaction
+            conn.setAutoCommit(false); // Bắt đầu transaction
 
             // Chèn đối tượng Product
             productStmt = conn.prepareStatement(productSQL, Statement.RETURN_GENERATED_KEYS);
@@ -187,17 +179,17 @@ public class ProductDAO {
             productStmt.setString(3, product.getName());
             productStmt.setString(4, product.getDescription());
 
-            if (product.getUserAdminId() != null) {
-                productStmt.setInt(5, product.getUserAdminId());
+            if (product.getCreatedBy() != null) {
+                productStmt.setInt(5, product.getCreatedBy()); // ID người tạo
             } else {
-                productStmt.setNull(5, java.sql.Types.INTEGER); // Set to NULL in the database
+                productStmt.setNull(5, java.sql.Types.INTEGER);
             }
 
-            productStmt.setDate(6, new java.sql.Date(System.currentTimeMillis())); // Lấy ngày hiện tại cho create_at
-            productStmt.setDate(7, new java.sql.Date(System.currentTimeMillis())); // Lấy ngày hiện tại cho approve_at
+            productStmt.setDate(6, new java.sql.Date(System.currentTimeMillis())); // Ngày tạo
+            productStmt.setDate(7, new java.sql.Date(System.currentTimeMillis())); // Ngày phê duyệt
             int productRowsAffected = productStmt.executeUpdate();
 
-            // Kiểm tra xem có chèn được product hay không
+            // Kiểm tra chèn thành công sản phẩm
             if (productRowsAffected == 0) {
                 throw new SQLException("Failed to insert product.");
             }
@@ -206,32 +198,37 @@ public class ProductDAO {
             ResultSet rs = productStmt.getGeneratedKeys();
             if (rs.next()) {
                 int productId = rs.getInt(1);
-                product.setProductId(productId); // Gán ID vào đối tượng Product
+                product.setProductId(productId); // Gán ID vào ProductDTO
             } else {
                 return false;
             }
+
             // Chuẩn bị cho câu lệnh chèn ảnh
             imageStmt = conn.prepareStatement(imageSQL);
+
             // Chèn ảnh chính (mainImg) nếu có
             if (product.getMainImg() != null) {
-                ImageProductDTO mainImg = product.getMainImg();
+                ImageProductDto mainImg = product.getMainImg();
                 imageStmt.setInt(1, product.getProductId()); // Liên kết với Product vừa tạo
                 imageStmt.setString(2, mainImg.getUrl());
-                imageStmt.setBoolean(3, true); // Ảnh chính
-                imageStmt.addBatch(); // Thêm vào batch
+                imageStmt.setBoolean(3, true); // Đánh dấu là ảnh chính
+                imageStmt.addBatch();
             }
-            // Chèn danh sách các ImageProduct khác (nếu có)
-            for (ImageProductDTO img : product.getImgs()) {
+
+            // Chèn các ảnh phụ (imgs) nếu có
+            for (ImageProductDto img : product.getImgs()) {
                 imageStmt.setInt(1, product.getProductId()); // Liên kết với Product vừa tạo
                 imageStmt.setString(2, img.getUrl());
-                imageStmt.setBoolean(3, false); // Ảnh phụ hoặc không
-                imageStmt.addBatch(); // Thêm vào batch
+                imageStmt.setBoolean(3, false); // Đánh dấu là ảnh phụ
+                imageStmt.addBatch();
             }
+
             // Thực thi batch cho tất cả ảnh
             imageStmt.executeBatch();
+
             // Commit transaction
             conn.commit();
-            success = true; // Nếu không có lỗi, đánh dấu thành công
+            success = true; // Đánh dấu thành công nếu không có lỗi
         } catch (SQLException e) {
             if (conn != null) {
                 conn.rollback(); // Rollback nếu có lỗi
@@ -243,14 +240,15 @@ public class ProductDAO {
             if (imageStmt != null) imageStmt.close();
             if (conn != null) conn.close();
         }
-        return success; // Trả về kết quả
+        return success;
     }
 
     @SneakyThrows
-    public boolean updateProductWithImages(ProductDTO product) {
+    public boolean updateProductWithImages(ProductDto product) {
         Connection conn = DBUtil.getConnection();
+
         // Lấy danh sách image_id hiện tại của sản phẩm
-        String sqlGetImageProduct = "SELECT x1.image_id, x1.url, x1.is_main_img FROM image_product x1 WHERE x1.product_id = ?";
+        String sqlGetImageProduct = "SELECT image_id FROM ImageProducts WHERE product_id = ?";
         PreparedStatement getImageProduct = conn.prepareStatement(sqlGetImageProduct);
         getImageProduct.setInt(1, product.getProductId());
         ResultSet rs = getImageProduct.executeQuery();
@@ -258,24 +256,27 @@ public class ProductDAO {
         while (rs.next()) {
             imageIdsPrevious.add(rs.getInt("image_id"));
         }
+        rs.close();
+        getImageProduct.close();
 
         // Lấy danh sách image_id mới từ product DTO
         List<Integer> imageIdsNew = new ArrayList<>();
-        if (product.getMainImg() != null) {
+        if (product.getMainImg() != null && product.getMainImg().getImageId() != null) {
             imageIdsNew.add(product.getMainImg().getImageId());
         }
-        for (ImageProductDTO img : product.getImgs()) {
+        for (ImageProductDto img : product.getImgs()) {
             if (img.getImageId() != null) {
                 imageIdsNew.add(img.getImageId());
             }
         }
+
         // Loại bỏ các image_id mới khỏi danh sách cũ để chỉ còn lại những ảnh cần xóa
         imageIdsPrevious.removeAll(imageIdsNew);
 
         // Câu lệnh cập nhật sản phẩm và ảnh
-        String productUpdateQuery = "UPDATE Product SET category_id = ?, price = ?, name = ?, description = ?, user_admin_id = ?, approve_at = ? WHERE product_id = ?";
-        String imageUpdateQuery = "UPDATE image_product SET url = ?, is_main_img = ? WHERE image_id = ? AND product_id = ?";
-        String imageInsertQuery = "INSERT INTO image_product (product_id, url, is_main_img) VALUES (?, ?, ?)";
+        String productUpdateQuery = "UPDATE Products SET category_id = ?, price = ?, name = ?, description = ?, created_by = ?, approved_at = ? WHERE product_id = ?";
+        String imageUpdateQuery = "UPDATE ImageProducts SET url = ?, is_main_image = ? WHERE image_id = ? AND product_id = ?";
+        String imageInsertQuery = "INSERT INTO ImageProducts (product_id, url, is_main_image) VALUES (?, ?, ?)";
 
         PreparedStatement productStmt = conn.prepareStatement(productUpdateQuery);
         PreparedStatement imgUpdateStmt = conn.prepareStatement(imageUpdateQuery);
@@ -291,31 +292,37 @@ public class ProductDAO {
             productStmt.setDouble(2, product.getPrice());
             productStmt.setString(3, product.getName());
             productStmt.setString(4, product.getDescription());
-            if (product.getUserAdminId() != null) {
-                productStmt.setInt(5, product.getUserAdminId());
+            if (product.getCreatedBy() != null) {
+                productStmt.setInt(5, product.getCreatedBy());
             } else {
-                productStmt.setNull(5, java.sql.Types.INTEGER); // Đặt giá trị NULL cho userAdminId nếu không có
+                productStmt.setNull(5, java.sql.Types.INTEGER);
             }
-            Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
-            productStmt.setTimestamp(6, currentTimestamp); // Ngày hiện tại
+            productStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Ngày phê duyệt
             productStmt.setInt(7, product.getProductId()); // Cập nhật theo product_id
-            int productRowsAffected = productStmt.executeUpdate(); // Thực thi câu lệnh cập nhật sản phẩm
+            int productRowsAffected = productStmt.executeUpdate();
             if (productRowsAffected == 0) {
                 return false;
             }
 
             // Cập nhật hoặc thêm hình ảnh chính
             if (product.getMainImg() != null) {
-                ImageProductDTO mainImg = product.getMainImg();
-                imgUpdateStmt.setString(1, mainImg.getUrl());
-                imgUpdateStmt.setBoolean(2, true); // Đây là ảnh chính
-                imgUpdateStmt.setInt(3, mainImg.getImageId());
-                imgUpdateStmt.setInt(4, product.getProductId());
-                imgUpdateStmt.addBatch(); // Thêm vào batch
+                ImageProductDto mainImg = product.getMainImg();
+                if (mainImg.getImageId() != null && mainImg.getImageId() != 0) {
+                    imgUpdateStmt.setString(1, mainImg.getUrl());
+                    imgUpdateStmt.setBoolean(2, true); // Đây là ảnh chính
+                    imgUpdateStmt.setInt(3, mainImg.getImageId());
+                    imgUpdateStmt.setInt(4, product.getProductId());
+                    imgUpdateStmt.addBatch(); // Thêm vào batch cập nhật
+                } else {
+                    imgInsertStmt.setInt(1, product.getProductId());
+                    imgInsertStmt.setString(2, mainImg.getUrl());
+                    imgInsertStmt.setBoolean(3, true); // Đây là ảnh chính
+                    imgInsertStmt.addBatch(); // Thêm vào batch chèn mới
+                }
             }
 
             // Cập nhật hoặc thêm các hình ảnh phụ
-            for (ImageProductDTO img : product.getImgs()) {
+            for (ImageProductDto img : product.getImgs()) {
                 if (img.getImageId() != null && img.getImageId() != 0) {
                     // Cập nhật ảnh đã tồn tại
                     imgUpdateStmt.setString(1, img.getUrl());
@@ -336,39 +343,34 @@ public class ProductDAO {
             imgUpdateStmt.executeBatch();
             imgInsertStmt.executeBatch();
 
-            // Xóa ảnh cũ (nếu có)
+            // Xóa ảnh cũ không còn sử dụng
             if (!imageIdsPrevious.isEmpty()) {
-                String deleteImageQuery = "DELETE FROM image_product WHERE product_id = ? AND image_id IN (" +
+                String deleteImageQuery = "DELETE FROM ImageProducts WHERE product_id = ? AND image_id IN (" +
                         imageIdsPrevious.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
                 PreparedStatement deleteImageStmt = conn.prepareStatement(deleteImageQuery);
-                deleteImageStmt.setInt(1, product.getProductId()); // Thêm product_id vào câu lệnh
-
-                // Gán các giá trị image_id vào câu lệnh DELETE
+                deleteImageStmt.setInt(1, product.getProductId());
                 for (int i = 0; i < imageIdsPrevious.size(); i++) {
-                    deleteImageStmt.setInt(i + 2, imageIdsPrevious.get(i)); // Gán từng giá trị image_id
+                    deleteImageStmt.setInt(i + 2, imageIdsPrevious.get(i));
                 }
-                deleteImageStmt.executeUpdate(); // Thực thi lệnh xóa ảnh
-                deleteImageStmt.close(); // Đóng PreparedStatement sau khi sử dụng
+                deleteImageStmt.executeUpdate();
+                deleteImageStmt.close();
             }
 
-            // Commit giao dịch nếu tất cả thành công
+            // Commit transaction nếu tất cả thành công
             conn.commit();
             isSuccess = true;
 
         } catch (SQLException e) {
-            // Rollback nếu có lỗi
             conn.rollback();
             e.printStackTrace();
-            isSuccess = false;
         } finally {
-            // Đóng tài nguyên và trả lại kết nối về trạng thái ban đầu
             conn.setAutoCommit(true);
             if (productStmt != null) productStmt.close();
             if (imgUpdateStmt != null) imgUpdateStmt.close();
             if (imgInsertStmt != null) imgInsertStmt.close();
-            if (conn != null) conn.close();
+            conn.close();
         }
-        return isSuccess; // Trả về kết quả thành công hay thất bại
+        return isSuccess;
     }
 
 }

@@ -6,11 +6,10 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
 
 /**
  * @author nguye
@@ -42,9 +40,9 @@ public class LoginController extends HttpServlet {
         String tableId = request.getParameter("tableId");
         String username = request.getParameter("username");
         UserDAO uDAO = new UserDAO();
-        UserDTO user = new UserDTO();
+        UserDto user = new UserDto();
         try {
-            user = uDAO.insertNewUser(username, username, username);
+            user = uDAO.insertNewUser(username, username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

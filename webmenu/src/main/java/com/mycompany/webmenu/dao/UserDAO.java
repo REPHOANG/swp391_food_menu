@@ -1,9 +1,9 @@
 package com.mycompany.webmenu.dao;
 
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import com.mycompany.webmenu.utils.DBUtil;
-import com.mycompany.webmenu.utils.RoleUserType;
+import com.mycompany.webmenu.enums.RoleUserType;
 import lombok.SneakyThrows;
 
 import javax.mail.*;
@@ -18,265 +18,266 @@ import java.util.*;
 public class UserDAO {
 
     @SneakyThrows
-    public List<UserDTO> getListCategoryManager(int page, int pageSize, int roleId) {
+    public List<UserDto> getListUserManager(int page, int pageSize, int roleId) {
         int offset = (page - 1) * pageSize;
-        String sql = "SELECT x1.user_id,x1.username ,x1.email, x1.phone, x1.address, x1.avatar,x1.full_name FROM Users x1 " +
-                "where x1.role_id = ? " +
+        String sql = "SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName " +
+                "FROM Users x1 " +
+                "WHERE x1.role_id = ? " +
                 "ORDER BY x1.user_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        List<UserDTO> list = new ArrayList<>();
-        // Use try-with-resources to ensure the connection and statement are closed
+        List<UserDto> list = new ArrayList<>();
+
+        // Sử dụng try-with-resources để tự động đóng kết nối và statement
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
-            // Set the parameters for the PreparedStatement
+            // Thiết lập tham số cho PreparedStatement
             stm.setInt(1, roleId);
             stm.setInt(2, offset);
             stm.setInt(3, pageSize);
-            // Execute the query
+
+            // Thực thi truy vấn
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    UserDTO dto = new UserDTO();
-                    dto.setUserID(rs.getInt("user_id"));
+                    UserDto dto = new UserDto();
+                    dto.setUserId(rs.getInt("user_id"));
                     dto.setEmail(rs.getString("email"));
                     dto.setPhone(rs.getString("phone"));
                     dto.setAddress(rs.getString("address"));
-                    dto.setAvatarUrl(rs.getString("avatar"));
-                    dto.setUsername(rs.getString("username"));
-                    dto.setFullName(rs.getString("full_name"));
+                    dto.setAvatarUrl(rs.getString("avatarUrl"));
+                    dto.setFullName(rs.getString("fullName"));
                     list.add(dto);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log the error for debugging
+            e.printStackTrace(); // Log lỗi để debug
         }
         return list;
     }
 
+
     @SneakyThrows
     public int getTotalUserCount(int roleId) {
-        String query = "select count(user_id) as total from Users where role_id = ?";
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query);
-        stmt.setInt(1, roleId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("total");
+        String query = "SELECT COUNT(user_id) AS total FROM Users WHERE role_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, roleId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");  // Trả về tổng số người dùng
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi để debug
         }
         return 0;
     }
 
-    public ArrayList<UserDTO> getAll() throws SQLException {
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("SELECT "
-                + "user_id\n"
-                + "      ,ward_id\n"
-                + "      ,role_id\n"
-                + "      ,email\n"
-                + "      ,phone\n"
-                + "      ,yob\n"
-                + "      ,address\n"
-                + "      ,avatar\n"
-                + "      ,username\n"
-                + "  FROM Users ");
-        ResultSet rs = stm.executeQuery();
-        ArrayList<UserDTO> list = new ArrayList<>();
-        while (rs.next()) {
-            UserDTO u = new UserDTO();
-            u.setUserID(rs.getInt("user_id"));
-            u.setWardID(rs.getString("ward_id"));
-            u.setRoleID(rs.getInt("role_id"));
-            u.setEmail(rs.getString("email"));
-            String phone = rs.getString("phone");
-            if (phone != null) {
-                phone = phone.trim();
+    public ArrayList<UserDto> getAll() throws SQLException {
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName " +
+                "FROM Users";
+        ArrayList<UserDto> list = new ArrayList<>();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                UserDto u = new UserDto();
+                u.setUserId(rs.getInt("user_id"));
+                u.setRoleId(rs.getInt("role_id"));
+                u.setEmail(rs.getString("email"));
+                // Kiểm tra và loại bỏ khoảng trắng khỏi số điện thoại
+                String phone = rs.getString("phone");
+                if (phone != null) {
+                    phone = phone.trim();
+                }
+                u.setPhone(phone);
+                u.setBirthDate(rs.getDate("birthDate"));    // Ngày sinh (birth_date)
+                u.setAddress(rs.getString("address"));      // Địa chỉ
+                u.setAvatarUrl(rs.getString("avatarUrl"));  // URL ảnh đại diện (avatar_url)
+                u.setFullName(rs.getString("fullName"));    // Họ và tên (full_name)
+
+                list.add(u);
             }
-            u.setPhone(phone);
-            u.setYob(rs.getDate("yob"));
-            u.setAddress(rs.getString("address"));
-            u.setAvatarUrl(rs.getString("avatar"));
-            u.setUsername(rs.getString("username"));
-            list.add(u);
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi để debug
         }
-        rs.close();
-        stm.close();
         return list;
     }
 
     @SneakyThrows
-    public UserDTO login(String email) {
-        String sql = "SELECT user_id, email, phone, address, avatar,username,role_id,full_name FROM Users WHERE email = ?";
+    public UserDto login(String email) {
+        String sql = "SELECT user_id, email, phone, address, avatar_url AS avatarUrl, role_id, full_name AS fullName " +
+                "FROM Users WHERE email = ?";
+
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
+
             // Thiết lập giá trị cho câu lệnh SQL
             stm.setString(1, email);
+
             // Thực thi câu lệnh và xử lý kết quả
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                UserDTO user = new UserDTO();
-                user.setUserID(rs.getInt("user_id"));
-                user.setRoleID(rs.getInt("role_id"));
-                user.setEmail(rs.getString("email"));
-                user.setPhone(rs.getString("phone"));
-                user.setAddress(rs.getString("address"));
-                user.setAvatarUrl(rs.getString("avatar"));
-                user.setUsername(rs.getString("username"));
-                user.setFullName(rs.getString("full_name"));
-                return user;
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    UserDto user = new UserDto();
+                    user.setUserId(rs.getInt("user_id"));           // ID người dùng
+                    user.setRoleId(rs.getInt("role_id"));           // Vai trò của người dùng
+                    user.setEmail(rs.getString("email"));           // Địa chỉ email
+                    user.setPhone(rs.getString("phone"));           // Số điện thoại
+                    user.setAddress(rs.getString("address"));       // Địa chỉ
+                    user.setAvatarUrl(rs.getString("avatarUrl"));   // URL ảnh đại diện
+                    user.setFullName(rs.getString("fullName"));     // Họ và tên
+                    return user;
+                }
             }
         } catch (SQLException e) {
-            System.out.println("login err " + e);
+            System.out.println("login err " + e);  // Log lỗi để debug
         }
         return null;
     }
 
     //
-    public UserDTO insertNewUser(String email, String imageUrl, String username) throws SQLException {
+    public UserDto insertNewUser(String email, String imageUrl) throws SQLException {
         Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("INSERT into Users (role_id,email,avatar,username)"
-                + " values (?,?,?,?)");
+        PreparedStatement stm = conn.prepareStatement("INSERT into Users (role_id,email,avatar_url)"
+                + " values (?,?,?)");
         stm.setInt(1, RoleUserType.USER.getId());
         stm.setString(2, email);
         stm.setString(3, imageUrl);
-        stm.setString(4, username);
         stm.executeUpdate();
-        UserDTO dto = new UserDTO();
+        UserDto dto = new UserDto();
         dto.setAvatarUrl(imageUrl);
         dto.setEmail(email);
-        dto.setUsername(username);
         stm.close();
         return dto;
     }
 
     @SneakyThrows
-    public UserDTO signUpUser(String email, String username, String password) {
-        Connection conn = null;
-        PreparedStatement stm = null;
-        ResultSet rs = null;
-        UserDTO dto = null;
-        try {
-            // Kết nối tới cơ sở dữ liệu
-            conn = DBUtil.getConnection();
-            // Câu lệnh SQL để thêm người dùng mới, sử dụng `RETURN_GENERATED_KEYS` để lấy ID vừa được tạo
-            String sql = "INSERT INTO Users (role_id, email, username, password) VALUES (?, ?, ?, ?)";
-            // Chuẩn bị câu lệnh và chỉ định rằng chúng ta muốn lấy về các khóa được tạo ra (generated keys)
-            stm = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            stm.setInt(1, 2); // role_id = 2 (giả định đây là role người dùng)
-            stm.setString(2, email);
-            stm.setString(3, username);
-            stm.setString(4, password); // Lưu mật khẩu đã mã hóa
-            // Thực thi câu lệnh
-            int affectedRows = stm.executeUpdate();
+    public UserDto signUpUser(String email, String fullName, String password) {
+        String insertSql = "INSERT INTO Users (role_id, email, full_name, password) VALUES (?, ?, ?, ?)";
+        String selectSql = "SELECT user_id, role_id, email, full_name, phone, address, avatar_url " +
+                "FROM Users WHERE user_id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement insertStm = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            // Thực hiện câu lệnh INSERT
+            insertStm.setInt(1, RoleUserType.USER.getId()); // role_id cho người dùng
+            insertStm.setString(2, email);                  // Đặt email
+            insertStm.setString(3, fullName);               // Đặt full_name
+            insertStm.setString(4, password);               // Đặt mật khẩu đã mã hóa
+
+            int affectedRows = insertStm.executeUpdate();
             if (affectedRows == 0) {
-                return null;
+                return null;  // Nếu không có hàng nào bị ảnh hưởng, trả về null
             }
-            // Lấy khóa chính (ID) vừa được tạo
-            rs = stm.getGeneratedKeys();
-            if (rs.next()) {
-                // Sau khi thêm thành công, tạo đối tượng DTO và thiết lập ID
-                dto = new UserDTO();
-                dto.setUserID(rs.getInt(1)); // Lấy ID của người dùng vừa thêm
-                dto.setEmail(email);
-                dto.setUsername(username);
+
+            // Lấy ID vừa được tạo
+            try (ResultSet generatedKeys = insertStm.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int newUserId = generatedKeys.getInt(1);  // Lấy ID của người dùng vừa thêm
+
+                    // Truy vấn lại để lấy đầy đủ thông tin người dùng
+                    try (PreparedStatement selectStm = conn.prepareStatement(selectSql)) {
+                        selectStm.setInt(1, newUserId);
+                        try (ResultSet rs = selectStm.executeQuery()) {
+                            if (rs.next()) {
+                                UserDto dto = new UserDto();
+                                dto.setUserId(rs.getInt("user_id"));
+                                dto.setRoleId(rs.getInt("role_id"));
+                                dto.setEmail(rs.getString("email"));
+                                dto.setFullName(rs.getString("full_name"));
+                                dto.setPhone(rs.getString("phone"));
+                                dto.setAddress(rs.getString("address"));
+                                dto.setAvatarUrl(rs.getString("avatar_url"));
+                                dto.setPassword(password);  // Thiết lập mật khẩu đã mã hóa
+                                return dto;
+                            }
+                        }
+                    }
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Log lỗi để debug
             return null;
-        } finally {
-            // Đảm bảo luôn đóng ResultSet, statement và connection để tránh rò rỉ tài nguyên
-            if (rs != null) rs.close();
-            if (stm != null) stm.close();
-            if (conn != null) conn.close();
         }
-        System.out.println("dto " + dto);
-        return dto;
+        return null;
     }
 
-    public void updateProfile(String email, String username, String phone, String avatarURL) throws SQLException {
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("update Users \n"
-                + "  set phone = ?,username=?, avatar=? where email = ?");
-        stm.setString(1, phone);
-        stm.setString(2, username);
-        stm.setString(3, avatarURL);
-        stm.setString(4, email);
-        stm.executeUpdate();
-        stm.close();
-    }
+    public void updateProfile(String email, String fullName, String phone, String avatarUrl) throws SQLException {
+        String sql = "UPDATE Users SET phone = ?, full_name = ?, avatar_url = ? WHERE email = ?";
 
-    public void updateWardAndAddress(String email, String wardID, String address) throws SQLException {
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("update Users \n"
-                + "  set ward_id = ?,address=? where email = ?");
-        stm.setString(1, wardID);
-        stm.setString(2, address);
-        stm.setString(3, email);
-        stm.executeUpdate();
-        stm.close();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, phone);       // Cập nhật số điện thoại
+            stm.setString(2, fullName);    // Cập nhật họ và tên
+            stm.setString(3, avatarUrl);   // Cập nhật URL ảnh đại diện
+            stm.setString(4, email);       // Điều kiện cập nhật theo email
+
+            stm.executeUpdate();
+        }
     }
 
     @SneakyThrows
-    public UserDTO getUserById(Integer id) {
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("SELECT "
-                + "user_id \n"
-                + "      ,ward_id \n"
-                + "      ,role_id \n"
-                + "      ,email \n"
-                + "      ,phone \n"
-                + "      ,yob \n"
-                + "      ,address \n"
-                + "      ,avatar \n"
-                + "      ,username \n"
-                + "      ,full_name \n"
-                + "  FROM Users \n"
-                + " where user_id = ?");
-        stm.setInt(1, id);
-        ResultSet rs = stm.executeQuery();
-        UserDTO u = new UserDTO();
-        if (rs.next()) {
-            u.setUserID(rs.getInt("user_id"));
-            u.setWardID(rs.getString("ward_id"));
-            u.setRoleID(rs.getInt("role_id"));
-            u.setEmail(rs.getString("email"));
-            String phone = rs.getString("phone");
-            if (phone != null) {
-                phone = phone.trim();
+    public UserDto getUserById(Integer id) {
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password " +
+                "FROM Users " +
+                "WHERE user_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    UserDto u = new UserDto();
+                    u.setUserId(rs.getInt("user_id"));            // ID người dùng
+                    u.setRoleId(rs.getInt("role_id"));            // Vai trò người dùng
+                    u.setEmail(rs.getString("email"));            // Địa chỉ email
+                    // Kiểm tra và loại bỏ khoảng trắng khỏi số điện thoại nếu có
+                    String phone = rs.getString("phone");
+                    if (phone != null) {
+                        phone = phone.trim();
+                    }
+                    u.setPhone(phone);                            // Số điện thoại
+                    u.setBirthDate(rs.getDate("birthDate"));      // Ngày sinh
+                    u.setAddress(rs.getString("address"));        // Địa chỉ
+                    u.setAvatarUrl(rs.getString("avatarUrl"));    // URL ảnh đại diện
+                    u.setFullName(rs.getString("full_name"));     // Họ và tên đầy đủ
+                    u.setPassword(rs.getString("password"));      // Mật khẩu người dùng
+                    return u;
+                }
             }
-            u.setPhone(phone);
-            u.setYob(rs.getDate("yob"));
-            u.setAddress(rs.getString("address"));
-            u.setAvatarUrl(rs.getString("avatar"));
-            u.setUsername(rs.getString("username"));
-            u.setFullName(rs.getString("full_name"));
-
         }
-        rs.close();
-        stm.close();
-        return u;
+        return null;  // Trả về null nếu không tìm thấy người dùng với ID được cung cấp
     }
 
-    public UserDTO loginAdmin(String username, String password) {
-        String sql = "SELECT user_id,role_id, email, phone, address, avatar,username, password FROM Users WHERE email = ? and password = ?";
+    public UserDto loginAdmin(String email, String password) {
+        String sql = "SELECT user_id, role_id, email, phone, address, avatar_url AS avatarUrl, full_name AS fullName, password " +
+                "FROM Users WHERE email = ? AND password = ?";
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
             // Thiết lập giá trị cho câu lệnh SQL
-            stm.setString(1, username);
+            stm.setString(1, email);
             stm.setString(2, password);
             // Thực thi câu lệnh và xử lý kết quả
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                UserDTO user = new UserDTO();
-                user.setUserID(rs.getInt("user_id"));
-                user.setRoleID(rs.getInt("role_id"));
-                user.setEmail(rs.getString("email"));
-                user.setPhone(rs.getString("phone"));
-                user.setAddress(rs.getString("address"));
-                user.setAvatarUrl(rs.getString("avatar"));
-                user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
-                return user;
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    UserDto user = new UserDto();
+                    user.setUserId(rs.getInt("user_id"));         // ID người dùng
+                    user.setRoleId(rs.getInt("role_id"));         // Vai trò người dùng
+                    user.setEmail(rs.getString("email"));         // Địa chỉ email
+                    // Kiểm tra và loại bỏ khoảng trắng khỏi số điện thoại nếu có
+                    String phone = rs.getString("phone");
+                    if (phone != null) {
+                        phone = phone.trim();
+                    }
+                    user.setPhone(phone);                         // Số điện thoại
+                    user.setAddress(rs.getString("address"));     // Địa chỉ
+                    user.setAvatarUrl(rs.getString("avatarUrl")); // URL ảnh đại diện
+                    user.setFullName(rs.getString("fullName"));   // Họ và tên đầy đủ
+                    user.setPassword(rs.getString("password"));   // Mật khẩu (đã mã hóa)
+                    return user;
+                }
             }
         } catch (SQLException e) {
             System.out.println("login err " + e);
@@ -284,16 +285,16 @@ public class UserDAO {
         return null;
     }
 
-    public Boolean saveOrUpdateStaff(UserDTO staff) throws SQLException {
+    public Boolean saveOrUpdateStaff(UserDto staff) throws SQLException {
         String query;
-        Boolean isUpdate = staff.getUserID() != null ? true : false;
+        Boolean isUpdate = staff.getUserId() != null;
 
         if (isUpdate) {
             // Truy vấn cập nhật
-            query = "UPDATE Users SET role_id = ?, email = ?, username = ?, full_name = ?, phone = ?, address = ? WHERE user_id = ?";
+            query = "UPDATE Users SET role_id = ?, email = ?, full_name = ?, phone = ?, address = ?, avatar_url = ? WHERE user_id = ?";
         } else {
             // Truy vấn thêm mới
-            query = "INSERT INTO Users (role_id, email, username, full_name, phone, address, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            query = "INSERT INTO Users (role_id, email, full_name, phone, address, avatar_url, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         }
 
         // Bắt đầu giao dịch
@@ -302,33 +303,28 @@ public class UserDAO {
 
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 // Thiết lập các giá trị chung cho cả cập nhật và thêm mới
-                stmt.setInt(1, RoleUserType.STAFF.getId());  // role_id
-                stmt.setString(2, staff.getEmail());  // email
-                stmt.setString(3, staff.getUsername());  // username
-                stmt.setString(4, staff.getFullName());  // full_name
-                stmt.setString(5, staff.getPhone());  // phone
-                stmt.setString(6, staff.getAddress());  // address
+                stmt.setInt(1, staff.getRoleId() != null ? staff.getRoleId() : RoleUserType.STAFF.getId());  // role_id
+                stmt.setString(2, staff.getEmail());       // email
+                stmt.setString(3, staff.getFullName());    // full_name
+                stmt.setString(4, staff.getPhone());       // phone
+                stmt.setString(5, staff.getAddress());     // address
+                stmt.setString(6, staff.getAvatarUrl());   // avatar_url
 
                 if (isUpdate) {
-                    // Nếu là cập nhật, thiết lập giá trị cho userID (tham số cuối cùng)
-                    stmt.setInt(7, staff.getUserID());
+                    stmt.setInt(7, staff.getUserId());       // user_id
                 } else {
                     // Nếu là thêm mới, tạo và hash mật khẩu
                     String generatedPassword = this.generatePassword(8);
-                    stmt.setString(7, generatedPassword);
-
-                    // Chưa gửi email ở đây, chờ lưu thành công trước
-                    staff.setPassword(generatedPassword); // Lưu mật khẩu chưa mã hóa để gửi email sau
+                    stmt.setString(7, generatedPassword);    // Đặt mật khẩu mới
+                    staff.setPassword(generatedPassword);    // Lưu mật khẩu để gửi email sau
                 }
-
                 // Thực thi truy vấn
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows > 0) {
                     conn.commit(); // Chỉ commit nếu lưu vào DB thành công
-
-                    // Nếu thành công và thêm mới, gửi email
+                    // Nếu là thêm mới và thành công, gửi email
                     if (!isUpdate) {
-                        sendEmail(staff);
+                        this.sendEmail(staff);
                     }
                     return true;
                 } else {
@@ -342,6 +338,7 @@ public class UserDAO {
             }
         }
     }
+
 
     public static String generatePassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
@@ -367,7 +364,7 @@ public class UserDAO {
     }
 
     // Hàm gửi email
-    public void sendEmail(UserDTO staff) {
+    public void sendEmail(UserDto staff) {
         // Email người gửi
         String senderEmail = Constants.SENDER_EMAIL;  // Email người gửi
         String senderPassword = Constants.SENDER_PASSWORD;      // Mật khẩu email người gửi
@@ -414,7 +411,7 @@ public class UserDAO {
     }
 
     public void forgotPassword(String email) {
-        UserDTO staff = this.login(email);
+        UserDto staff = this.login(email);
         System.out.println("staff " + staff);
         String user = Constants.SENDER_EMAIL;
         String pass = Constants.SENDER_PASSWORD;
@@ -447,7 +444,7 @@ public class UserDAO {
             messge.setText(emailContent, "utf-8", "html");
             messge.setReplyTo(messge.getFrom());
             Transport.send(messge);
-            this.updateTokenResetPassword(staff.getUserID(), token);
+            this.updateTokenResetPassword(staff.getUserId(), token);
             System.out.println("Gửi email thành công.");
         } catch (Exception e) {
             System.out.println("Gửi email thất bại.");
@@ -474,54 +471,44 @@ public class UserDAO {
     }
 
     @SneakyThrows
-    public UserDTO getUserByToken(String token) {
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stm = conn.prepareStatement("SELECT "
-                + "user_id \n"
-                + "      ,ward_id \n"
-                + "      ,role_id \n"
-                + "      ,email \n"
-                + "      ,phone \n"
-                + "      ,yob \n"
-                + "      ,address \n"
-                + "      ,avatar \n"
-                + "      ,username \n"
-                + "      ,full_name \n"
-                + "  FROM Users \n"
-                + " where token_reset_password = ?");
-        stm.setString(1, token);
-        ResultSet rs = stm.executeQuery();
-        UserDTO u = new UserDTO();
-        if (rs.next()) {
-            u.setUserID(rs.getInt("user_id"));
-            u.setWardID(rs.getString("ward_id"));
-            u.setRoleID(rs.getInt("role_id"));
-            u.setEmail(rs.getString("email"));
-            String phone = rs.getString("phone");
-            if (phone != null) {
-                phone = phone.trim();
+    public UserDto getUserByToken(String token) {
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name " +
+                "FROM Users " +
+                "WHERE token_reset_password = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, token);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    UserDto u = new UserDto();
+                    u.setUserId(rs.getInt("user_id"));            // ID người dùng
+                    u.setRoleId(rs.getInt("role_id"));            // Vai trò người dùng
+                    u.setEmail(rs.getString("email"));            // Địa chỉ email
+                    // Kiểm tra và loại bỏ khoảng trắng khỏi số điện thoại nếu có
+                    String phone = rs.getString("phone");
+                    if (phone != null) {
+                        phone = phone.trim();
+                    }
+                    u.setPhone(phone);                            // Số điện thoại
+                    u.setBirthDate(rs.getDate("birthDate"));      // Ngày sinh
+                    u.setAddress(rs.getString("address"));        // Địa chỉ
+                    u.setAvatarUrl(rs.getString("avatarUrl"));    // URL ảnh đại diện
+                    u.setFullName(rs.getString("full_name"));     // Họ và tên
+                    return u;
+                }
             }
-            u.setPhone(phone);
-            u.setYob(rs.getDate("yob"));
-            u.setAddress(rs.getString("address"));
-            u.setAvatarUrl(rs.getString("avatar"));
-            u.setUsername(rs.getString("username"));
-            u.setFullName(rs.getString("full_name"));
-
         }
-        rs.close();
-        stm.close();
-        return u;
+        return null;  // Trả về null nếu không tìm thấy người dùng với token được cung cấp
     }
 
-    public Boolean updateProfile(UserDTO userDto) {
+    public Boolean updateProfile(UserDto userDto) {
         String query = "update Users set full_name = ?,phone = ?,address = ? where user_id = ? ";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, userDto.getFullName()); // Nên mã hóa mật khẩu nếu cần
             stmt.setString(2, userDto.getPhone()); // Nên mã hóa mật khẩu nếu cần
             stmt.setString(3, userDto.getAddress()); // Nên mã hóa mật khẩu nếu cần
-            stmt.setInt(4, userDto.getUserID());
+            stmt.setInt(4, userDto.getUserId());
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0; // Nếu cập nhật thành công
         } catch (SQLException e) {

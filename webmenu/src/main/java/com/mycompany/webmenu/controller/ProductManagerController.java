@@ -12,8 +12,8 @@ import java.util.List;
 
 import com.mycompany.webmenu.dao.CategoryDAO;
 import com.mycompany.webmenu.dao.ProductDAO;
-import com.mycompany.webmenu.dto.ImageProductDTO;
-import com.mycompany.webmenu.dto.ProductDTO;
+import com.mycompany.webmenu.dto.ImageProductDto;
+import com.mycompany.webmenu.dto.ProductDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,16 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ProductManagerController", urlPatterns = {"/ProductManagerController"})
 public class ProductManagerController extends HttpServlet {
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -55,7 +46,7 @@ public class ProductManagerController extends HttpServlet {
                     pageNo = Integer.parseInt(pageParam);
                 }
                 try {
-                    ArrayList<ProductDTO> productList = productDAO.getListProductManager(pageNo, pageSize);
+                    List<ProductDto> productList = productDAO.getListAllProduct(pageNo, pageSize);
                     int totalProducts = productDAO.getTotalProductCount();
                     int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
                     request.setAttribute("products", productList);
@@ -72,7 +63,7 @@ public class ProductManagerController extends HttpServlet {
             case "addProduct": {
                 CategoryDAO categoryDao = new CategoryDAO();
                 request.setAttribute("listCategory", categoryDao.getListAllCategory());
-                request.setAttribute("product", new ProductDTO());
+                request.setAttribute("product", new ProductDto());
                 request.setAttribute("imgs", new ArrayList<>());
                 request.getRequestDispatcher(Constants.ADD_NEW_PRODUCT_JSP).forward(request, response);
                 break;
@@ -82,7 +73,7 @@ public class ProductManagerController extends HttpServlet {
                 ProductDAO productDAO = new ProductDAO();
                 CategoryDAO categoryDao = new CategoryDAO();
                 request.setAttribute("listCategory", categoryDao.getListAllCategory());
-                ProductDTO productDto = productDAO.getProductDetail(productId);
+                ProductDto productDto = productDAO.getProductDetail(productId);
                 request.setAttribute("product", productDAO.getProductDetail(productId));
                 request.setAttribute("imgs", productDto != null ? productDto.getImgs() : new ArrayList<>());
                 request.getRequestDispatcher(Constants.ADD_NEW_PRODUCT_JSP).forward(request, response);
@@ -120,13 +111,13 @@ public class ProductManagerController extends HttpServlet {
 
         String[] imageIds = request.getParameterValues("imageIds[]");
         String[] imageUrls = request.getParameterValues("imageUrls[]");
-        List<ImageProductDTO> imageList = new ArrayList<>();
+        List<ImageProductDto> imageList = new ArrayList<>();
         if (imageIds != null && imageUrls != null) {
             for (int i = 0; i < imageIds.length; i++) {
                 String imageId = imageIds[i].trim();
                 String imageUrl = imageUrls[i].trim();
                 if (!imageId.isEmpty() || !imageUrl.isEmpty()) {
-                    ImageProductDTO img = ImageProductDTO.builder()
+                    ImageProductDto img = ImageProductDto.builder()
                             .imageId(imageId.isEmpty() ? null : Integer.parseInt(imageId))
                             .url(imageUrl)
                             .build();
@@ -136,16 +127,23 @@ public class ProductManagerController extends HttpServlet {
         }
 
         // Tạo đối tượng ProductDTO
-        ProductDTO product = ProductDTO.builder()
-                .productId(productId)
-                .name(name)
-                .categoryId(categoryId)
-                .price(price)
-                .description(description)
-                .userAdminId(userAdminId)
-                .mainImg(ImageProductDTO.builder().imageId(mainImgId).url(mainImgUrl).build())
-                .imgs(imageList)
-                .build();
+        ProductDto product = new ProductDto();
+        product.setProductId(productId);
+        product.setName(name);
+        product.setCategoryId(categoryId);
+        product.setPrice(price);
+        product.setDescription(description);
+        product.setCreatedBy(userAdminId);
+
+        // Tạo đối tượng ImageProductDto cho mainImg và sử dụng setter
+        ImageProductDto mainImg = new ImageProductDto();
+        mainImg.setImageId(mainImgId);
+        mainImg.setUrl(mainImgUrl);
+        product.setMainImg(mainImg); // Gán mainImg vào product
+
+        // Gán danh sách hình ảnh cho product
+        product.setImgs(imageList);
+
 
         ProductDAO productDAO = new ProductDAO();
         Boolean isAdded;
@@ -182,15 +180,5 @@ public class ProductManagerController extends HttpServlet {
             request.getRequestDispatcher(Constants.ADD_NEW_PRODUCT_JSP).forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

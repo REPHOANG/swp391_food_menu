@@ -6,15 +6,10 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.mycompany.webmenu.dao.CategoryDAO;
-import com.mycompany.webmenu.dao.ProductDAO;
 import com.mycompany.webmenu.dto.CategoryDto;
-import com.mycompany.webmenu.dto.ProductDTO;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -95,7 +90,12 @@ public class CategoryManagerController extends HttpServlet {
         String categoryIdStr = request.getParameter("categoryId");
         Integer categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : null;
         String name = request.getParameter("name");
-        CategoryDto category = CategoryDto.builder().categoryId(categoryId).name(name).build();
+        String description = request.getParameter("description");
+        CategoryDto category = CategoryDto.builder()
+                .categoryId(categoryId)
+                .name(name)
+                .description(description)
+                .build();
         Boolean isNewProduct = category.getCategoryId() == null ? true : false;
         CategoryDAO categoryDAO = new CategoryDAO();
         Boolean isAdded = categoryDAO.insertCategory(category);

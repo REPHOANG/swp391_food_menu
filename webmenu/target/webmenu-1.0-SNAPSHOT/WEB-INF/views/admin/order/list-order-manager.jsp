@@ -87,7 +87,6 @@
                                                 <th>Order Name</th>
                                                 <th>Order Date</th>
                                                 <th>Status</th>
-                                                <th>Address</th>
                                                 <th>Option</th>
                                             </tr>
                                             </thead>
@@ -99,21 +98,29 @@
                                                     <td>${order.orderDate}</td>
                                                     <td>
                                                         <c:choose>
-                                                            <c:when test="${order.status == 1}">
-                                                                Pending
+                                                            <c:when test="${order.orderStatus == 1}">
+                                                                Initialized
                                                             </c:when>
-                                                            <c:when test="${order.status == 2}">
+                                                            <c:when test="${order.orderStatus == 2}">
+                                                                Confirmed
+                                                            </c:when>
+                                                            <c:when test="${order.orderStatus == 3}">
                                                                 Preparing
                                                             </c:when>
-                                                            <c:when test="${order.status == 3}">
-                                                                Transaction executed
+                                                            <c:when test="${order.orderStatus == 4}">
+                                                                Delivered
+                                                            </c:when>
+                                                            <c:when test="${order.orderStatus == 5}">
+                                                                Paid
+                                                            </c:when>
+                                                            <c:when test="${order.orderStatus == 6}">
+                                                                Table Cleared
                                                             </c:when>
                                                             <c:otherwise>
                                                                 Unknown
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
-                                                    <td>${order.address}</td>
                                                     <td>
                                                         <ul>
                                                             <li>

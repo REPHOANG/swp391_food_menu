@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
-import com.mycompany.webmenu.utils.RoleUserType;
+import com.mycompany.webmenu.enums.RoleUserType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -58,11 +58,10 @@ public class UserController extends HttpServlet {
                     if (email == null || email.isEmpty()) {
                         throw new IllegalArgumentException("\"email\" parameter is missing");
                     } else {
-                        UserDTO user = uDAO.login(email);
+                        UserDto user = uDAO.login(email);
                         if (user == null) {
                             String avatarURL = request.getParameter("picture");
-                            String username = request.getParameter("username");
-                            user = uDAO.insertNewUser(email, avatarURL, username);
+                            user = uDAO.insertNewUser(email, avatarURL);
                         }
                         session.setAttribute("user", user);
                         out.println(gson.toJson(user));
@@ -79,14 +78,13 @@ public class UserController extends HttpServlet {
                     break;
                 }
                 case "updateProfile": {
-                    String username = request.getParameter("username");
+                    String fullName = request.getParameter("username");
                     String phone = request.getParameter("phone");
                     String email = request.getParameter("email");
                     String urlAvatar = request.getParameter("urlAvatar").replace("/avatar/", "%2Favatar%2F");
-                    uDAO.updateProfile(email, username, phone, urlAvatar);
-                    UserDTO u = (UserDTO) session.getAttribute("user");
+                    uDAO.updateProfile(email, fullName, phone, urlAvatar);
+                    UserDto u = (UserDto) session.getAttribute("user");
                     u.setPhone(phone);
-                    u.setUsername(username);
                     u.setAvatarUrl(urlAvatar);
                     session.setAttribute("user", u);
                     break;
@@ -101,7 +99,7 @@ public class UserController extends HttpServlet {
                     }
                     int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId());
                     int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                    request.setAttribute("users", uDAO.getListCategoryManager(pageNo, pageSize, RoleUserType.USER.getId()));
+                    request.setAttribute("users", uDAO.getListUserManager(pageNo, pageSize, RoleUserType.USER.getId()));
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("currentPage", pageNo);
                     request.getRequestDispatcher(Constants.LIST_USER_MANAGER).forward(request, response);

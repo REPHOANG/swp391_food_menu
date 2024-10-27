@@ -125,7 +125,7 @@
                                                 <td>
                                                     <ul>
                                                         <li>
-                                                            <a href="<c:url value="StaffController?staffAction=staffDetail&staffId=${staff.userID}"/>">
+                                                            <a href="<c:url value="StaffController?staffAction=staffDetail&staffId=${staff.userId}"/>">
                                                                 <i class="ri-eye-line"></i>
                                                             </a>
                                                         </li>

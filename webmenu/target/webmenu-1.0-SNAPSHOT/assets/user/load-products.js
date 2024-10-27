@@ -1,4 +1,7 @@
 // Cấu hình mặc định
+import { applyQuantityAdjustment } from './cart-local-storage.js';
+
+
 let currentPage = 1;
 const itemsPerPage = 10;  // Số sản phẩm mỗi trang
 const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
@@ -83,7 +86,6 @@ function loadMenu(page) {
                                 <a href="product-left-thumbnail.html">
                                     <img src="${item.mainImg.url}" class="img-fluid blur-up lazyload" alt="${item.name}">
                                 </a>
-                                ${handleProductOptions(item)}
                             </div>
                         </div>
                         <div class="product-footer">
@@ -105,7 +107,7 @@ function loadMenu(page) {
                                     <span></span>
                                 </div>
                                 <h6 class="unit"></h6>
-                                <h5 class="price"><span class="theme-color">$${item.price}</span>
+                                <h5 class="price"><span class="theme-color">${formatVND(item.price)}</span>
                                     <del>$0</del>
                                 </h5>
                                 <div class="add-to-cart-box bg-white">
@@ -131,30 +133,6 @@ function loadMenu(page) {
                     </div>
                 `;
                 menuContainer.appendChild(menuItem);
-
-                // Thêm event listeners cho product options
-                const productElement = menuItem.querySelector('.product-box-3');
-
-                productElement.querySelector('.view-product').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Mở modal xem chi tiết sản phẩm
-                    console.log('View product:', item.id);
-                    // TODO: Implement view product modal
-                });
-
-                productElement.querySelector('.compare-product').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Thêm vào danh sách so sánh
-                    console.log('Add to compare:', item.id);
-                    // TODO: Implement compare functionality
-                });
-
-                productElement.querySelector('.wishlist-product').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Thêm vào wishlist
-                    console.log('Add to wishlist:', item.id);
-                    // TODO: Implement wishlist functionality
-                });
 
                 // Initialize Feather icons
                 if (window.feather) {
@@ -216,3 +194,6 @@ function loadMenu(page) {
 // Gọi hàm loadMenu khi trang đã tải xong
 window.onload = () => loadMenu(currentPage);
 
+function formatVND(price) {
+    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}

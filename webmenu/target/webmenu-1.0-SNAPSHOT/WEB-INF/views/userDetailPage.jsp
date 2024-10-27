@@ -328,7 +328,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const storage = getStorage();
-    const listRef = ref(storage, 'userID-${sessionScope.user.userID}/avatar');
+    const listRef = ref(storage, 'userID-${sessionScope.user.userId}/avatar');
     console.log(listRef);
     document.querySelector('#submit').addEventListener('click', function () {
         var http = new XMLHttpRequest();
@@ -343,7 +343,7 @@
                             })
                     });
                 })
-            const storageRef = ref(storage, 'userID-${sessionScope.user.userID}/avatar/' + avatar.name);
+            const storageRef = ref(storage, 'userID-${sessionScope.user.userId}/avatar/' + avatar.name);
             uploadBytes(storageRef, avatar)
                 .then((snapshot) => {
                     console.log(snapshot)

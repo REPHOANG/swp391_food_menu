@@ -8,9 +8,9 @@ package com.mycompany.webmenu.controller;
 import java.io.IOException;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
-import com.mycompany.webmenu.utils.RoleUserType;
+import com.mycompany.webmenu.enums.RoleUserType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -54,13 +54,13 @@ public class LoginWebController extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         UserDAO userDao = new UserDAO();
-        UserDTO userDto = userDao.loginAdmin(username, password);
+        UserDto userDto = userDao.loginAdmin(username, password);
         if (userDto == null) {
             request.setAttribute("message", "Invalid username or password. Please try again.");
             request.getRequestDispatcher(Constants.LOGIN_ADMIN).forward(request, response);
         } else {
             session.setAttribute("user", userDto);
-            if (userDto.getRoleID() != RoleUserType.USER.getId()) {
+            if (userDto.getRoleId() != RoleUserType.USER.getId()) {
                 response.sendRedirect(Constants.ADMIN_CONTROLLER);
             } else {
                 response.sendRedirect(Constants.MAIN_CONTROLLER);

@@ -95,6 +95,15 @@
                                                        name="name" value="${category.name}">
                                             </div>
                                         </div>
+                                        <!-- Description -->
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="form-label-title col-sm-3 mb-0">Description</label>
+                                            <div class="col-sm-9">
+                                                <textarea class="form-control" placeholder="Description"
+                                                          name="description"
+                                                          id="description">${category.description}</textarea>
+                                            </div>
+                                        </div>
                                         <div class="modal-footer">
                                             <input type="submit" class="btn btn-success" value="Save">
                                         </div>
@@ -156,7 +165,7 @@
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function (event) {
         const inputField = document.querySelector('input[name="name"]');
         if (!inputField.value.trim()) {
             event.preventDefault(); // Prevent form submission

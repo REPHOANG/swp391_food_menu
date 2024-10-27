@@ -89,7 +89,7 @@
                                         <input class="form-control" type="hidden" name="productId"
                                                value="${product.productId}">
                                         <input type="hidden" id="discount" name="userAdminId"
-                                               value="${sessionScope.user.userID}"/><br/>
+                                               value="${sessionScope.user.userId}"/><br/>
 
                                         <!-- Product Name -->
                                         <div class="mb-4 row align-items-center">

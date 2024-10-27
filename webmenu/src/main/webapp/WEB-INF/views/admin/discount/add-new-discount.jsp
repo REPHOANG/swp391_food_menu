@@ -98,6 +98,14 @@
                                             </div>
                                         </div>
 
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="form-label-title col-sm-3 mb-0">Discount Code</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" placeholder="Discount Code"
+                                                       name="discountCode" value="${discount.discountCode}">
+                                            </div>
+                                        </div>
+
                                         <!-- Discount Percent -->
                                         <div class="mb-4 row align-items-center">
                                             <label class="form-label-title col-sm-3 mb-0">Percent</label>
