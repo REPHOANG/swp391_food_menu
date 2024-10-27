@@ -6,17 +6,12 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
 
-import com.mycompany.webmenu.dao.CategoryDAO;
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.CategoryDto;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
-import com.mycompany.webmenu.utils.RoleUserType;
+import com.mycompany.webmenu.enums.RoleUserType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -56,7 +51,7 @@ public class StaffController extends HttpServlet {
                 }
                 int totalStaffs = userDao.getTotalUserCount(RoleUserType.STAFF.getId());
                 int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
-                request.setAttribute("staffs", userDao.getListCategoryManager(pageNo, pageSize, RoleUserType.STAFF.getId()));
+                request.setAttribute("staffs", userDao.getListUserManager(pageNo, pageSize, RoleUserType.STAFF.getId()));
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("currentPage", pageNo);
                 request.setAttribute("message", message);
@@ -64,13 +59,13 @@ public class StaffController extends HttpServlet {
                 break;
             }
             case "addStaff": {
-                request.setAttribute("staff", new UserDTO());
+                request.setAttribute("staff", new UserDto());
                 request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
                 break;
             }
             case "staffDetail": {
                 Integer staffId = Integer.parseInt(request.getParameter("staffId"));
-                UserDTO staff = userDao.getUserById(staffId);
+                UserDto staff = userDao.getUserById(staffId);
                 request.setAttribute("staff", staff);
                 request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
                 break;
@@ -86,15 +81,15 @@ public class StaffController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         // Lấy các tham số từ form
-        String userID = request.getParameter("userID");
+        String userID = request.getParameter("userId");
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
-        UserDTO staff = new UserDTO();
+        UserDto staff = new UserDto();
         if (!Objects.equals(userID, "") && userID != null) {
-            staff.setUserID(Integer.valueOf(userID));
+            staff.setUserId(Integer.valueOf(userID));
         }
         staff.setFullName(fullName);
         staff.setEmail(email);
@@ -102,14 +97,14 @@ public class StaffController extends HttpServlet {
         staff.setAddress(address);
 
         UserDAO userDao = new UserDAO();
-        UserDTO userMail = userDao.login(staff.getEmail());
-        if (userMail != null && !Objects.equals(userMail.getUserID(), staff.getUserID())) {
+        UserDto userMail = userDao.login(staff.getEmail());
+        if (userMail != null && !Objects.equals(userMail.getUserId(), staff.getUserId())) {
             request.setAttribute("message", "Email already exists.");
             request.setAttribute("staff", staff);
             request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
             return;
         }
-        Boolean isNewProduct = staff.getUserID() == null ? true : false;
+        Boolean isNewProduct = staff.getUserId() == null ? true : false;
         Boolean isAdded = userDao.saveOrUpdateStaff(staff);
         if (isAdded) {
             String message = null;

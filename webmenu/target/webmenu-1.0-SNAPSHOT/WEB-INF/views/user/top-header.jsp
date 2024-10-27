@@ -45,7 +45,7 @@
                             </div>
                         </li>
                         <li class="right-side">
-                            <a href="contact-us.html" class="delivery-login-box">
+                            <a href="" class="delivery-login-box">
                                 <div class="delivery-icon">
                                     <i data-feather="phone-call"></i>
                                 </div>
@@ -71,7 +71,8 @@
                                         <h4 class="theme-color fw-bold" id="cart-total">$0.00</h4>
                                     </div>
                                     <div class="button-group">
-                                        <a href="<c:url value="/ViewCartController"></c:url>" class="btn btn-sm cart-button">View Cart</a>
+                                        <a href="<c:url value="/ViewCartController"></c:url>"
+                                           class="btn btn-sm cart-button">View Cart</a>
                                     </div>
                                 </div>
                             </div>

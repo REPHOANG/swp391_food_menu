@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import com.mycompany.webmenu.dao.CategoryDAO;
 import com.mycompany.webmenu.dao.TableDAO;
-import com.mycompany.webmenu.dto.CategoryDto;
-import com.mycompany.webmenu.dto.TableDTO;
+import com.mycompany.webmenu.dto.TableDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,41 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "TableManagerController", urlPatterns = {"/TableManagerController"})
 public class TableManagerController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet TableManagerController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet TableManagerController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -79,7 +42,7 @@ public class TableManagerController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                List<TableDTO> list = tableDao.getListTableManager(pageNo, pageSize);
+                List<TableDto> list = tableDao.getListTableManager(pageNo, pageSize);
                 int total = tableDao.getTotalTableCount();
                 int totalPages = (int) Math.ceil((double) total / pageSize);
                 request.setAttribute("tables", list);
@@ -90,7 +53,7 @@ public class TableManagerController extends HttpServlet {
                 break;
             }
             case "addTable": {
-                request.setAttribute("tableDTO", new TableDTO());
+                request.setAttribute("tableDTO", new TableDto());
                 request.getRequestDispatcher(Constants.ADD_NEW_TABLE_JSP).forward(request, response);
                 break;
             }
@@ -105,14 +68,6 @@ public class TableManagerController extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -120,18 +75,19 @@ public class TableManagerController extends HttpServlet {
         String tableIdStr = request.getParameter("tableId");
         Integer tableId = (tableIdStr != null && !tableIdStr.isEmpty()) ? Integer.parseInt(tableIdStr) : null;
         String tableName = request.getParameter("tableName");
-        String status = request.getParameter("status");
+        String statusStr = request.getParameter("status");
+        Integer status = statusStr != null ? Integer.valueOf(statusStr) : null;
         String capacityStr = request.getParameter("capacity");
         Integer capacity = (capacityStr != null && !capacityStr.isEmpty()) ? Integer.parseInt(capacityStr) : null;
         // Xây dựng đối tượng TableDto (giả sử bạn có lớp này để chứa thông tin bàn)
-        TableDTO table = TableDTO.builder()
+        TableDto table = TableDto.builder()
                 .tableId(tableId)
                 .tableName(tableName)
                 .status(status)
                 .capacity(capacity)
                 .build();
 
-         // Kiểm tra xem đây là thao tác thêm mới hay cập nhật
+        // Kiểm tra xem đây là thao tác thêm mới hay cập nhật
         Boolean isNewTable = table.getTableId() == null ? true : false;
         // Gọi DAO để thêm hoặc cập nhật table
         TableDAO tableDAO = new TableDAO();

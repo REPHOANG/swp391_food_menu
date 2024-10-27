@@ -86,8 +86,8 @@
                                     </div>
                                     <form class="theme-form theme-form-2 mega-form" action="./StaffController"
                                           method="post">
-                                        <input class="form-control" type="hidden" name="userID"
-                                               value="${staff.userID}">
+                                        <input class="form-control" type="hidden" name="userId"
+                                               value="${staff.userId}">
                                         <div class="mb-4 row align-items-center">
                                             <label class="form-label-title col-sm-3 mb-0">Full Name</label>
                                             <div class="col-sm-9">

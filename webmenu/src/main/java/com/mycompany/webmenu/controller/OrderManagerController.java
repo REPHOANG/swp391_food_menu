@@ -6,13 +6,11 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
-import com.mycompany.webmenu.dao.CategoryDAO;
+import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.OrderDAO;
-import com.mycompany.webmenu.dto.CategoryDto;
-import com.mycompany.webmenu.dto.OrderDTO;
+import com.mycompany.webmenu.dto.OrderDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,25 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "OrderManagerController", urlPatterns = {"/OrderManagerController"})
 public class OrderManagerController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,7 +45,7 @@ public class OrderManagerController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                List<OrderDTO> categoryList = orderDAO.getListOrderManager(pageNo, pageSize);
+                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize);
                 int totalProducts = orderDAO.getTotalOrderCount();
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
                 request.setAttribute("orders", categoryList);
@@ -79,7 +58,10 @@ public class OrderManagerController extends HttpServlet {
             case "detailOrderAdmin": {
                 Integer orderId = Integer.parseInt(request.getParameter("orderId"));
                 OrderDAO orderDAO = new OrderDAO();
-                request.setAttribute("orderDetail", orderDAO.getOrderDetail(orderId));
+                OrderDto orderDetail = orderDAO.getOrderDetail(orderId);
+                request.setAttribute("orderDetail", orderDetail);
+                String orderDetailJson = new Gson().toJson(orderDetail.getOrderDetailDto());
+                request.setAttribute("orderDetailDtoList", orderDetailJson);
                 request.getRequestDispatcher(Constants.ORDER_DETAIL_MANAGER).forward(request, response);
                 break;
             }
@@ -93,7 +75,7 @@ public class OrderManagerController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                List<OrderDTO> categoryList = orderDAO.getListOrderUserManager(userId, pageNo, pageSize);
+                List<OrderDto> categoryList = orderDAO.getListOrderUserManager(userId, pageNo, pageSize);
                 System.out.println("categoryList " + categoryList);
                 int totalProducts = orderDAO.getTotalOrderUserCount(userId);
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);

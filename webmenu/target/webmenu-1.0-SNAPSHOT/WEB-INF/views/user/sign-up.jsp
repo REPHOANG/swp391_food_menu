@@ -37,18 +37,10 @@
     <div class="top-nav top-header sticky-header">
         <jsp:include page="/WEB-INF/views/user/top-header.jsp"/>
     </div>
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="header-nav">
-                    <div class="header-nav-middle">
-                        <jsp:include page="/WEB-INF/views/user/header-nav-middle.jsp"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
+<!-- mobile fix menu start -->
+<jsp:include page="menu-section.jsp"/>
+<!-- mobile fix menu end -->
 <!-- log in section start -->
 <section class="log-in-section section-b-space">
     <div class="container-fluid-lg w-100">
@@ -144,6 +136,7 @@
 
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 
 </html>

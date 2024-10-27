@@ -2,7 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -61,24 +60,11 @@
     <div class="top-nav top-header sticky-header">
         <jsp:include page="top-header.jsp"/>
     </div>
-
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="header-nav">
-                    <div class="header-nav-middle">
-                        <jsp:include page="header-nav-middle.jsp"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
 <!-- Header End -->
-
 <!-- mobile fix menu start -->
+<jsp:include page="menu-section.jsp"/>
 <!-- mobile fix menu end -->
-
 <!-- Breadcrumb Section Start -->
 <!-- Breadcrumb Section End -->
 
@@ -86,62 +72,36 @@
 <section class="cart-section section-b-space">
     <div class="container-fluid-lg">
         <div class="row g-sm-5 g-3">
+            <form style="max-width: 400px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <label style="display: none; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    User
+                    <input id="userId" name="userId" type="text"
+                           style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
+                </label>
+
+                <label style="display: none; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    Email
+                    <input id="email" name="email" type="email"
+                           style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
+                </label>
+
+                <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    Full Name
+                    <input id="fullName" name="fullName" type="text"
+                           style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
+                </label>
+                <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    Order Note
+                    <input id="orderNote" name="orderNote" type="text"
+                           style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
+                </label>
+            </form>
+
             <div class="col-xxl-9">
                 <div class="cart-table">
                     <div class="table-responsive-xl">
                         <table class="table">
                             <tbody>
-                            <tr class="product-box-contain">
-                                <td class="product-detail">
-                                    <div class="product border-0">
-                                        <a href="product-left-thumbnail.html" class="product-image">
-                                            <img src="../assets/images/vegetable/product/1.png"
-                                                 class="img-fluid blur-up lazyload" alt="">
-                                        </a>
-                                        <div class="product-detail">
-                                            <ul>
-                                                <li class="name">
-                                                    <a href="product-left-thumbnail.html">Bell pepper</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="price">
-                                    <h4 class="table-title text-content">Price</h4>
-                                    <h5>$35.10</h5>
-                                </td>
-
-                                <td class="quantity">
-                                    <h4 class="table-title text-content">Qty</h4>
-                                    <div class="quantity-price">
-                                        <div class="cart_qty">
-                                            <div class="input-group">
-                                                <button type="button" class="btn qty-left-minus"
-                                                        data-type="minus" data-field="">
-                                                    <i class="fa fa-minus ms-0" aria-hidden="true"></i>
-                                                </button>
-                                                <input class="form-control input-number qty-input" type="text"
-                                                       name="quantity" value="0">
-                                                <button type="button" class="btn qty-right-plus"
-                                                        data-type="plus" data-field="">
-                                                    <i class="fa fa-plus ms-0" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="subtotal">
-                                    <h4 class="table-title text-content">Total</h4>
-                                    <h5>$35.10</h5>
-                                </td>
-                                <td class="save-remove">
-                                    <h4 class="table-title text-content">Action</h4>
-                                    <a class="save notifi-wishlist" href="javascript:void(0)">Save for later</a>
-                                    <a class="remove close_button" href="javascript:void(0)">Remove</a>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -158,48 +118,38 @@
                         <div class="coupon-cart">
                             <h6 class="text-content mb-2">Coupon Apply</h6>
                             <div class="mb-3 coupon-box input-group">
-                                <input type="email" class="form-control" id="exampleFormControlInput1"
-                                       placeholder="Enter Coupon Code Here...">
-                                <button class="btn-apply">Apply</button>
+                                <select type="email" class="form-control" id="exampleFormControlInput1"
+                                        placeholder="Enter Coupon Code Here..."></select>
+                                <button class="btn-apply" onclick="applyCoupon()">Apply</button>
                             </div>
                         </div>
                         <ul>
                             <li>
                                 <h4>Subtotal</h4>
-                                <h4 class="price">$125.65</h4>
+                                <h4 class="price" id="total-price" content="total-price"></h4>
                             </li>
-
                             <li>
                                 <h4>Coupon Discount</h4>
-                                <h4 class="price">(-) 0.00</h4>
-                            </li>
-
-                            <li class="align-items-start">
-                                <h4>Shipping</h4>
-                                <h4 class="price text-end">$6.90</h4>
+                                <h4 class="price" id="coupon-discount" content="coupon-discount">(-) 0.00</h4>
                             </li>
                         </ul>
                     </div>
 
                     <ul class="summery-total">
                         <li class="list-total border-top-0">
-                            <h4>Total (USD)</h4>
-                            <h4 class="price theme-color">$132.58</h4>
+                            <h4>Total</h4>
+                            <h4 class="price theme-color" id="price-order">$132.58</h4>
                         </li>
                     </ul>
 
                     <div class="button-group cart-button">
                         <ul>
                             <li>
-                                <button onclick="location.href = 'checkout.html';"
-                                        class="btn btn-animation proceed-btn fw-bold">Process To Checkout
-                                </button>
-                            </li>
-
-                            <li>
-                                <button onclick="location.href = 'index.html';"
-                                        class="btn btn-light shopping-button text-dark">
-                                    <i class="fa-solid fa-arrow-left-long"></i>Return To Shopping
+                                <button
+                                        class="btn btn-animation proceed-btn fw-bold"
+                                        onclick="placeOrder()"
+                                        style="padding: 10px 20px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+                                    Place Order
                                 </button>
                             </li>
                         </ul>
@@ -239,7 +189,23 @@
 <script src="<c:url value="/assets/user/js/quantity.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
-<script src="<c:url value="/assets/user/view-cart.js"/>"></script>
+<script type="module" src="<c:url value="/assets/user/cart-local-storage.js"/>" defer></script>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
+<script src="<c:url value="/assets/user/apply-coupon.js"/>"></script>
+<script type="application/javascript">
+    const user = {
+        userId: '${user.userId}',
+        roleId: '${user.roleId}',
+        email: '${user.email}',
+        address: '${user.address}',
+        avatarUrl: ' ${user.avatarUrl}',
+        fullName: '${user.fullName}',
+    };
+    console.log("user " + user)
+    document.getElementById("userId").value = user.userId;
+    document.getElementById("email").value = user.email;
+    document.getElementById("fullName").value = user.fullName;
+</script>
 </body>
 
 </html>

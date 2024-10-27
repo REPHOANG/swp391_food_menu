@@ -60,23 +60,10 @@
     <div class="top-nav top-header sticky-header">
         <jsp:include page="top-header.jsp"/>
     </div>
-
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="header-nav">
-                    <div class="header-nav-middle">
-                        <jsp:include page="header-nav-middle.jsp"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
 <!-- Header End -->
-
 <!-- mobile fix menu start -->
-
+<jsp:include page="menu-section.jsp"/>
 <!-- mobile fix menu end -->
 
 <!-- Breadcrumb Section Start -->
@@ -161,6 +148,7 @@
 <script src="<c:url value="/assets/user/js/lazysizes.min.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 
 </html>

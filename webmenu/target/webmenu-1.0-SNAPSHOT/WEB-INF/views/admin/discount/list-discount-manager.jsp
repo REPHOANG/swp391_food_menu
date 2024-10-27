@@ -93,6 +93,7 @@
                                             <tr>
                                             <tr>
                                                 <th>Discount Name</th>
+                                                <th>Discount Code</th>
                                                 <th>Discount Percent</th>
                                                 <th>Max Discount Value</th>
                                                 <th>Min Discount Value</th>
@@ -107,6 +108,7 @@
                                             <c:forEach var="discount" items="${discounts}">
                                                 <tr>
                                                     <td>${discount.name}</td>
+                                                    <td>${discount.discountCode}</td>
                                                     <td>${discount.discountPercent}</td>
                                                     <td>${discount.maxDiscountValue}</td>
                                                     <td>${discount.minDiscountValue}</td>

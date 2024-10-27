@@ -37,18 +37,10 @@
     <div class="top-nav top-header sticky-header">
         <jsp:include page="/WEB-INF/views/user/top-header.jsp"/>
     </div>
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="header-nav">
-                    <div class="header-nav-middle">
-                        <jsp:include page="/WEB-INF/views/user/header-nav-middle.jsp"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
+<!-- mobile fix menu start -->
+<jsp:include page="menu-section.jsp"/>
+<!-- mobile fix menu end -->
 <!-- log in section start -->
 <div class="page-body">
     <!-- New Product Add Start -->
@@ -64,7 +56,7 @@
                                   action="./ViewProfileController?viewProfileAction=profileActionUser"
                                   method="post">
                                 <input class="form-control" type="hidden" name="userId"
-                                       value="${profileUser.userID}">
+                                       value="${profileUser.userId}">
                                 <div class="mb-4 row align-items-center">
                                     <label class="form-label-title col-sm-3 mb-0">Full Name</label>
                                     <div class="col-sm-9">
@@ -133,6 +125,7 @@
 <script src="<c:url value="/assets/user/js/lazysizes.min.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 
 </html>

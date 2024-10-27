@@ -17,13 +17,13 @@
                         <div class="user-name-hide media-body">
                             <span>${user.email}</span>
                             <c:choose>
-                                <c:when test="${user.roleID == 1}">
+                                <c:when test="${user.roleId == 1}">
                                     <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
                                 </c:when>
-                                <c:when test="${user.roleID == 2}">
+                                <c:when test="${user.roleId == 2}">
                                     <p class="mb-0 font-roboto">User<i class="middle ri-arrow-down-s-line"></i></p>
                                 </c:when>
-                                <c:when test="${user.roleID == 3}">
+                                <c:when test="${user.roleId == 3}">
                                     <p class="mb-0 font-roboto">Staff<i class="middle ri-arrow-down-s-line"></i></p>
                                 </c:when>
                                 <c:otherwise>

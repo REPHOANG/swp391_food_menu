@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import com.mycompany.webmenu.dao.UserDAO;
-import com.mycompany.webmenu.dto.UserDTO;
+import com.mycompany.webmenu.dto.UserDto;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -38,7 +38,7 @@ public class ChangePasswordStaffController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
+        UserDto user = (UserDto) session.getAttribute("user");
 
         // Lấy các tham số từ form
         String currentPassword = request.getParameter("currentPassword");
@@ -60,7 +60,7 @@ public class ChangePasswordStaffController extends HttpServlet {
                 return;
             }
             // Cập nhật mật khẩu mới
-            if (userDAO.updatePassword(user.getUserID(), newPassword)) {
+            if (userDAO.updatePassword(user.getUserId(), newPassword)) {
                 response.sendRedirect(Constants.LOGIN_WEB_CONTROLLER + "?message=Password changed successfully.");
                 return;
             } else {

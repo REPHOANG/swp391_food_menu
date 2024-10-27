@@ -155,5 +155,6 @@
         </div>
     </div>
 </div>
+<script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 </html>

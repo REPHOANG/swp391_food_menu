@@ -5,11 +5,7 @@
 
 package com.mycompany.webmenu.controller;
 
-import java.awt.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +14,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.ProductDAO;
-import com.mycompany.webmenu.dto.ProductDTO;
+import com.mycompany.webmenu.dto.ProductDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,11 +36,11 @@ public class MenuServletController extends HttpServlet {
         int currentPage = Integer.parseInt(request.getParameter("page"));
         int itemsPerPage = Integer.parseInt(request.getParameter("itemsPerPage"));
         // Danh sách các món ăn
-        List<ProductDTO> productDTO = new ArrayList<>();
+        List<ProductDto> productDTO = new ArrayList<>();
         ProductDAO productDAO = new ProductDAO();
         int totalPages = 0;
         try {
-            productDTO = productDAO.getListALlProduct(currentPage, itemsPerPage);
+            productDTO = productDAO.getListAllProduct(currentPage, itemsPerPage);
             int totalProducts = productDAO.getTotalProductCount();
             totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
         } catch (SQLException e) {

@@ -106,8 +106,10 @@
                                                 <tr>
                                                     <td>
                                                         <div class="table-image">
-                                                            <img src="<c:url value='${product.mainImg.url}' />"
-                                                                 class="img-fluid" alt="">
+                                                            <c:if test="${not empty product.mainImg and not empty product.mainImg.url}">
+                                                                <img src="<c:url value='${product.mainImg.url}' />"
+                                                                     class="img-fluid" alt="">
+                                                            </c:if>
                                                         </div>
                                                     </td>
 
@@ -121,17 +123,6 @@
                                                                     <i class="ri-eye-line"></i>
                                                                 </a>
                                                             </li>
-                                                                <%--                                                            <li>--%>
-                                                                <%--                                                                <a href="javascript:void(0)">--%>
-                                                                <%--                                                                    <i class="ri-pencil-line"></i>--%>
-                                                                <%--                                                                </a>--%>
-                                                                <%--                                                            </li>--%>
-                                                                <%--                                                            <li>--%>
-                                                                <%--                                                                <a href="javascript:void(0)" data-bs-toggle="modal"--%>
-                                                                <%--                                                                   data-bs-target="#exampleModalToggle">--%>
-                                                                <%--                                                                    <i class="ri-delete-bin-line"></i>--%>
-                                                                <%--                                                                </a>--%>
-                                                                <%--                                                            </li>--%>
                                                         </ul>
                                                     </td>
                                                 </tr>
