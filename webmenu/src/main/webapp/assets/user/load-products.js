@@ -1,7 +1,5 @@
 // Cấu hình mặc định
 import { applyQuantityAdjustment } from './cart-local-storage.js';
-
-
 let currentPage = 1;
 const itemsPerPage = 10;  // Số sản phẩm mỗi trang
 const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị

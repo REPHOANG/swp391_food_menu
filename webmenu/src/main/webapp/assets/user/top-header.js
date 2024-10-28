@@ -1,5 +1,4 @@
 viewCartHeaderDisplay()
-
 async function viewCartHeaderDisplay() {
     console.log("viewCartHeaderDisplay")
     let cart = JSON.parse(localStorage.getItem('cart')) || [];

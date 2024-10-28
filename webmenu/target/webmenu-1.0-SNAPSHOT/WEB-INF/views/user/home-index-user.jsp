@@ -907,6 +907,14 @@
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
 <script type="module" src="<c:url value="/assets/user/load-products.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
+<script type="text/javascript">
+    const userSelectedTable = {
+        tableId: '${userSelectedTable.tableId}',
+        tableName: '${userSelectedTable.tableName}',
+        status: '${userSelectedTable.status}',
+        capacity: '${userSelectedTable.capacity}'
+    }
+</script>
 </body>
 
 </html>

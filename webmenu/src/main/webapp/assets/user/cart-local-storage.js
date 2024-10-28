@@ -1,6 +1,5 @@
 console.log("cart-local-storage.js")
 viewCartUser()
-
 export function applyQuantityAdjustment() {
     console.log("applyQuantityAdjustment")
     $(".addcart-button").off('click').on('click', function () {
