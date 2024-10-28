@@ -9,12 +9,14 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.webmenu.dao.OrderDAO;
+import com.mycompany.webmenu.dao.TableDAO;
 import com.mycompany.webmenu.dto.OrderDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * @author nguye
@@ -37,29 +39,38 @@ public class OrderUserController extends HttpServlet {
         try {
             // Chuyển đổi JSON request thành đối tượng OrderDto
             OrderDto orderDto = objectMapper.readValue(request.getReader(), OrderDto.class);
-            System.out.println("orderDto: " + orderDto);
+            // Kiểm tra nếu TableId không null, lấy thông tin bàn từ TableDAO
+            if (orderDto.getTableId() != null) {
+                HttpSession session = request.getSession();
+                TableDAO tableDao = new TableDAO();
+                session.setAttribute("userSelectedTable", tableDao.getTableDetail(orderDto.getTableId()));
+            }
+
             // Tạo OrderDAO và gọi phương thức createOrder
             OrderDAO orderDao = new OrderDAO();
             boolean isOrderCreated = orderDao.createOrder(orderDto);
+
             // Thiết lập kiểu dữ liệu và mã hóa cho phản hồi
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            // Gửi phản hồi JSON tùy thuộc vào kết quả của createOrder
+
             if (isOrderCreated) {
-                // Trả về JSON cho trường hợp thành công
-                response.getWriter().write("{\"success\": true, \"message\": \"Order placed successfully\"}");
+                // Trả về trạng thái 200 OK và JSON cho trường hợp thành công
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"success\": true, \"status\": \"Order Placed\", \"message\": \"Order placed successfully\", \"orderId\": " + orderDto.getOrderId() + "}");
             } else {
-                // Trả về JSON cho trường hợp lỗi
-                response.getWriter().write("{\"success\": false, \"message\": \"Failed to place order\"}");
+                // Trả về trạng thái 400 Bad Request và JSON cho trường hợp thất bại
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"success\": false, \"status\": \"Order Failed\", \"message\": \"Failed to place order. Possible reasons: insufficient stock, invalid table selection, or database error.\"}");
             }
         } catch (Exception e) {
             e.printStackTrace();
             // Thiết lập mã trạng thái HTTP là 500 nếu có lỗi xảy ra
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            // Gửi phản hồi JSON cho trường hợp lỗi ngoại lệ
+            // Phản hồi JSON cho trường hợp lỗi ngoại lệ với trạng thái "Processing Error"
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while processing the order\"}");
+            response.getWriter().write("{\"success\": false, \"status\": \"Processing Error\", \"message\": \"An error occurred while processing the order\", \"error\": \"" + e.getMessage() + "\"}");
         }
     }
 }

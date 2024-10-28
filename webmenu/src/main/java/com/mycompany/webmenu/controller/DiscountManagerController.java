@@ -38,7 +38,7 @@ public class DiscountManagerController extends HttpServlet {
         switch (productAction) {
             case "discountListManager": {
                 int pageNo = 1; // Trang mặc định
-                int pageSize = 3; // Số sản phẩm trên mỗi trang
+                int pageSize = 10; // Số sản phẩm trên mỗi trang
                 // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
                 String pageParam = request.getParameter("page");
                 if (pageParam != null) {
@@ -142,7 +142,7 @@ public class DiscountManagerController extends HttpServlet {
         discountDTO.setQuantity(quantity);
         discountDTO.setRmQuantity(rmQuantity);
         Boolean isNewProduct = discountDTO.getId() == null ? true : false;
-
+        System.out.println("discountDTO " + discountDTO);
         DiscountDAO discountDAO = new DiscountDAO();
         Boolean isAdded = discountDAO.insertOrUpdateDiscount(discountDTO);
         if (isAdded) {

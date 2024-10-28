@@ -34,6 +34,7 @@ public class ViewProfileController extends HttpServlet {
             viewProfileAction = "profileActionUser";
         }
         UserDto user = (UserDto) session.getAttribute("user");
+        System.out.println("profileUser " + user);
         UserDAO userDao = new UserDAO();
         session.setAttribute("profileUser", userDao.getUserById(user.getUserId()));
         switch (viewProfileAction) {

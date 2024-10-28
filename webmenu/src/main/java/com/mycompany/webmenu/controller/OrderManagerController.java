@@ -6,7 +6,10 @@
 package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.OrderDAO;
@@ -33,11 +36,9 @@ public class OrderManagerController extends HttpServlet {
         if (productAction == null) {
             productAction = "orderListManager";
         }
+        OrderDAO orderDAO = new OrderDAO();
         switch (productAction) {
-            case "orderListManager": {
-                request.setAttribute("orderAction", "orderListManager");
-
-                OrderDAO orderDAO = new OrderDAO();
+            case "viewOrderListManager": {
                 int pageNo = 1; // Trang mặc định
                 int pageSize = 10; // Số sản phẩm trên mỗi trang
                 // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
@@ -45,19 +46,34 @@ public class OrderManagerController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize);
-                int totalProducts = orderDAO.getTotalOrderCount();
+                String pageSizeStr = request.getParameter("pageSize");
+                if (pageSizeStr != null) {
+                    pageSize = Integer.parseInt(pageSizeStr);
+                }
+                String userNameParam = request.getParameter("userName");
+                String userName = (userNameParam != null && !userNameParam.isEmpty() && !Objects.equals(userNameParam, "null")) ? userNameParam : null;
+                String orderStatusParam = request.getParameter("orderStatus");
+                Integer orderStatus = (orderStatusParam != null && !orderStatusParam.isEmpty() && !Objects.equals(orderStatusParam, "null")) ? Integer.parseInt(orderStatusParam) : null;
+                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize, userName, orderStatus);
+                int totalProducts = orderDAO.getTotalOrderCount(userName, orderStatus);
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                request.setAttribute("orders", categoryList);
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("currentPage", pageNo);
-                request.setAttribute("message", message);
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("items", categoryList);
+                result.put("totalPages", totalPages);
+                // Chuyển danh sách món ăn thành JSON
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(result);
+                // Trả về JSON cho client
+                response.getWriter().write(menuJson);
+                break;
+            }
+            case "orderListManager": {
                 request.getRequestDispatcher(Constants.LIST_ORDER_MANAGER).forward(request, response);
                 break;
             }
             case "detailOrderAdmin": {
                 Integer orderId = Integer.parseInt(request.getParameter("orderId"));
-                OrderDAO orderDAO = new OrderDAO();
                 OrderDto orderDetail = orderDAO.getOrderDetail(orderId);
                 request.setAttribute("orderDetail", orderDetail);
                 String orderDetailJson = new Gson().toJson(orderDetail.getOrderDetailDto());
@@ -68,7 +84,6 @@ public class OrderManagerController extends HttpServlet {
             case "orderListUser": {
                 request.setAttribute("orderAction", "orderListUser");
                 Integer userId = Integer.parseInt(request.getParameter("userId"));
-                OrderDAO orderDAO = new OrderDAO();
                 int pageNo = 1;
                 int pageSize = 10;
                 String pageParam = request.getParameter("page");
@@ -76,7 +91,6 @@ public class OrderManagerController extends HttpServlet {
                     pageNo = Integer.parseInt(pageParam);
                 }
                 List<OrderDto> categoryList = orderDAO.getListOrderUserManager(userId, pageNo, pageSize);
-                System.out.println("categoryList " + categoryList);
                 int totalProducts = orderDAO.getTotalOrderUserCount(userId);
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
                 request.setAttribute("userId", userId);
@@ -85,6 +99,43 @@ public class OrderManagerController extends HttpServlet {
                 request.setAttribute("currentPage", pageNo);
                 request.getRequestDispatcher(Constants.LIST_ORDER_MANAGER).forward(request, response);
                 break;
+            }
+            case "staffUpdateStatusOrder": {
+                try {
+                    // Lấy orderId và statusId từ request
+                    Integer orderId = Integer.parseInt(request.getParameter("orderId"));
+                    Integer statusId = Integer.parseInt(request.getParameter("statusId"));
+                    Integer tableId = Integer.parseInt(request.getParameter("tableId"));
+
+                    // Gọi phương thức cập nhật trạng thái đơn hàng
+                    Boolean isUpdated = orderDAO.updateStatusOrder(orderId, statusId, tableId);
+                    // Kiểm tra nếu cập nhật thành công
+                    if (isUpdated) {
+                        // Trả về phản hồi JSON cho client với thông báo thành công
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("{\"message\": \"Status updated successfully\", \"status\": \"success\"}");
+                    } else {
+                        // Trả về thông báo lỗi nếu cập nhật thất bại
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("{\"message\": \"Failed to update status\", \"status\": \"error\"}");
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Xử lý lỗi nếu orderId hoặc statusId không phải là số hợp lệ
+                    e.printStackTrace();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"message\": \"Invalid orderId or statusId\", \"status\": \"error\"}");
+                } catch (Exception e) {
+                    // Xử lý lỗi chung
+                    e.printStackTrace();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"message\": \"An error occurred\", \"status\": \"error\"}");
+                }
+                return;
             }
             default:
                 throw new AssertionError();

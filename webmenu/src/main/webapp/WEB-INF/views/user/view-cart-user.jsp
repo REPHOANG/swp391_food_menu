@@ -84,11 +84,16 @@
                     <input id="email" name="email" type="email"
                            style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
                 </label>
-
+                <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    Table
+                    <select class="form-control" id="table-selection"></select>
+                    <div class="error-message" id="table-error" style="color: red; font-size: 12px; display: none;">Please select a table.</div>
+                </label>
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Full Name
                     <input id="fullName" name="fullName" type="text"
                            style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
+                    <div class="error-message" id="name-error" style="color: red; font-size: 12px; display: none;">Full Name is required.</div>
                 </label>
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Order Note
@@ -192,7 +197,7 @@
 <script type="module" src="<c:url value="/assets/user/cart-local-storage.js"/>" defer></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
 <script src="<c:url value="/assets/user/apply-coupon.js"/>"></script>
-<script type="application/javascript">
+<script type="text/javascript">
     const user = {
         userId: '${user.userId}',
         roleId: '${user.roleId}',
@@ -201,7 +206,13 @@
         avatarUrl: ' ${user.avatarUrl}',
         fullName: '${user.fullName}',
     };
-    console.log("user " + user)
+    // Kiểm tra và khởi tạo userSelectedTable bằng EL
+    const userSelectedTable = {
+        tableId: '${userSelectedTable.tableId}',
+        tableName: '${userSelectedTable.tableName}',
+        status: '${userSelectedTable.status}',
+        capacity: '${userSelectedTable.capacity}'
+    }
     document.getElementById("userId").value = user.userId;
     document.getElementById("email").value = user.email;
     document.getElementById("fullName").value = user.fullName;

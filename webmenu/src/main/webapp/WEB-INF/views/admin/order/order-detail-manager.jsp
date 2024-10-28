@@ -1,6 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.mycompany.webmenu.enums.StatusOrderType" %>
+<%@ page import="com.mycompany.webmenu.dto.OrderDto" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%
+    // Lấy trạng thái hiện tại của đơn hàng từ orderDetail
+    OrderDto orderDetail = (OrderDto) request.getAttribute("orderDetail");
+    Integer currentStatus = orderDetail != null ? orderDetail.getOrderStatus() : null;
+%>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -165,7 +172,29 @@
                                                     <h4>Order Note</h4>
                                                     <textarea readonly>${orderDetail.orderNote}</textarea>
                                                 </div>
+                                                <div class="row g-4">
+                                                    <h4>Status Order</h4>
+                                                    <select class="form-select select-form-size" id="status-selection">
+                                                        <option disabled>Select Status</option>
+                                                        <%
+                                                            // Lặp qua các trạng thái trong enum và tạo các <option>
+                                                            for (StatusOrderType status : StatusOrderType.getStatusOptions()) {
+                                                                // Kiểm tra nếu trạng thái hiện tại khớp với trạng thái trong vòng lặp
+                                                                boolean isSelected = status.getId() == currentStatus;
+                                                        %>
+                                                        <option value="<%= status.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                                            <%= status.getName() %>
+                                                        </option>
+                                                        <%
+                                                            }
+                                                        %>
+                                                    </select>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="submit" class="btn btn-success" value="Save"
+                                                   onclick="saveStatus()">
                                         </div>
                                     </div>
                                 </div>
@@ -223,7 +252,9 @@
 <!-- sidebar effect -->
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
-<script type="application/javascript">
+<script type="text/javascript">
+    const orderId =${orderDetail.orderId};
+    const tableId =${orderDetail.tableId};
     const orderTotal = ${orderDetail.orderTotal};
     const orderDetailDtoList = JSON.parse('${orderDetailDtoList}');
     const orderDetails = []
@@ -245,6 +276,35 @@
     document.getElementById("total-price-product").textContent = formatCurrency(totalPriceProduct);
     document.getElementById("max-discount-value").textContent = formatCurrency(${orderDetail.maxDiscountValue});
     document.getElementById("total-price-order").textContent = formatCurrency(${orderDetail.orderTotal});
+
+    function saveStatus() {
+        // Lấy giá trị của statusId từ select'
+        const statusId = document.getElementById('status-selection').value;
+        console.log("statusId " + orderId + "-" + statusId)
+        const url = `/webmenu/OrderManagerController?orderAction=staffUpdateStatusOrder&orderId=` + orderId + `&statusId=` + statusId + `&tableId=` + tableId;
+        // Gửi yêu cầu fetch với phương thức POST để cập nhật dữ liệu
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            // Kiểm tra phản hồi thành công
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            // Xử lý dữ liệu trả về từ API
+            console.log("Response data:", data);
+            alert("Status updated successfully!");
+            location.reload();
+        }).catch(error => {
+            // Xử lý lỗi
+            console.error("Error updating status:", error);
+            alert("Failed to update status.");
+        });
+    }
 </script>
 </body>
 

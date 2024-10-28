@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.TableDAO;
 import com.mycompany.webmenu.dto.TableDto;
 import com.mycompany.webmenu.utils.Constants;
@@ -62,6 +63,13 @@ public class TableManagerController extends HttpServlet {
                 request.setAttribute("tableDTO", tableDao.getTableDetail(productId));
                 request.getRequestDispatcher(Constants.ADD_NEW_TABLE_JSP).forward(request, response);
                 break;
+            }
+            case "listSelectedTableUser": {
+                List<TableDto> listSelectedTableUser = tableDao.getListAllTable();
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(listSelectedTableUser);
+                response.getWriter().write(menuJson);
+                return;
             }
             default:
                 throw new AssertionError();
