@@ -1,6 +1,8 @@
-loadCoupons();
 let orderTotal = 0;
 let discountUser = null;
+let selectedTables = [];
+loadCoupons();
+loadTable()
 
 function loadCoupons() {
     const url = '/webmenu/DiscountManagerController?discountAction=discountUser';
@@ -19,6 +21,40 @@ function loadCoupons() {
             });
         })
         .catch(error => console.error('Error loading coupons:', error));
+}
+
+function loadTable() {
+    const url = '/webmenu/TableManagerController?tableAction=listSelectedTableUser';
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            return response.json();
+        })
+        .then(data => {
+            selectedTables = data;
+            populateTableDropdown()
+        })
+        .catch(error => console.error('Error loading tables:', error));
+}
+
+function populateTableDropdown() {
+    const tableSelect = document.getElementById("table-selection");
+    tableSelect.innerHTML = ''; // Xóa các tùy chọn hiện tại nếu có
+    selectedTables.forEach(table => {
+        if ((userSelectedTable && userSelectedTable.tableId == table.tableId) || table.status === 0) {
+            const option = document.createElement("option");
+            option.value = table.tableId;
+            option.textContent = `${table.tableName} - Capacity: ${table.capacity} - Status: ${table.status === 0 ? 'Available' : table.status === 1 ? 'In Use' : ''}`;
+            // // Kiểm tra nếu userSelectedTable tồn tại và có cùng tableId
+            if (userSelectedTable && userSelectedTable.tableId == table.tableId) {
+                option.selected = true; // Đặt tùy chọn này là 'selected' nếu có khớp
+            }
+            tableSelect.appendChild(option);
+        }
+    });
 }
 
 // Hàm xử lý khi nhấn nút Apply
@@ -89,6 +125,29 @@ function placeOrder() {
         return; // Thoát khỏi hàm nếu giỏ hàng rỗng
     }
 
+    // Lấy các giá trị cần kiểm tra
+    const tableId = document.getElementById("table-selection").value;
+    const fullName = document.getElementById("fullName").value.trim();
+    // Xóa thông báo lỗi cũ
+    document.getElementById("table-error").style.display = "none";
+    document.getElementById("name-error").style.display = "none";
+    // Biến kiểm soát lỗi
+    let hasError = false;
+    // Kiểm tra trường "Table"
+    if (!tableId) {
+        document.getElementById("table-error").style.display = "block";
+        hasError = true;
+    }
+    // Kiểm tra trường "Full Name"
+    if (!fullName) {
+        document.getElementById("name-error").style.display = "block";
+        hasError = true;
+    }
+    // Nếu có lỗi, ngăn không cho gửi đơn hàng
+    if (hasError) {
+        return;
+    }
+
     const orderDetails = []; // Khởi tạo mảng orderDetails để chứa chi tiết đơn hàng
     let totalPrice = 0; // Biến tổng giá trị đơn hàng
 
@@ -116,8 +175,6 @@ function placeOrder() {
         orderTotal = totalPrice; // Không giảm giá
     }
 
-    const tableId = null; // ID bàn, đặt là null nếu không có
-
     // Tạo đối tượng đơn hàng (orderDto) để gửi yêu cầu
     const orderDto = {
         orderId: null, // Thay bằng ID đơn hàng thực tế nếu có
@@ -126,7 +183,7 @@ function placeOrder() {
         discountId: (typeof discountUser !== "undefined" && discountUser !== null) ? discountUser.id : null, // ID mã giảm giá nếu có
         userName: document.getElementById("fullName").value, // Tên người dùng
         orderDate: new Date().toISOString(), // Ngày hiện tại
-        deliveryAddress: document.getElementById("email").value || null, // Địa chỉ giao hàng, dùng email nếu có
+        deliveryAddress: null, // Địa chỉ giao hàng, dùng email nếu có
         orderNote: document.getElementById("orderNote").value, // Ghi chú đơn hàng từ người dùng
         orderStatus: null, // Trạng thái đơn hàng mặc định, có thể chỉnh lại
         orderTotal: typeof orderTotal !== "undefined" ? orderTotal : 0, // Tổng giá trị đơn hàng
@@ -138,18 +195,36 @@ function placeOrder() {
     fetch('/webmenu/OrderUserController', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // Định dạng JSON
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(orderDto) // Chuyển đổi đối tượng orderDto thành chuỗi JSON
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Đặt hàng thành công!"); // Thông báo khi đặt hàng thành công
+        body: JSON.stringify(orderDto)
+    }).then(response => {
+        if (!response.ok) {
+            // Kiểm tra mã trạng thái HTTP nếu có lỗi
+            if (response.status === 400) {
+                throw new Error("Bad Request: Đặt hàng thất bại do dữ liệu không hợp lệ.");
+            } else if (response.status === 500) {
+                throw new Error("Internal Server Error: Có sự cố khi xử lý đơn hàng.");
             } else {
-                alert("Đặt hàng thất bại: " + data.message); // Thông báo lỗi khi đặt hàng thất bại
+                throw new Error("Có sự cố không xác định xảy ra.");
             }
-        })
-        .catch(error => console.error("Lỗi khi gửi đơn hàng:", error)); // Xử lý lỗi khi gửi yêu cầu
-    // Thêm các logic bổ sung cho việc xử lý đơn hàng ở đây nếu cần...
+        }
+        // Nếu phản hồi thành công, chuyển đổi sang JSON
+        return response.json();
+    }).then(data => {
+        if (data.success) {
+            alert("Đặt hàng thành công!"); // Thông báo khi đặt hàng thành công
+            localStorage.removeItem('cart')
+            if (userSelectedTable && userSelectedTable.tableId) {
+                window.location.href = "/webmenu/MainController?tableId=" + userSelectedTable.tableId;
+            } else {
+                window.location.href = "/webmenu/MainController";
+            }
+        } else {
+            alert("Đặt hàng thất bại: " + data.message); // Thông báo lỗi khi đặt hàng thất bại
+        }
+    }).catch(error => {
+        console.error("Lỗi khi gửi đơn hàng:", error);
+        alert(error.message); // Hiển thị thông báo lỗi chi tiết cho người dùng
+    });
 }

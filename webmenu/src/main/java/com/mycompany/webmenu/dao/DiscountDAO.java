@@ -4,6 +4,7 @@ import com.mycompany.webmenu.dto.DiscountDto;
 import com.mycompany.webmenu.utils.DBUtil;
 import lombok.SneakyThrows;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -141,6 +142,7 @@ public class DiscountDAO {
             if (discountDTO.getId() == null) {
                 // Thực hiện thêm mới
                 stmt = conn.prepareStatement(queryInsert);
+                discountDTO.setDiscountCode(this.generateDiscountCode());
                 this.setDiscountValues(stmt, discountDTO);
                 stmt.setInt(10, 0);
             } else {
@@ -157,10 +159,21 @@ public class DiscountDAO {
             conn.commit(); // Commit transaction
             stmt.close();
             return true; // Thành công
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e);
             return false;
         }
+    }
+
+    public static String generateDiscountCode() {
+        StringBuilder discountCode = new StringBuilder(8);
+        SecureRandom random = new SecureRandom();
+        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            discountCode.append(CHARACTERS.charAt(index));
+        }
+        return discountCode.toString();
     }
 
     // Hàm để thiết lập giá trị cho PreparedStatement

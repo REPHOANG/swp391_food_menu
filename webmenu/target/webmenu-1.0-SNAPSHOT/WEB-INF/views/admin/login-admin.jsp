@@ -137,7 +137,15 @@
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
+<script type="text/javascript">
+    const userSelectedTable = {
+        tableId: '${userSelectedTable.tableId}',
+        tableName: '${userSelectedTable.tableName}',
+        status: '${userSelectedTable.status}',
+        capacity: '${userSelectedTable.capacity}'
+    }
+    console.log("userSelectedTable " + userSelectedTable.tableId)
+
     // Hàm để giải mã token JWT
     function decodeJwtResponse(token) {
         var base64Url = token.split('.')[1];
@@ -151,16 +159,53 @@
     function loginByGoogle(response) {
         const responsePayload = decodeJwtResponse(response.credential);
         const email = responsePayload.email;
-        const avatar = responsePayload.picture;
         const username = responsePayload.name;
-        fetch("<c:url value="/MainController?btnAction=user&userAction=login&email="/>" + email + "&picture=" + avatar + "&username=" + username, {
-            method: "GET"
-        }).then(res =>
-            res.json()
-        ).then(res => {
-                window.location.href = "/webmenu/MainController?tableId=${tableId}";
+        console.log("loginByGoogle " + email + " - " + username)
+        const userDto = {
+            userId: null,
+            roleId: null,
+            email: email,
+            phone: null,
+            birthDate: null,
+            address: null,
+            avatarUrl: null,
+            fullName: username,
+            password: null,
+        }
+        fetch('/webmenu/LoginWebController?loginAction=loginGoogle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userDto)
+        }).then(response => {
+            if (!response.ok) {
+                // Kiểm tra mã trạng thái HTTP nếu có lỗi
+                if (response.status === 400) {
+                    throw new Error("Bad Request: Đặt hàng thất bại do dữ liệu không hợp lệ.");
+                } else if (response.status === 500) {
+                    throw new Error("Internal Server Error: Có sự cố khi xử lý đơn hàng.");
+                } else {
+                    throw new Error("Có sự cố không xác định xảy ra.");
+                }
             }
-        )
+            // Nếu phản hồi thành công, chuyển đổi sang JSON
+            return response.json();
+        }).then(data => {
+            // if (data.success) {
+            //     alert("Đặt hàng thành công!"); // Thông báo khi đặt hàng thành công
+            if (userSelectedTable && userSelectedTable.tableId) {
+                window.location.href = "/webmenu/MainController?tableId=" + userSelectedTable.tableId;
+            } else {
+                window.location.href = "/webmenu/MainController";
+            }
+            // } else {
+            //     alert("Đặt hàng thất bại: " + data.message); // Thông báo lỗi khi đặt hàng thất bại
+            // }
+        }).catch(error => {
+            console.error("Lỗi khi gửi đơn hàng:", error);
+            alert(error.message); // Hiển thị thông báo lỗi chi tiết cho người dùng
+        });
     }
 </script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>

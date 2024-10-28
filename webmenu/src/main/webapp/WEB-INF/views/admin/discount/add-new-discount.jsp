@@ -98,11 +98,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="mb-4 row align-items-center">
+                                        <div class="mb-4 row align-items-center" id="discountCodeContainer">
                                             <label class="form-label-title col-sm-3 mb-0">Discount Code</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" placeholder="Discount Code"
-                                                       name="discountCode" value="${discount.discountCode}">
+                                                       name="discountCode" value="${discount.discountCode}" readonly>
                                             </div>
                                         </div>
 
@@ -169,7 +169,7 @@
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="number"
                                                        placeholder="Remaining Quantity" name="rmQuantity"
-                                                       value="${discount.rmQuantity}">
+                                                       value="${discount.rmQuantity}" readonly>
                                             </div>
                                         </div>
 
@@ -243,11 +243,18 @@
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
-<script>
+<script type="text/javascript">
+    // Giả sử `discount.discountCode` là giá trị được truyền từ server-side vào
+    const discountCodeValue = "${discount.discountCode}";
+    // Kiểm tra và ẩn phần tử nếu `discountCode` không có giá trị
+    if (!discountCodeValue || discountCodeValue.trim() === "") {
+        document.getElementById("discountCodeContainer").style.display = "none";
+    }
+
     document.querySelector('form').addEventListener('submit', function (event) {
         // Mảng chứa tên các trường input cần kiểm tra
         const inputNames = ['name', 'discountPercent', 'maxDiscountValue', 'minDiscountValue',
-            'startDate', 'endDate', 'quantity', 'rmQuantity'];
+            'startDate', 'endDate', 'quantity'];
         let isValid = true; // Biến theo dõi trạng thái hợp lệ của form
         // Lặp qua tất cả các input trong form
         document.querySelectorAll('input').forEach(function (input) {

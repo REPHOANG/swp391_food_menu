@@ -37,6 +37,29 @@ public class TableDAO {
         }
     }
 
+    public List<TableDto> getListAllTable() {
+        String sql = "SELECT x1.table_id AS tableId, x1.table_name AS tableName, x1.status, x1.capacity " +
+                "FROM Tables x1 " +
+                "ORDER BY x1.table_id DESC";
+        List<TableDto> list = new ArrayList<>();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                TableDto dto = new TableDto();
+                dto.setTableId(rs.getInt("tableId"));         // Thiết lập ID của bàn
+                dto.setTableName(rs.getString("tableName"));  // Thiết lập tên bàn
+                dto.setStatus(rs.getInt("status"));           // Thiết lập trạng thái bàn
+                dto.setCapacity(rs.getInt("capacity"));       // Thiết lập sức chứa bàn
+                list.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // Có thể thay bằng log.error nếu bạn sử dụng framework logging
+            System.out.println(e);
+        }
+        return list;
+    }
+
     @SneakyThrows
     public int getTotalTableCount() {
         String query = "SELECT COUNT(table_id) AS total FROM Tables";

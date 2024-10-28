@@ -27,4 +27,9 @@ public enum StatusOrderType {
         }
         return "Unknown"; // default if no match found
     }
+
+    // Phương thức để lấy danh sách trạng thái
+    public static StatusOrderType[] getStatusOptions() {
+        return values();
+    }
 }

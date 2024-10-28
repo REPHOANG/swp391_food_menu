@@ -6,7 +6,6 @@ import lombok.Getter;
 public enum StatusTablesType {
     AVAILABLE(0, "Available"), //Còn trống
     IN_USE(1, "In Use"),//Đang sử dụng
-    RESERVED(2, "Reserved"),//Đã đặt trước
     ;
     private final Integer id;
     private final String name;

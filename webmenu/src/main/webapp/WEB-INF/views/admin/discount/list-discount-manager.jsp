@@ -100,7 +100,7 @@
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>Quantity</th>
-                                                <th>Remaining Quantity</th>
+<%--                                                <th>Remaining Quantity</th>--%>
                                                 <th>Option</th>
                                             </tr>
                                             </thead>
@@ -115,7 +115,7 @@
                                                     <td>${discount.startDate}</td>
                                                     <td>${discount.endDate}</td>
                                                     <td>${discount.quantity}</td>
-                                                    <td>${discount.rmQuantity}</td>
+<%--                                                    <td>${discount.rmQuantity}</td>--%>
                                                     <td>
                                                         <ul>
                                                             <li>
