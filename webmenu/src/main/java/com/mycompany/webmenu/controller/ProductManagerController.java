@@ -35,9 +35,9 @@ public class ProductManagerController extends HttpServlet {
         if (productAction == null) {
             productAction = "productListManager";
         }
+        ProductDAO productDAO = new ProductDAO();
         switch (productAction) {
             case "productListManager": {
-                ProductDAO productDAO = new ProductDAO();
                 int pageNo = 1; // Trang mặc định
                 int pageSize = 5; // Số sản phẩm trên mỗi trang
                 // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
@@ -70,13 +70,18 @@ public class ProductManagerController extends HttpServlet {
             }
             case "detailProduct": {
                 Integer productId = Integer.parseInt(request.getParameter("productId"));
-                ProductDAO productDAO = new ProductDAO();
                 CategoryDAO categoryDao = new CategoryDAO();
                 request.setAttribute("listCategory", categoryDao.getListAllCategory());
                 ProductDto productDto = productDAO.getProductDetail(productId);
                 request.setAttribute("product", productDAO.getProductDetail(productId));
                 request.setAttribute("imgs", productDto != null ? productDto.getImgs() : new ArrayList<>());
                 request.getRequestDispatcher(Constants.ADD_NEW_PRODUCT_JSP).forward(request, response);
+                break;
+            }
+            case "productDetailUser": {
+                Integer productId = Integer.parseInt(request.getParameter("productId"));
+                request.setAttribute("product", productDAO.getProductDetail(productId));
+                request.getRequestDispatcher(Constants.PRODUCT_DETAIL_USER_JSP).forward(request, response);
                 break;
             }
             default:

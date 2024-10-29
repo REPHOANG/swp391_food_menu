@@ -905,8 +905,9 @@
 <script src="<c:url value="/assets/user/js/custom-wow.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
-<script type="module" src="<c:url value="/assets/user/load-products.js"/>"></script>
+<script src="<c:url value="/assets/user/cart-local-storage.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
+<script src="<c:url value="/assets/user/load-products.js"/>"></script>
 <script type="text/javascript">
     const userSelectedTable = {
         tableId: '${userSelectedTable.tableId}',
@@ -914,6 +915,7 @@
         status: '${userSelectedTable.status}',
         capacity: '${userSelectedTable.capacity}'
     }
+    viewCartHeaderDisplay()
 </script>
 </body>
 

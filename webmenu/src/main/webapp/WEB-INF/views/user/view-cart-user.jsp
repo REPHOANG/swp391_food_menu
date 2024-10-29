@@ -87,13 +87,17 @@
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Table
                     <select class="form-control" id="table-selection"></select>
-                    <div class="error-message" id="table-error" style="color: red; font-size: 12px; display: none;">Please select a table.</div>
+                    <div class="error-message" id="table-error" style="color: red; font-size: 12px; display: none;">
+                        Please select a table.
+                    </div>
                 </label>
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Full Name
                     <input id="fullName" name="fullName" type="text"
                            style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
-                    <div class="error-message" id="name-error" style="color: red; font-size: 12px; display: none;">Full Name is required.</div>
+                    <div class="error-message" id="name-error" style="color: red; font-size: 12px; display: none;">Full
+                        Name is required.
+                    </div>
                 </label>
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Order Note
@@ -106,7 +110,7 @@
                 <div class="cart-table">
                     <div class="table-responsive-xl">
                         <table class="table">
-                            <tbody>
+                            <tbody id="table-cart-user">
                             </tbody>
                         </table>
                     </div>
@@ -143,7 +147,7 @@
                     <ul class="summery-total">
                         <li class="list-total border-top-0">
                             <h4>Total</h4>
-                            <h4 class="price theme-color" id="price-order">$132.58</h4>
+                            <h4 class="price theme-color" id="price-order"></h4>
                         </li>
                     </ul>
 
@@ -194,9 +198,10 @@
 <script src="<c:url value="/assets/user/js/quantity.js"/>"></script>
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
-<script type="module" src="<c:url value="/assets/user/cart-local-storage.js"/>" defer></script>
+<script src="<c:url value="/assets/user/cart-local-storage.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
 <script src="<c:url value="/assets/user/apply-coupon.js"/>"></script>
+<script src="<c:url value="/assets/user/view-cart-user.js"/>"></script>
 <script type="text/javascript">
     const user = {
         userId: '${user.userId}',
@@ -216,6 +221,7 @@
     document.getElementById("userId").value = user.userId;
     document.getElementById("email").value = user.email;
     document.getElementById("fullName").value = user.fullName;
+    viewCartHeaderDisplay();
 </script>
 </body>
 

@@ -45,4 +45,5 @@ public class Constants {
     public final static String VIEW_PROFILE_USER_JSP = "WEB-INF/views/user/view-profile-user.jsp";
     public final static String VIEW_PROFILE_ADMIN_JSP = "WEB-INF/views/admin/view-profile-admin.jsp";
     public final static String VIEW_CART_JSP = "WEB-INF/views/user/view-cart-user.jsp";
+    public final static String PRODUCT_DETAIL_USER_JSP = "WEB-INF/views/user/product-detail.jsp";
 }

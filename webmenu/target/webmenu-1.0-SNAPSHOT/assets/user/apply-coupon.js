@@ -117,7 +117,7 @@ function formatVND(price) {
 
 function placeOrder() {
     // Lấy các sản phẩm trong giỏ hàng từ localStorage
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = getCart();
 
     // Kiểm tra nếu giỏ hàng rỗng
     if (cart.length === 0) {

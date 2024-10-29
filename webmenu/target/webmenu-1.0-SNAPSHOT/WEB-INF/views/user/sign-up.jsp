@@ -136,6 +136,7 @@
 
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
+<script src="<c:url value="/assets/user/cart-local-storage.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
 </body>
 
