@@ -98,10 +98,10 @@
                                         <li class="product-box-contain">
                                             <a href="<c:url value="/SignUpUserController"></c:url>">Register</a>
                                         </li>
+                                        <li class="product-box-contain">
+                                            <a href="<c:url value="/ForgotPasswordController"></c:url>">Forgot Password</a>
+                                        </li>
                                     </c:if>
-                                    <li class="product-box-contain">
-                                        <a href="<c:url value="/ForgotPasswordController"></c:url>">Forgot Password</a>
-                                    </li>
                                     <c:if test="${user != null}">
                                         <li class="product-box-contain">
                                             <a href="<c:url value="/ViewProfileController?viewProfileAction=profileActionUser"></c:url>">Profile</a>
