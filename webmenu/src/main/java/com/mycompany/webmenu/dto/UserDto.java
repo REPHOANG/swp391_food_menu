@@ -17,4 +17,5 @@ public class UserDto {
     private String avatarUrl;     // URL ảnh đại diện của người dùng
     private String fullName;      // Họ và tên của người dùng
     private String password;      // Mật khẩu của người dùng
+    private Double accumulatedPoints;
 }

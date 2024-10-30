@@ -179,8 +179,10 @@ function placeOrder() {
     const orderDto = {
         orderId: null, // Thay bằng ID đơn hàng thực tế nếu có
         tableId: typeof tableId !== "undefined" ? tableId : null, // Kiểm tra tableId có xác định, nếu không đặt là null
+        tableName: null,
         userId: document.getElementById("userId").value ? parseInt(document.getElementById("userId").value) : null, // Lấy userId nếu có
         discountId: (typeof discountUser !== "undefined" && discountUser !== null) ? discountUser.id : null, // ID mã giảm giá nếu có
+        discountCode: null,
         userName: document.getElementById("fullName").value, // Tên người dùng
         orderDate: new Date().toISOString(), // Ngày hiện tại
         deliveryAddress: null, // Địa chỉ giao hàng, dùng email nếu có

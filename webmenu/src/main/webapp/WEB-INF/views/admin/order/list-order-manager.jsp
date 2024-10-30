@@ -81,6 +81,7 @@
                                 <div class="title-header option-title d-sm-flex d-block">
                                     <h5>Orders List</h5>
                                     <div>
+                                        <input type="text" value="${userId}" id="data-user-id" style="display: none;">
                                         <p>Search : <input type="search" id="search" class="" placeholder>
                                         </p>
                                     </div>
@@ -226,6 +227,7 @@
     let maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
     let userName = null;
     let orderStatus = document.getElementById("status-selection").value;
+    let userId = document.getElementById("data-user-id").value;
     loadOrdersList(currentPage)
     handleSearchInput();
     handleStatusSelection();
@@ -240,6 +242,10 @@
         // Chỉ thêm orderStatus vào URL nếu nó có giá trị
         if (orderStatus) {
             url += `&orderStatus=` + orderStatus;
+        }
+        // Chỉ thêm userId vào URL nếu nó có giá trị
+        if (userId) {
+            url += `&userId=` + userId;
         }
         console.log("loadOrdersList url " + url);
         fetch(url)

@@ -15,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDto {
     private Integer orderId;           // ID đơn hàng, tương ứng với order_id trong bảng
-    private Integer tableId;            // ID bàn, tương ứng với table_id trong bảng
+    private Integer tableId;           // ID bàn, tương ứng với table_id trong bảng
+    private String tableName;          // name bàn, tương ứng với table_id trong bảng
     private Integer userId;             // ID người dùng, tương ứng với user_id trong bảng
     private Integer discountId;         // ID mã giảm giá, tương ứng với discount_id trong bảng
     private String userName;            // Tên người dùng, tương ứng với user_name trong bảng

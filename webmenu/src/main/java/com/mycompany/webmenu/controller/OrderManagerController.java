@@ -52,10 +52,18 @@ public class OrderManagerController extends HttpServlet {
                 }
                 String userNameParam = request.getParameter("userName");
                 String userName = (userNameParam != null && !userNameParam.isEmpty() && !Objects.equals(userNameParam, "null")) ? userNameParam : null;
+
                 String orderStatusParam = request.getParameter("orderStatus");
-                Integer orderStatus = (orderStatusParam != null && !orderStatusParam.isEmpty() && !Objects.equals(orderStatusParam, "null")) ? Integer.parseInt(orderStatusParam) : null;
-                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize, userName, orderStatus);
-                int totalProducts = orderDAO.getTotalOrderCount(userName, orderStatus);
+                Integer orderStatus = (orderStatusParam != null && !orderStatusParam.isEmpty() && !Objects.equals(orderStatusParam, "null"))
+                        ? Integer.parseInt(orderStatusParam) : null;
+
+                String userIdParam = request.getParameter("userId");
+                Integer userId = (userIdParam != null && !userIdParam.isEmpty() && !Objects.equals(userIdParam, "null"))
+                        ? Integer.parseInt(userIdParam) : null;
+
+
+                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize, userName, orderStatus, userId);
+                int totalProducts = orderDAO.getTotalOrderCount(userName, orderStatus, userId);
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 
                 Map<String, Object> result = new HashMap<>();
@@ -69,6 +77,12 @@ public class OrderManagerController extends HttpServlet {
                 break;
             }
             case "orderListManager": {
+                String userId = request.getParameter("userId");
+                if (userId != null) {
+                    request.setAttribute("userId", Integer.parseInt(userId));
+                } else {
+                    request.setAttribute("userId", null);
+                }
                 request.getRequestDispatcher(Constants.LIST_ORDER_MANAGER).forward(request, response);
                 break;
             }
@@ -81,23 +95,17 @@ public class OrderManagerController extends HttpServlet {
                 request.getRequestDispatcher(Constants.ORDER_DETAIL_MANAGER).forward(request, response);
                 break;
             }
-            case "orderListUser": {
-                request.setAttribute("orderAction", "orderListUser");
-                Integer userId = Integer.parseInt(request.getParameter("userId"));
-                int pageNo = 1;
-                int pageSize = 10;
-                String pageParam = request.getParameter("page");
-                if (pageParam != null) {
-                    pageNo = Integer.parseInt(pageParam);
-                }
-                List<OrderDto> categoryList = orderDAO.getListOrderUserManager(userId, pageNo, pageSize);
-                int totalProducts = orderDAO.getTotalOrderUserCount(userId);
-                int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                request.setAttribute("userId", userId);
-                request.setAttribute("orders", categoryList);
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("currentPage", pageNo);
-                request.getRequestDispatcher(Constants.LIST_ORDER_MANAGER).forward(request, response);
+            case "detailOrderUser": {
+                Integer orderId = Integer.parseInt(request.getParameter("orderId"));
+                OrderDto orderDetail = orderDAO.getOrderDetail(orderId);
+                request.setAttribute("orderDetail", orderDetail);
+                String orderDetailJson = new Gson().toJson(orderDetail.getOrderDetailDto());
+                request.setAttribute("orderDetailDtoList", orderDetailJson);
+                request.getRequestDispatcher(Constants.ORDER_DETAIL_USER_JSP).forward(request, response);
+                break;
+            }
+            case "orderHistoryUser": {
+                request.getRequestDispatcher(Constants.ORDER_HISTORY_USER_JSP).forward(request, response);
                 break;
             }
             case "staffUpdateStatusOrder": {

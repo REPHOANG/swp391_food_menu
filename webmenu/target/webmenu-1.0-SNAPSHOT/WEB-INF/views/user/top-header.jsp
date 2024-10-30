@@ -99,10 +99,13 @@
                                             <a href="<c:url value="/SignUpUserController"></c:url>">Register</a>
                                         </li>
                                         <li class="product-box-contain">
-                                            <a href="<c:url value="/ForgotPasswordController"></c:url>">Forgot Password</a>
+                                            <a href="<c:url value="/ForgotPasswordController"></c:url>">Forgot
+                                                Password</a>
                                         </li>
                                     </c:if>
                                     <c:if test="${user != null}">
+                                        <h6>Points <c:if
+                                                test="${user != null}">: ${user.accumulatedPoints}</c:if></h6>
                                         <li class="product-box-contain">
                                             <a href="<c:url value="/ViewProfileController?viewProfileAction=profileActionUser"></c:url>">Profile</a>
                                         </li>

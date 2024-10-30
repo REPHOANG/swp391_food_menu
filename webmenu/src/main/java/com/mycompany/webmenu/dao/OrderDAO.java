@@ -16,18 +16,19 @@ import java.util.List;
 public class OrderDAO {
 
     @SneakyThrows
-    public List<OrderDto> getListOrderManager(int page, int pageSize, String userName, Integer orderStatus) {
+    public List<OrderDto> getListOrderManager(int page, int pageSize, String userName, Integer orderStatus, Integer userId) {
         int offset = (page - 1) * pageSize;
 
         // Xây dựng câu truy vấn SQL động
         StringBuilder sql = new StringBuilder("SELECT x1.order_id AS orderId, x1.user_id AS userId, ")
                 .append("COALESCE(x2.full_name, x1.user_name) AS userName, ")
-                .append("x1.table_id AS tableId, x1.discount_id AS discountId, ")
+                .append("x1.table_id AS tableId,x3.table_name AS tableName, x1.discount_id AS discountId, ")
                 .append("x1.order_date AS orderDate, x1.order_status AS orderStatus, ")
                 .append("x1.delivery_address AS deliveryAddress, x1.order_note AS orderNote, ")
                 .append("x1.order_total AS orderTotal, x1.shipping_fee AS shippingFee ")
                 .append("FROM Orders x1 ")
                 .append("LEFT JOIN Users x2 ON x2.user_id = x1.user_id ")
+                .append("LEFT JOIN Tables x3 ON x3.table_id = x1.table_id ")
                 .append("WHERE 1=1 ");
 
         // Chỉ thêm điều kiện tìm kiếm khi có giá trị tương ứng
@@ -36,6 +37,9 @@ public class OrderDAO {
         }
         if (orderStatus != null) {
             sql.append("AND x1.order_status = ? ");
+        }
+        if (userId != null) {
+            sql.append("AND x1.user_id = ? "); // Thêm điều kiện tìm kiếm cho userId
         }
 
         // Thêm điều kiện phân trang
@@ -54,6 +58,9 @@ public class OrderDAO {
             if (orderStatus != null) {
                 stm.setInt(paramIndex++, orderStatus);
             }
+            if (userId != null) {
+                stm.setInt(paramIndex++, userId); // Thiết lập giá trị cho userId
+            }
 
             // Thiết lập giá trị LIMIT và OFFSET cho phân trang
             stm.setInt(paramIndex++, offset); // OFFSET cho trang hiện tại
@@ -70,6 +77,7 @@ public class OrderDAO {
                     dto.setUserId(rs.getInt("userId"));
                     dto.setUserName(rs.getString("userName"));
                     dto.setTableId(rs.getInt("tableId"));
+                    dto.setTableName(rs.getString("tableName"));
                     dto.setDiscountId(rs.getInt("discountId"));
                     dto.setOrderDate(rs.getDate("orderDate"));
                     dto.setOrderStatus(rs.getInt("orderStatus"));
@@ -90,7 +98,7 @@ public class OrderDAO {
         }
     }
 
-    public int getTotalOrderCount(String userName, Integer orderStatus) {
+    public int getTotalOrderCount(String userName, Integer orderStatus, Integer userId) {
         StringBuilder query = new StringBuilder("SELECT COUNT(x1.order_id) AS total ")
                 .append("FROM Orders x1 ")
                 .append("LEFT JOIN Users x2 ON x2.user_id = x1.user_id ")
@@ -103,16 +111,25 @@ public class OrderDAO {
         if (orderStatus != null) {
             query.append("AND x1.order_status = ? ");
         }
+        if (userId != null) {
+            query.append("AND x1.user_id = ? "); // Thêm điều kiện tìm kiếm cho userId
+        }
+
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
             int paramIndex = 1;
+
             // Thiết lập tham số cho câu lệnh SQL
             if (userName != null && !userName.isEmpty()) {
                 stmt.setString(paramIndex++, "%" + userName + "%"); // Sử dụng LIKE với ký tự `%`
             }
             if (orderStatus != null) {
-                stmt.setInt(paramIndex, orderStatus);
+                stmt.setInt(paramIndex++, orderStatus); // Cập nhật paramIndex++
             }
+            if (userId != null) {
+                stmt.setInt(paramIndex++, userId); // Thiết lập giá trị cho userId
+            }
+
             // Thực thi truy vấn và trả về tổng số bản ghi
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -126,75 +143,9 @@ public class OrderDAO {
     }
 
     @SneakyThrows
-    public List<OrderDto> getListOrderUserManager(int userId, int page, int pageSize) {
-        int offset = (page - 1) * pageSize;
-        String sql = "SELECT x1.order_id AS orderId, x1.user_id AS userId, " +
-                "COALESCE(x2.full_name, x1.user_name) AS userName, " +
-                "x1.table_id AS tableId, x1.discount_id AS discountId, " +
-                "x1.order_date AS orderDate, x1.order_status AS orderStatus, " +
-                "x1.delivery_address AS deliveryAddress, x1.order_note AS orderNote, " +
-                "x1.order_total AS orderTotal, x1.shipping_fee AS shippingFee " +
-                "FROM Orders x1 " +
-                "LEFT JOIN Users x2 ON x2.user_id = x1.user_id " +
-                "WHERE x1.user_id = ? " +
-                "ORDER BY x1.order_date DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-
-            // Thiết lập tham số cho câu lệnh SQL
-            stm.setInt(1, userId);
-            stm.setInt(2, offset);
-            stm.setInt(3, pageSize);
-
-            try (ResultSet rs = stm.executeQuery()) {
-                List<OrderDto> list = new ArrayList<>();
-
-                // Lặp qua kết quả truy vấn
-                while (rs.next()) {
-                    OrderDto dto = new OrderDto();
-                    dto.setOrderId(rs.getInt("orderId"));                 // ID đơn hàng
-                    dto.setUserId(rs.getInt("userId"));                   // ID người dùng
-                    dto.setUserName(rs.getString("userName"));            // Tên người dùng hoặc tên từ user_name trong Orders
-                    dto.setTableId(rs.getInt("tableId"));                 // ID bàn
-                    dto.setDiscountId(rs.getInt("discountId"));           // ID mã giảm giá
-                    dto.setOrderDate(rs.getDate("orderDate"));            // Ngày đặt hàng
-                    dto.setOrderStatus(rs.getInt("orderStatus"));         // Trạng thái đơn hàng
-                    dto.setDeliveryAddress(rs.getString("deliveryAddress")); // Địa chỉ giao hàng
-                    dto.setOrderNote(rs.getString("orderNote"));          // Ghi chú cho đơn hàng
-                    dto.setOrderTotal(rs.getDouble("orderTotal"));        // Tổng tiền của đơn hàng
-                    dto.setShippingFee(rs.getDouble("shippingFee"));      // Phí vận chuyển
-
-                    // Thêm đối tượng OrderDTO vào danh sách
-                    list.add(dto);
-                }
-                return list; // Trả về danh sách đơn hàng
-            }
-        } catch (SQLException e) {
-            // In ra lỗi SQL để gỡ lỗi
-            System.err.println("SQL error: " + e.getMessage());
-            return new ArrayList<>(); // Trả về danh sách rỗng trong trường hợp có lỗi
-        }
-    }
-
-    @SneakyThrows
-    public int getTotalOrderUserCount(Integer userId) {
-        String query = "select count(order_id) as total from Orders where user_id = ?";
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query);
-        stmt.setInt(1, userId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("total");
-        }
-        return 0;
-    }
-
-    @SneakyThrows
     public OrderDto getOrderDetail(Integer orderId) {
         String sql = "SELECT x1.order_id AS orderId, x1.user_id AS userId, " +
-                "x1.table_id AS tableId, x1.discount_id AS discountId, " +
+                "x1.table_id AS tableId,x4.table_name AS tableName, x1.discount_id AS discountId, " +
                 "x1.order_date AS orderDate, x1.order_status AS orderStatus, " +
                 "x1.delivery_address AS deliveryAddress, x1.order_note AS orderNote, " +
                 "x1.order_total AS orderTotal, x1.shipping_fee AS shippingFee, " +
@@ -203,6 +154,7 @@ public class OrderDAO {
                 "FROM Orders x1 " +
                 "LEFT JOIN Users x2 ON x2.user_id = x1.user_id " +
                 "LEFT JOIN Discounts x3 ON x3.discount_id = x1.discount_id " +
+                "LEFT JOIN Tables x4 ON x4.table_id = x1.table_id " +
                 "WHERE x1.order_id = ?";
 
         try (Connection conn = DBUtil.getConnection();
@@ -216,6 +168,7 @@ public class OrderDAO {
                     orderDto.setUserId(rs.getInt("userId"));                  // ID người dùng
                     orderDto.setUserName(rs.getString("userName"));           // Tên người dùng hoặc từ user_name trong Orders
                     orderDto.setTableId(rs.getInt("tableId"));                // ID bàn
+                    orderDto.setTableName(rs.getString("tableName"));                // Name bàn
                     orderDto.setDiscountId(rs.getInt("discountId"));          // ID mã giảm giá
                     orderDto.setOrderDate(rs.getDate("orderDate"));           // Ngày đặt hàng
                     orderDto.setOrderStatus(rs.getInt("orderStatus"));        // Trạng thái đơn hàng
@@ -284,9 +237,10 @@ public class OrderDAO {
             int rowsAffected = statement.executeUpdate();
             if (status == StatusOrderType.TABLE_CLEARED.getId()) {
                 TableDAO tableDAO = new TableDAO();
-                System.out.println("tableId " + tableId);
                 tableDAO.updateStatusTable(tableId, StatusTablesType.AVAILABLE.getId());
             }
+            OrderDto dto = this.getOrderDetail(orderId);
+            this.updateAccumulatedPoints(dto.getUserId());
             // Check if the update was successful
             if (rowsAffected > 0) {
                 System.out.println("Order status updated successfully.");
@@ -307,6 +261,27 @@ public class OrderDAO {
             } catch (SQLException e) {
                 System.out.println("Failed to close resources: " + e.getMessage());
             }
+        }
+    }
+
+    public void updateAccumulatedPoints(Integer userId) {
+        String updateQuery = "UPDATE Users " +
+                "SET accumulated_points = COALESCE((SELECT SUM(x1.order_total) " +
+                "FROM Orders x1 " +
+                "WHERE x1.user_id = ? " +
+                "AND x1.order_status IN (4, 5, 6) " +
+                "GROUP BY x1.user_id), 0) " +
+                "WHERE user_id = ?";
+
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            // Thiết lập giá trị cho các tham số trong câu lệnh SQL
+            preparedStatement.setInt(1, userId); // Tham số đầu tiên cho truy vấn con
+            preparedStatement.setInt(2, userId); // Tham số thứ hai cho mệnh đề WHERE
+            // Thực thi lệnh cập nhật
+            int rowsUpdated = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

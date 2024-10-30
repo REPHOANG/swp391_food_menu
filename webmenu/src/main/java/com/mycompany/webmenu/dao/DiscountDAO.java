@@ -14,10 +14,21 @@ import java.util.List;
 
 public class DiscountDAO {
     public List<DiscountDto> getListDiscountUser() {
-        String sql = "SELECT discount_id, discount_code, name, description, discount_percent, max_discount_value,\n" +
-                "       min_discount_value, start_date, end_date, quantity, rm_quantity\n" +
+        String sql = "SELECT discount_id,\n" +
+                "       discount_code,\n" +
+                "       name,\n" +
+                "       description,\n" +
+                "       discount_percent,\n" +
+                "       max_discount_value,\n" +
+                "       min_discount_value,\n" +
+                "       start_date,\n" +
+                "       end_date,\n" +
+                "       quantity,\n" +
+                "       rm_quantity\n" +
                 "FROM Discounts\n" +
-                "where quantity > rm_quantity\n" +
+                "WHERE quantity > rm_quantity\n" +
+                "and FORMAT(start_date, 'yyyyMMdd') <= FORMAT(GETDATE(), 'yyyyMMdd')\n" +
+                "and FORMAT(GETDATE(), 'yyyyMMdd')  <= FORMAT(end_date, 'yyyyMMdd')\n" +
                 "ORDER BY discount_id DESC";
         List<DiscountDto> list = new ArrayList<>();
         try (Connection conn = DBUtil.getConnection();
