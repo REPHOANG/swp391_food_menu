@@ -12,12 +12,14 @@
                 <div class="menu-contain" style="text-align: center;">
                     <a href="<c:url value="MainController"/>"
                        style="color: black; text-decoration: none; margin: 0 15px; font-weight: bold;">
-                        <i class="fa-solid fa-house"></i> TRANG CHỦ
+                        <i class="fa-solid fa-house"></i> Home
                     </a>
-                    <a href=""
-                       style="color: black; text-decoration: none; margin: 0 15px; font-weight: bold;">
-                        GIỚI THIỆU
-                    </a>
+                    <c:if test="${user != null}">
+                        <a href="<c:url value="OrderManagerController?orderAction=orderHistoryUser&userId=${user.userId}"/>"
+                           style="color: black; text-decoration: none; margin: 0 15px; font-weight: bold;">
+                            Order History
+                        </a>
+                    </c:if>
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@ public class UserDAO {
     @SneakyThrows
     public List<UserDto> getListUserManager(int page, int pageSize, int roleId) {
         int offset = (page - 1) * pageSize;
-        String sql = "SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName " +
+        String sql = "SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName ,x1.accumulated_points as accumulatedPoints " +
                 "FROM Users x1 " +
                 "WHERE x1.role_id = ? " +
                 "ORDER BY x1.user_id DESC " +
@@ -45,6 +45,7 @@ public class UserDAO {
                     dto.setAddress(rs.getString("address"));
                     dto.setAvatarUrl(rs.getString("avatarUrl"));
                     dto.setFullName(rs.getString("fullName"));
+                    dto.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));
                     list.add(dto);
                 }
             }
@@ -73,7 +74,7 @@ public class UserDAO {
     }
 
     public ArrayList<UserDto> getAll() throws SQLException {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName " +
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName, accumulated_points as accumulatedPoints" +
                 "FROM Users";
         ArrayList<UserDto> list = new ArrayList<>();
         try (Connection conn = DBUtil.getConnection();
@@ -94,7 +95,7 @@ public class UserDAO {
                 u.setAddress(rs.getString("address"));      // Địa chỉ
                 u.setAvatarUrl(rs.getString("avatarUrl"));  // URL ảnh đại diện (avatar_url)
                 u.setFullName(rs.getString("fullName"));    // Họ và tên (full_name)
-
+                u.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));
                 list.add(u);
             }
         } catch (SQLException e) {
@@ -105,7 +106,7 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto login(String email) {
-        String sql = "SELECT user_id, email, phone, address, avatar_url AS avatarUrl, role_id, full_name AS fullName " +
+        String sql = "SELECT user_id, email, phone, address, avatar_url AS avatarUrl, role_id, full_name AS fullName ,accumulated_points as accumulatedPoints" +
                 "FROM Users WHERE email = ?";
 
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
@@ -126,6 +127,7 @@ public class UserDAO {
                     user.setAddress(rs.getString("address"));       // Địa chỉ
                     user.setAvatarUrl(rs.getString("avatarUrl"));   // URL ảnh đại diện
                     user.setFullName(rs.getString("fullName"));     // Họ và tên
+                    user.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));     // Họ và tên
                     return user;
                 }
             }
@@ -220,7 +222,7 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto getUserById(Integer id) {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password " +
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password,accumulated_points as accumulatedPoints" +
                 "FROM Users " +
                 "WHERE user_id = ?";
         try (Connection conn = DBUtil.getConnection();
@@ -243,6 +245,7 @@ public class UserDAO {
                     u.setAvatarUrl(rs.getString("avatarUrl"));    // URL ảnh đại diện
                     u.setFullName(rs.getString("full_name"));     // Họ và tên đầy đủ
                     u.setPassword(rs.getString("password"));      // Mật khẩu người dùng
+                    u.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));
                     return u;
                 }
             }
@@ -251,7 +254,7 @@ public class UserDAO {
     }
 
     public UserDto loginAdmin(String email, String password) {
-        String sql = "SELECT user_id, role_id, email, phone, address, avatar_url AS avatarUrl, full_name AS fullName, password " +
+        String sql = "SELECT user_id, role_id, email, phone, address, avatar_url AS avatarUrl, full_name AS fullName, password,accumulated_points as accumulatedPoints " +
                 "FROM Users WHERE email = ? AND password = ?";
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
         try (Connection conn = DBUtil.getConnection();
@@ -276,6 +279,7 @@ public class UserDAO {
                     user.setAvatarUrl(rs.getString("avatarUrl")); // URL ảnh đại diện
                     user.setFullName(rs.getString("fullName"));   // Họ và tên đầy đủ
                     user.setPassword(rs.getString("password"));   // Mật khẩu (đã mã hóa)
+                    user.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));
                     return user;
                 }
             }

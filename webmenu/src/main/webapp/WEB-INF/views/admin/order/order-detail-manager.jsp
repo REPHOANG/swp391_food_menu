@@ -169,26 +169,32 @@
                                         <div class="col-xl-4">
                                             <div class="order-success">
                                                 <div class="row g-4">
-                                                    <h4>Order Note</h4>
-                                                    <textarea readonly>${orderDetail.orderNote}</textarea>
-                                                </div>
-                                                <div class="row g-4">
-                                                    <h4>Status Order</h4>
-                                                    <select class="form-select select-form-size" id="status-selection">
-                                                        <option disabled>Select Status</option>
-                                                        <%
-                                                            // Lặp qua các trạng thái trong enum và tạo các <option>
-                                                            for (StatusOrderType status : StatusOrderType.getStatusOptions()) {
-                                                                // Kiểm tra nếu trạng thái hiện tại khớp với trạng thái trong vòng lặp
-                                                                boolean isSelected = status.getId() == currentStatus;
-                                                        %>
-                                                        <option value="<%= status.getId() %>" <%= isSelected ? "selected" : "" %>>
-                                                            <%= status.getName() %>
-                                                        </option>
-                                                        <%
-                                                            }
-                                                        %>
-                                                    </select>
+                                                    <div class="payment-mode">
+                                                        <h4>Table </h4>
+                                                        <p>${orderDetail.tableName}</p>
+                                                    </div>
+                                                    <div class="payment-mode">
+                                                        <h4>Order Note </h4>
+                                                        <p>${orderDetail.orderNote}</p>
+                                                    </div>
+                                                    <div class="payment-mode">
+                                                        <h4>Status Order </h4>
+                                                        <select class="form-select select-form-size" id="status-selection">
+                                                            <option disabled>Select Status</option>
+                                                            <%
+                                                                // Lặp qua các trạng thái trong enum và tạo các <option>
+                                                                for (StatusOrderType status : StatusOrderType.getStatusOptions()) {
+                                                                    // Kiểm tra nếu trạng thái hiện tại khớp với trạng thái trong vòng lặp
+                                                                    boolean isSelected = status.getId() == currentStatus;
+                                                            %>
+                                                            <option value="<%= status.getId() %>" <%= isSelected ? "selected" : "" %>>
+                                                                <%= status.getName() %>
+                                                            </option>
+                                                            <%
+                                                                }
+                                                            %>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

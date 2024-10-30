@@ -101,7 +101,7 @@
                                                     <td>
                                                         <ul>
                                                             <li>
-                                                                <a href="<c:url value="OrderManagerController?orderAction=orderListUser&userId=${user.userId}"/>">
+                                                                <a href="<c:url value="OrderManagerController?orderAction=orderListManager&userId=${user.userId}"/>">
                                                                 <i class="ri-eye-line"></i>
                                                                 </a>
                                                             </li>
