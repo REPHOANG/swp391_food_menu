@@ -8,6 +8,11 @@ package com.mycompany.webmenu.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.mycompany.webmenu.dao.CategoryDAO;
+import com.mycompany.webmenu.dao.OrderDAO;
+import com.mycompany.webmenu.dao.ProductDAO;
+import com.mycompany.webmenu.dao.UserDAO;
+import com.mycompany.webmenu.enums.RoleUserType;
 import com.mycompany.webmenu.utils.Constants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -48,7 +53,18 @@ public class AdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+
+        OrderDAO orderDao = new OrderDAO();
+        ProductDAO productDao = new ProductDAO();
+        UserDAO userDao = new UserDAO();
+        CategoryDAO categoryDao = new CategoryDAO();
+        request.setAttribute("totalRevenue", orderDao.getTotalRevenue());
+        request.setAttribute("totalOrders", orderDao.getTotalOrders());
+        request.setAttribute("totalProducts", productDao.getTotalProductCount());
+        request.setAttribute("totalCustomers", userDao.getTotalUserCount(RoleUserType.USER.getId()));
+        request.setAttribute("listAllCategory", categoryDao.getListAllCategory());
+        request.getRequestDispatcher(Constants.ADMIN_PAGE).forward(request, response);
     }
 
     /**

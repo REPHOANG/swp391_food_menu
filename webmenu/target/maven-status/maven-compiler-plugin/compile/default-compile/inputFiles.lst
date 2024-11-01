@@ -1,6 +1,7 @@
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\UserDto.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\StaffController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ImageProductDto.java
+G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\GenerateQRCodeServlet.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\controller\OrderUserController.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\ProductDto.java
 G:\VB_v1\swp391_food_menu\webmenu\src\main\java\com\mycompany\webmenu\dto\CategoryDto.java

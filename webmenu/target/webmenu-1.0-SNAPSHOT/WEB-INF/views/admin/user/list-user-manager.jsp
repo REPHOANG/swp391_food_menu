@@ -79,7 +79,6 @@
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
                                             <tr>
-                                                <th>User Image</th>
                                                 <th>Email</th>
                                                 <th>Phone</th>
                                                 <th>Address</th>
@@ -89,12 +88,6 @@
                                             <tbody>
                                             <c:forEach var="user" items="${users}">
                                                 <tr>
-                                                    <td>
-                                                        <div class="table-image">
-                                                            <img src="<c:url value='${user.avatarUrl}' />"
-                                                                 class="img-fluid" alt="">
-                                                        </div>
-                                                    </td>
                                                     <td>${user.email}</td>
                                                     <td>${user.phone}</td>
                                                     <td>${user.address}</td>

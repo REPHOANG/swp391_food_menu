@@ -222,7 +222,7 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto getUserById(Integer id) {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password,accumulated_points as accumulatedPoints" +
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password,accumulated_points as accumulatedPoints " +
                 "FROM Users " +
                 "WHERE user_id = ?";
         try (Connection conn = DBUtil.getConnection();
@@ -520,4 +520,18 @@ public class UserDAO {
         }
     }
 
+    public int getTotalProductCount() {
+        String query = "SELECT COUNT(product_id) AS total FROM Products";
+        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
+            if (rs.next()) {
+                return rs.getInt("total"); // Trả về tổng số sản phẩm ngay lập tức
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ghi lại lỗi nếu có
+            return 0; // Ném lại lỗi để xử lý ở nơi gọi
+        }
+        return 0; // Trả về 0 nếu không có sản phẩm
+    }
 }

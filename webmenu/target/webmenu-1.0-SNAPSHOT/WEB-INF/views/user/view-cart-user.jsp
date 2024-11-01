@@ -85,6 +85,14 @@
                            style="padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; box-sizing: border-box; margin-top: 5px;">
                 </label>
                 <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
+                    Capacity Table
+                    <select class="form-control" id="capacity-table-selection"></select>
+                    <div class="error-message" id="capacity-table-error"
+                         style="color: red; font-size: 12px; display: none;">
+                        Please select a table.
+                    </div>
+                </label>
+                <label style="display: flex; flex-direction: column; font-weight: bold; margin-bottom: 15px; color: #333;">
                     Table
                     <select class="form-control" id="table-selection"></select>
                     <div class="error-message" id="table-error" style="color: red; font-size: 12px; display: none;">
@@ -200,7 +208,6 @@
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
 <script src="<c:url value="/assets/user/cart-local-storage.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
-<script src="<c:url value="/assets/user/apply-coupon.js"/>"></script>
 <script src="<c:url value="/assets/user/view-cart-user.js"/>"></script>
 <script type="text/javascript">
     const user = {
@@ -212,17 +219,19 @@
         fullName: '${user.fullName}',
     };
     // Kiểm tra và khởi tạo userSelectedTable bằng EL
-    const userSelectedTable = {
+    const userSelectedTableCart = {
         tableId: '${userSelectedTable.tableId}',
         tableName: '${userSelectedTable.tableName}',
         status: '${userSelectedTable.status}',
         capacity: '${userSelectedTable.capacity}'
     }
+    console.log("userSelectedTableCart " + userSelectedTableCart.tableId)
     document.getElementById("userId").value = user.userId;
     document.getElementById("email").value = user.email;
     document.getElementById("fullName").value = user.fullName;
     viewCartHeaderDisplay();
 </script>
+<script src="<c:url value="/assets/user/apply-coupon.js"/>"></script>
 </body>
 
 </html>

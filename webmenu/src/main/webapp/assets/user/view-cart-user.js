@@ -74,7 +74,6 @@ function removeProductCartTable(productId) {
 }
 
 function qtyLeftMinusUser(productId) {
-    console.log("Giảm số lượng đi 1 " + productId)
     const input = document.getElementById(`qty-input-${productId}`);
     let currentQty = parseInt(input.value) || 0;
     currentQty -= 1;
@@ -89,7 +88,6 @@ function qtyLeftMinusUser(productId) {
 }
 
 function qtyRightPlusUser(productId) {
-    console.log("Tăng số lượng đi 1 " + productId)
     const input = document.getElementById(`qty-input-${productId}`);
     let currentQty = parseInt(input.value) || 0;
     currentQty += 1;
