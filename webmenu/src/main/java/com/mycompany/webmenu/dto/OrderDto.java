@@ -19,6 +19,7 @@ public class OrderDto {
     private String tableName;          // name bàn, tương ứng với table_id trong bảng
     private Integer userId;             // ID người dùng, tương ứng với user_id trong bảng
     private Integer discountId;         // ID mã giảm giá, tương ứng với discount_id trong bảng
+    private String discountCode;         // ID mã giảm giá, tương ứng với discount_id trong bảng
     private String userName;            // Tên người dùng, tương ứng với user_name trong bảng
     private Date orderDate;             // Ngày đặt hàng, tương ứng với order_date trong bảng
     private String deliveryAddress;     // Địa chỉ giao hàng, tương ứng với delivery_address

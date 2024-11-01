@@ -379,4 +379,33 @@ public class OrderDAO {
         }
     }
 
+    public Double getTotalRevenue() {
+        String query = "select sum(x1.order_total) as total from Orders x1 where x1.order_status in (4,5,6)";
+        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
+            if (rs.next()) {
+                return rs.getDouble("total"); // Trả về tổng số sản phẩm ngay lập tức
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Ghi lại lỗi nếu có
+            return 0.0;
+        }
+        return 0.0;
+    }
+
+    public Integer getTotalOrders() {
+        String query = "select count(x1.order_id) as total from Orders x1 where x1.order_status in (4,5,6)";
+        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
+            if (rs.next()) {
+                return rs.getInt("total"); // Trả về tổng số sản phẩm ngay lập tức
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Ghi lại lỗi nếu có
+            return 0;
+        }
+        return 0;
+    }
 }

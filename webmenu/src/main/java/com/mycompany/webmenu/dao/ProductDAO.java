@@ -60,7 +60,7 @@ public class ProductDAO {
     }
 
     // Phương thức để đếm tổng số sản phẩm
-    public int getTotalProductCount() throws SQLException {
+    public int getTotalProductCount() {
         String query = "SELECT COUNT(product_id) AS total FROM Products";
         try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -70,7 +70,7 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Ghi lại lỗi nếu có
-            throw e; // Ném lại lỗi để xử lý ở nơi gọi
+            return 0; // Ném lại lỗi để xử lý ở nơi gọi
         }
         return 0; // Trả về 0 nếu không có sản phẩm
     }

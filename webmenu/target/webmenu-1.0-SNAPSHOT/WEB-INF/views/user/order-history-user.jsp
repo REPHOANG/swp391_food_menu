@@ -173,6 +173,7 @@
     let currentPage = 1;
     let itemsPerPage = 2;  // Số sản phẩm mỗi trang
     let maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
+    let userId = ${user.userId};
     loadOrdersList(currentPage)
 
     function loadOrdersList(page) {

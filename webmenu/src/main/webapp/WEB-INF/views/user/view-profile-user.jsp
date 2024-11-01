@@ -126,6 +126,9 @@
 <!-- script js -->
 <script src="<c:url value="/assets/user/js/script.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
+<script type="text/javascript">
+    viewCartHeaderDisplay()
+</script>
 </body>
 
 </html>

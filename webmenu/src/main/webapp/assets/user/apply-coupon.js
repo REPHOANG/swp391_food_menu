@@ -1,6 +1,6 @@
 let orderTotal = 0;
 let discountUser = null;
-let selectedTables = [];
+let selectedTables = []; // Khởi tạo biến để lưu danh sách bàn
 loadCoupons();
 loadTable()
 
@@ -30,27 +30,61 @@ function loadTable() {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-
             return response.json();
         })
         .then(data => {
-            selectedTables = data;
-            populateTableDropdown()
+            selectedTables = data; // Lưu danh sách bàn từ server
+            populateCapacityDropdown(data); // Gọi hàm điền dropdown sức chứa
+            addDropdownChangeListener(); // Thêm sự kiện thay đổi cho dropdown
         })
         .catch(error => console.error('Error loading tables:', error));
 }
 
-function populateTableDropdown() {
+// Hàm điền dropdown với các giá trị sức chứa duy nhất
+function populateCapacityDropdown(data) {
+    const uniqueCapacities = new Set();
+    data.forEach(table => {
+        uniqueCapacities.add(table.capacity); // Thêm sức chứa duy nhất vào Set
+    });
+    const selectElement = document.getElementById("capacity-table-selection");
+    selectElement.innerHTML = ''; // Xóa các tùy chọn hiện tại nếu có
+    uniqueCapacities.forEach(capacity => {
+        const option = document.createElement("option");
+        option.value = capacity;
+        option.textContent = capacity;
+        if (userSelectedTableCart && parseInt(userSelectedTableCart.capacity) === parseInt(capacity)) {
+            option.selected = true;
+        }
+        selectElement.appendChild(option);
+    });
+    populateTableDropdown(parseInt(selectElement.value)); // Gọi hàm điền dropdown bàn với sức chứa ban đầu
+}
+
+// Hàm thêm sự kiện thay đổi cho dropdown
+function addDropdownChangeListener() {
+    const selectElement = document.getElementById("capacity-table-selection");
+    // Kiểm tra nếu sự kiện chưa được thêm
+    if (!selectElement.hasAttribute('data-listener')) {
+        selectElement.setAttribute('data-listener', 'true'); // Đánh dấu đã thêm sự kiện
+        selectElement.addEventListener("change", () => {
+            const selectedCapacity = parseInt(selectElement.value);
+            populateTableDropdown(selectedCapacity); // Gọi hàm điền dropdown bàn khi thay đổi sức chứa
+        });
+    }
+}
+
+// Hàm điền dropdown bàn với sức chứa được chọn
+function populateTableDropdown(capacity) {
     const tableSelect = document.getElementById("table-selection");
     tableSelect.innerHTML = ''; // Xóa các tùy chọn hiện tại nếu có
     selectedTables.forEach(table => {
-        if ((userSelectedTable && userSelectedTable.tableId == table.tableId) || table.status === 0) {
+        if ((userSelectedTableCart && parseInt(userSelectedTableCart.tableId) === parseInt(table.tableId)) || (parseInt(table.status) === 0 && parseInt(table.capacity) === capacity)) {
             const option = document.createElement("option");
             option.value = table.tableId;
             option.textContent = `${table.tableName} - Capacity: ${table.capacity} - Status: ${table.status === 0 ? 'Available' : table.status === 1 ? 'In Use' : ''}`;
-            // // Kiểm tra nếu userSelectedTable tồn tại và có cùng tableId
-            if (userSelectedTable && userSelectedTable.tableId == table.tableId) {
-                option.selected = true; // Đặt tùy chọn này là 'selected' nếu có khớp
+            // Đặt bàn đã chọn của người dùng làm tùy chọn mặc định
+            if (userSelectedTableCart && parseInt(userSelectedTableCart.tableId) === parseInt(table.tableId)) {
+                option.selected = true;
             }
             tableSelect.appendChild(option);
         }
@@ -89,14 +123,20 @@ function applyCoupon() {
                     quantity: data.quantity,
                     rmQuantity: data.rmQuantity
                 };
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let cart = getCart();
                 let totalPrice = 0;
                 cart.forEach(item => {
                     const itemTotal = (item.price * item.quantity);
                     totalPrice += parseFloat(itemTotal);
                 });
-                let priceOrder = totalPrice - data.maxDiscountValue;
-                document.getElementById("coupon-discount").textContent = `(-) ${formatVND(data.maxDiscountValue)}`;
+                let couponDiscount = 0;
+                if (totalPrice <= data.maxDiscountValue) {
+                    couponDiscount = totalPrice * (data.discountPercent / 100);
+                } else {
+                    couponDiscount = data.maxDiscountValue;
+                }
+                let priceOrder = totalPrice - couponDiscount;
+                document.getElementById("coupon-discount").textContent = `(-) ${formatVND(couponDiscount)}`;
                 document.getElementById("price-order").textContent = formatVND(priceOrder);
             }
         })
@@ -217,8 +257,8 @@ function placeOrder() {
         if (data.success) {
             alert("Đặt hàng thành công!"); // Thông báo khi đặt hàng thành công
             localStorage.removeItem('cart')
-            if (userSelectedTable && userSelectedTable.tableId) {
-                window.location.href = "/webmenu/MainController?tableId=" + userSelectedTable.tableId;
+            if (userSelectedTableCart && userSelectedTableCart.tableId) {
+                window.location.href = "/webmenu/MainController?tableId=" + userSelectedTableCart.tableId;
             } else {
                 window.location.href = "/webmenu/MainController";
             }
