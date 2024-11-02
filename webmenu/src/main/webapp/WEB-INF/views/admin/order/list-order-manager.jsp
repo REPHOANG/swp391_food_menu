@@ -223,7 +223,7 @@
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script type="text/javascript">
     let currentPage = 1;
-    let itemsPerPage = 5;  // Số sản phẩm mỗi trang
+    let itemsPerPage = 10;  // Số sản phẩm mỗi trang
     let maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
     let userName = null;
     let orderStatus = document.getElementById("status-selection").value;

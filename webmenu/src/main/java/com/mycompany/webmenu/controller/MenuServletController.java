@@ -7,10 +7,7 @@ package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.ProductDAO;
@@ -35,13 +32,42 @@ public class MenuServletController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         int currentPage = Integer.parseInt(request.getParameter("page"));
         int itemsPerPage = Integer.parseInt(request.getParameter("itemsPerPage"));
+
+
+        String productNameParam = request.getParameter("productName");
+        String productName = (productNameParam != null && !productNameParam.isEmpty() && !Objects.equals(productNameParam, "null")) ? productNameParam : null;
+
+        String priceFromParam = request.getParameter("priceFrom");
+        Double priceFrom = (priceFromParam != null && !priceFromParam.isEmpty() && !Objects.equals(priceFromParam, "null"))
+                ? Double.valueOf(priceFromParam) : null;
+
+        String priceToParam = request.getParameter("priceTo");
+        Double priceTo = (priceToParam != null && !priceToParam.isEmpty() && !Objects.equals(priceToParam, "null"))
+                ? Double.valueOf(priceToParam) : null;
+
+        // Lấy danh sách categoryIds
+        List<Integer> listCategoryIds = new ArrayList<>();
+        String[] categoryIdsParam = request.getParameterValues("categoryIds");
+        if (categoryIdsParam != null) {
+            for (String id : categoryIdsParam) {
+                if (id != null && !id.isEmpty()) {
+                    try {
+                        listCategoryIds.add(Integer.valueOf(id));
+                    } catch (NumberFormatException e) {
+                        // Ghi lại lỗi nếu không chuyển đổi được
+                        System.err.println("Không thể chuyển đổi categoryId: " + id);
+                    }
+                }
+            }
+        }
+
         // Danh sách các món ăn
         List<ProductDto> productDTO = new ArrayList<>();
         ProductDAO productDAO = new ProductDAO();
         int totalPages = 0;
         try {
-            productDTO = productDAO.getListAllProduct(currentPage, itemsPerPage);
-            int totalProducts = productDAO.getTotalProductCount();
+            productDTO = productDAO.getListAllProduct(currentPage, itemsPerPage, productName, priceFrom, priceTo, listCategoryIds);
+            int totalProducts = productDAO.getTotalProductCount(productName, priceFrom, priceTo, listCategoryIds);
             totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
         } catch (SQLException e) {
             throw new RuntimeException(e);

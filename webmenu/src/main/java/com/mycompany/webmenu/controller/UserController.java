@@ -22,6 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,23 +93,27 @@ public class UserController extends HttpServlet {
                     break;
                 }
                 case "userManagerAdmin": {
-                    int pageNo = 1; // Trang mặc định
-                    int pageSize = 10; // Số sản phẩm trên mỗi trang
-                    // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
-                    String pageParam = request.getParameter("page");
-                    if (pageParam != null) {
-                        pageNo = Integer.parseInt(pageParam);
-                    }
-                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId());
-                    int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                    request.setAttribute("users", uDAO.getListUserManager(pageNo, pageSize, RoleUserType.USER.getId()));
-                    request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("currentPage", pageNo);
                     request.getRequestDispatcher(Constants.LIST_USER_MANAGER).forward(request, response);
                     break;
                 }
-            }
+                case "userManagerAdminApi": {
+                    int currentPage = Integer.parseInt(request.getParameter("page"));
+                    int itemsPerPage = Integer.parseInt(request.getParameter("itemsPerPage"));
+                    String emailParam = request.getParameter("email");
+                    String email = (emailParam != null && !emailParam.isEmpty() && !Objects.equals(emailParam, "null")) ? emailParam : null;
 
+                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId(), email);
+                    int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("items", uDAO.getListUserManager(currentPage, itemsPerPage, RoleUserType.USER.getId(), email));
+                    result.put("totalPages", totalPages);
+                    // Chuyển danh sách món ăn thành JSON
+                    String menuJson = gson.toJson(result);
+                    // Trả về JSON cho client
+                    response.getWriter().write(menuJson);
+                    break;
+                }
+            }
         } catch (IllegalArgumentException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
         } catch (SQLException ex) {

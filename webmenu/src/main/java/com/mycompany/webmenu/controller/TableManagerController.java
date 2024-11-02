@@ -38,7 +38,7 @@ public class TableManagerController extends HttpServlet {
         switch (productAction) {
             case "tableListManager": {
                 int pageNo = 1;
-                int pageSize = 3;
+                int pageSize = 10;
                 String pageParam = request.getParameter("page");
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);

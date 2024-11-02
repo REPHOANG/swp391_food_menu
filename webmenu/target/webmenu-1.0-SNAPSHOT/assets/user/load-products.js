@@ -3,11 +3,27 @@ let currentPage = 1;
 let itemsPerPage = 10;  // Số sản phẩm mỗi trang
 const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
 loadMenu(currentPage)
+listCategory()
 
 // Hàm tải và hiển thị menu
 function loadMenu(page) {
     currentPage = page;
-    const url = `/webmenu/MenuServletController?page=` + currentPage + `&itemsPerPage=` + itemsPerPage;
+    let url = `/webmenu/MenuServletController?page=` + currentPage + `&itemsPerPage=` + itemsPerPage;
+    if (priceFrom) {
+        url += `&priceFrom=` + priceFrom;
+    }
+    if (priceTo) {
+        url += `&priceTo=` + priceTo;
+    }
+    if (productName) {
+        url += `&productName=` + productName;
+    }
+    if (categoryIds.length > 0) {
+        categoryIds.forEach(id => {
+            url += `&categoryIds=${id}`;
+        });
+    }
+    console.log("url " + url)
     // Lấy giỏ hàng từ localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     fetch(url)
@@ -197,9 +213,74 @@ function applyQuantityAdjustment() {
 
 function formatVND(price) {
     return price.toLocaleString('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
+        style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 2
     });
+}
+
+function listCategory() {
+    const url = `/webmenu/CategoryManagerController?categoryAction=filterCategory`;
+    fetch(url, {
+        method: "GET"
+    })
+        .then(response => response.json())
+        .then(data => {
+            const categoryList = document.querySelector(".category-list");
+            categoryList.innerHTML = ""; // Clear the existing list
+
+            data.forEach(category => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <div class="form-check ps-0 m-0 category-list-box">
+                        <input class="checkbox_animated" type="checkbox" id="flexCheck${category.categoryId}" data-category-id="${category.categoryId}">
+                        <label class="form-check-label" for="flexCheck${category.categoryId}">
+                            <span class="name">${category.name}</span>
+                        </label>
+                    </div>
+                `;
+                categoryList.appendChild(listItem);
+                const checkbox = listItem.querySelector(`#flexCheck${category.categoryId}`);
+                // Gắn sự kiện cho mỗi checkbox
+                checkbox.addEventListener("change", () => handleCategorySelection(category, checkbox.checked));
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching categories:", error);
+        });
+}
+
+function handleCategorySelection(category, isChecked) {
+    // Gọi hàm để lấy danh sách ID của các category đã chọn
+    categoryIds = getSelectedCategoryIds();
+    loadMenu(1)
+}
+
+function getSelectedCategoryIds() {
+    const selectedCategoryIds = [];
+    const checkboxes = document.querySelectorAll(".category-list .checkbox_animated:checked"); // Tìm các checkbox được chọn
+    checkboxes.forEach(checkbox => {
+        selectedCategoryIds.push(checkbox.getAttribute("data-category-id"));
+    });
+    return selectedCategoryIds;
+}
+
+// Lấy phần tử input
+const productNameInput = document.getElementById('searchProductName');
+// Lắng nghe sự kiện input
+productNameInput.addEventListener('input', function (event) {
+    // Lấy giá trị mới từ input
+    const newValue = event.target.value;
+    // Kiểm tra nếu newValue có giá trị
+    if (newValue) {
+        productName = newValue;
+        loadMenu(1)
+        console.log("Product name changed to:", newValue);
+    } else {
+        productName = null;
+        loadMenu(1)
+        console.log("Product name is empty, not updating productName.");
+    }
+});
+
+function filterProduct() {
+    loadMenu(1)
 }

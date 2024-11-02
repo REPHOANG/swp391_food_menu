@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -81,8 +82,8 @@
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Revenue</span>
                                         <h4 class="mb-0 counter" id="revenueDisplay"></h4>
-<%--                                            <span class="badge badge-light-primary grow">--%>
-<%--                                                    <i data-feather="trending-up"></i>8.5%</span>--%>
+                                        <%--                                            <span class="badge badge-light-primary grow">--%>
+                                        <%--                                                    <i data-feather="trending-up"></i>8.5%</span>--%>
                                         </h4>
                                     </div>
                                     <div class="align-self-center text-center">
@@ -100,8 +101,8 @@
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Orders</span>
                                         <h4 class="mb-0 counter">${totalOrders}
-<%--                                            <span class="badge badge-light-danger grow">--%>
-<%--                                                    <i data-feather="trending-down"></i>8.5%</span>--%>
+                                            <%--                                            <span class="badge badge-light-danger grow">--%>
+                                            <%--                                                    <i data-feather="trending-down"></i>8.5%</span>--%>
                                         </h4>
                                     </div>
                                     <div class="align-self-center text-center">
@@ -119,7 +120,8 @@
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Products</span>
                                         <h4 class="mb-0 counter">${totalProducts}
-                                            <a  href="<c:url value="ProductManagerController?productAction=addProduct"/>" class="badge badge-light-secondary grow">
+                                            <a href="<c:url value="ProductManagerController?productAction=addProduct"/>"
+                                               class="badge badge-light-secondary grow">
                                                 ADD NEW</a>
                                         </h4>
                                     </div>
@@ -139,8 +141,8 @@
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Customers</span>
                                         <h4 class="mb-0 counter">${totalCustomers}
-<%--                                            <span class="badge badge-light-success grow">--%>
-<%--                                                    <i data-feather="trending-down"></i>8.5%</span>--%>
+                                            <%--                                            <span class="badge badge-light-success grow">--%>
+                                            <%--                                                    <i data-feather="trending-down"></i>8.5%</span>--%>
                                         </h4>
                                     </div>
 
@@ -179,18 +181,18 @@
 
 
                     <!-- Earning chart star-->
-                    <div class="col-xl-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0 pb-1">
-                                <div class="card-header-title">
-                                    <h4>Revenue Report</h4>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="report-chart"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <%--                    <div class="col-xl-6">--%>
+                    <%--                        <div class="card o-hidden card-hover">--%>
+                    <%--                            <div class="card-header border-0 pb-1">--%>
+                    <%--                                <div class="card-header-title">--%>
+                    <%--                                    <h4>Revenue Report</h4>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
+                    <%--                            <div class="card-body p-0">--%>
+                    <%--                                <div id="report-chart"></div>--%>
+                    <%--                            </div>--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                     <!-- Earning chart  end-->
 
 
@@ -201,21 +203,6 @@
                                 <div class="card-header-title">
                                     <h4>Best Selling Product</h4>
                                 </div>
-
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Short By:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button"
-                                                id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                                data-bs-auto-close="true">Today
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="card-body p-0">
@@ -225,134 +212,36 @@
                                             w-image
                                             w-image table border-0">
                                             <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-image">
-                                                            <img src="assets/images/product/1.png"
-                                                                 class="img-fluid" alt="Product">
-                                                        </div>
+                                            <c:forEach var="product" items="${bestSellingProduct}">
+                                                <tr>
+                                                    <td>
                                                         <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
+                                                            <h5>${product.productName}</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$29.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Orders</h6>
-                                                        <h5>62</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Stock</h6>
-                                                        <h5>510</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-image">
-                                                            <img src="assets/images/product/2.png"
-                                                                 class="img-fluid" alt="Product">
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Price</h6>
+                                                            <h5>${product.price}</h5>
                                                         </div>
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
+                                                    </td>
+
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Orders</h6>
+                                                            <h5>${product.orders}</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$29.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Orders</h6>
-                                                        <h5>62</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Stock</h6>
-                                                        <h5>510</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-image">
-                                                            <img src="assets/images/product/3.png"
-                                                                 class="img-fluid" alt="Product">
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Amount</h6>
+                                                            <h5>${product.amount}</h5>
                                                         </div>
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$29.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Orders</h6>
-                                                        <h5>62</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Stock</h6>
-                                                        <h5>510</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -370,21 +259,6 @@
                                 <div class="card-header-title">
                                     <h4>Recent Orders</h4>
                                 </div>
-
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Short By:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button"
-                                                id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                                                data-bs-auto-close="true">Today
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="card-body p-0">
@@ -392,164 +266,38 @@
                                     <div class="table-responsive">
                                         <table class="best-selling-table table border-0">
                                             <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>#64548</h6>
+                                            <c:forEach var="recent" items="${recentOrders}">
+                                                <tr>
+                                                    <td>
+                                                        <div class="best-product-box">
+                                                            <h5>${recent.userName}</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="text-danger">Unpaid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Date Placed</h6>
+                                                            <h5>${recent.orderDate}</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Price</h6>
+                                                            <h5><fmt:formatNumber value="${recent.orderTotal}"
+                                                                                  type="number" groupingUsed="true"/>
+                                                                ₫</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
+                                                    <td>
+                                                        <div class="product-detail-box">
+                                                            <h6>Order Status</h6>
+                                                            <h5>${recent.orderStatusDescription}</h5>
                                                         </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -560,200 +308,200 @@
                     <!-- Recent orders end-->
 
                     <!-- Earning chart star-->
-                    <div class="col-xl-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0 mb-0">
-                                <div class="card-header-title">
-                                    <h4>Earning</h4>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="bar-chart-earning"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <%--                    <div class="col-xl-6">--%>
+                    <%--                        <div class="card o-hidden card-hover">--%>
+                    <%--                            <div class="card-header border-0 mb-0">--%>
+                    <%--                                <div class="card-header-title">--%>
+                    <%--                                    <h4>Earning</h4>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
+                    <%--                            <div class="card-body p-0">--%>
+                    <%--                                <div id="bar-chart-earning"></div>--%>
+                    <%--                            </div>--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                     <!-- Earning chart end-->
 
 
                     <!-- Transactions start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0">
-                                <div class="card-header-title">
-                                    <h4>Transactions</h4>
-                                </div>
-                            </div>
+                    <%--                    <div class="col-xxl-4 col-md-6">--%>
+                    <%--                        <div class="card o-hidden card-hover">--%>
+                    <%--                            <div class="card-header border-0">--%>
+                    <%--                                <div class="card-header-title">--%>
+                    <%--                                    <h4>Transactions</h4>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
 
-                            <div class="card-body pt-0">
-                                <div>
-                                    <div class="table-responsive">
-                                        <table class="user-table transactions-table table border-0">
-                                            <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-shield-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Wallets</h6>
-                                                        <p>Starbucks</p>
-                                                    </div>
-                                                </td>
+                    <%--                            <div class="card-body pt-0">--%>
+                    <%--                                <div>--%>
+                    <%--                                    <div class="table-responsive">--%>
+                    <%--                                        <table class="user-table transactions-table table border-0">--%>
+                    <%--                                            <tbody>--%>
+                    <%--                                            <tr>--%>
+                    <%--                                                <td>--%>
+                    <%--                                                    <div class="transactions-icon">--%>
+                    <%--                                                        <i class="ri-shield-line"></i>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                    <div class="transactions-name">--%>
+                    <%--                                                        <h6>Wallets</h6>--%>
+                    <%--                                                        <p>Starbucks</p>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                </td>--%>
 
-                                                <td class="lost">-$74</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-1">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-check-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Bank Transfer</h6>
-                                                        <p>Add Money</p>
-                                                    </div>
-                                                </td>
+                    <%--                                                <td class="lost">-$74</td>--%>
+                    <%--                                            </tr>--%>
+                    <%--                                            <tr>--%>
+                    <%--                                                <td class="td-color-1">--%>
+                    <%--                                                    <div class="transactions-icon">--%>
+                    <%--                                                        <i class="ri-check-line"></i>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                    <div class="transactions-name">--%>
+                    <%--                                                        <h6>Bank Transfer</h6>--%>
+                    <%--                                                        <p>Add Money</p>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                </td>--%>
 
-                                                <td class="success">+$125</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-2">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-exchange-dollar-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Paypal</h6>
-                                                        <p>Add Money</p>
-                                                    </div>
-                                                </td>
+                    <%--                                                <td class="success">+$125</td>--%>
+                    <%--                                            </tr>--%>
+                    <%--                                            <tr>--%>
+                    <%--                                                <td class="td-color-2">--%>
+                    <%--                                                    <div class="transactions-icon">--%>
+                    <%--                                                        <i class="ri-exchange-dollar-line"></i>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                    <div class="transactions-name">--%>
+                    <%--                                                        <h6>Paypal</h6>--%>
+                    <%--                                                        <p>Add Money</p>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                </td>--%>
 
-                                                <td class="lost">-$50</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-3">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-bank-card-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Mastercard</h6>
-                                                        <p>Ordered Food</p>
-                                                    </div>
-                                                </td>
+                    <%--                                                <td class="lost">-$50</td>--%>
+                    <%--                                            </tr>--%>
+                    <%--                                            <tr>--%>
+                    <%--                                                <td class="td-color-3">--%>
+                    <%--                                                    <div class="transactions-icon">--%>
+                    <%--                                                        <i class="ri-bank-card-line"></i>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                    <div class="transactions-name">--%>
+                    <%--                                                        <h6>Mastercard</h6>--%>
+                    <%--                                                        <p>Ordered Food</p>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                </td>--%>
 
-                                                <td class="lost">-$40</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-4 pb-0">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-bar-chart-grouped-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Transfer</h6>
-                                                        <p>Refund</p>
-                                                    </div>
-                                                </td>
+                    <%--                                                <td class="lost">-$40</td>--%>
+                    <%--                                            </tr>--%>
+                    <%--                                            <tr>--%>
+                    <%--                                                <td class="td-color-4 pb-0">--%>
+                    <%--                                                    <div class="transactions-icon">--%>
+                    <%--                                                        <i class="ri-bar-chart-grouped-line"></i>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                    <div class="transactions-name">--%>
+                    <%--                                                        <h6>Transfer</h6>--%>
+                    <%--                                                        <p>Refund</p>--%>
+                    <%--                                                    </div>--%>
+                    <%--                                                </td>--%>
 
-                                                <td class="success pb-0">+$90</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <%--                                                <td class="success pb-0">+$90</td>--%>
+                    <%--                                            </tr>--%>
+                    <%--                                            </tbody>--%>
+                    <%--                                        </table>--%>
+                    <%--                                    </div>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                     <!-- Transactions end-->
 
                     <!-- visitors chart start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="h-100">
-                            <div class="card o-hidden card-hover">
-                                <div class="card-header border-0">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div class="card-header-title">
-                                            <h4>Visitors</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0">
-                                    <div class="pie-chart">
-                                        <div id="pie-chart-visitors"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <%--                    <div class="col-xxl-4 col-md-6">--%>
+                    <%--                        <div class="h-100">--%>
+                    <%--                            <div class="card o-hidden card-hover">--%>
+                    <%--                                <div class="card-header border-0">--%>
+                    <%--                                    <div class="d-flex align-items-center justify-content-between">--%>
+                    <%--                                        <div class="card-header-title">--%>
+                    <%--                                            <h4>Visitors</h4>--%>
+                    <%--                                        </div>--%>
+                    <%--                                    </div>--%>
+                    <%--                                </div>--%>
+                    <%--                                <div class="card-body pt-0">--%>
+                    <%--                                    <div class="pie-chart">--%>
+                    <%--                                        <div id="pie-chart-visitors"></div>--%>
+                    <%--                                    </div>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                     <!-- visitors chart end-->
 
 
                     <!-- To Do List start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0">
-                                <div class="card-header-title">
-                                    <h4>To Do List</h4>
-                                </div>
-                            </div>
+                    <%--                    <div class="col-xxl-4 col-md-6">--%>
+                    <%--                        <div class="card o-hidden card-hover">--%>
+                    <%--                            <div class="card-header border-0">--%>
+                    <%--                                <div class="card-header-title">--%>
+                    <%--                                    <h4>To Do List</h4>--%>
+                    <%--                                </div>--%>
+                    <%--                            </div>--%>
 
-                            <div class="card-body pt-0">
-                                <ul class="to-do-list">
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="checkbox_animated check-it" type="checkbox" value=""
-                                                   id="flexCheckDefault">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Pick up kids from school</strong>
-                                            <p>8 Hours</p>
-                                        </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="checkbox_animated check-it" type="checkbox" value=""
-                                                   id="flexCheckDefault1">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Prepare or presentation.</strong>
-                                            <p>8 Hours</p>
-                                        </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="checkbox_animated check-it" type="checkbox" value=""
-                                                   id="flexCheckDefault2">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Create invoice</strong>
-                                            <p>8 Hours</p>
-                                        </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="checkbox_animated check-it" type="checkbox" value=""
-                                                   id="flexCheckDefault3">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Meeting with Alisa</strong>
-                                            <p>8 Hours</p>
-                                        </div>
-                                    </li>
+                    <%--                            <div class="card-body pt-0">--%>
+                    <%--                                <ul class="to-do-list">--%>
+                    <%--                                    <li class="to-do-item">--%>
+                    <%--                                        <div class="form-check user-checkbox">--%>
+                    <%--                                            <input class="checkbox_animated check-it" type="checkbox" value=""--%>
+                    <%--                                                   id="flexCheckDefault">--%>
+                    <%--                                        </div>--%>
+                    <%--                                        <div class="to-do-list-name">--%>
+                    <%--                                            <strong>Pick up kids from school</strong>--%>
+                    <%--                                            <p>8 Hours</p>--%>
+                    <%--                                        </div>--%>
+                    <%--                                    </li>--%>
+                    <%--                                    <li class="to-do-item">--%>
+                    <%--                                        <div class="form-check user-checkbox">--%>
+                    <%--                                            <input class="checkbox_animated check-it" type="checkbox" value=""--%>
+                    <%--                                                   id="flexCheckDefault1">--%>
+                    <%--                                        </div>--%>
+                    <%--                                        <div class="to-do-list-name">--%>
+                    <%--                                            <strong>Prepare or presentation.</strong>--%>
+                    <%--                                            <p>8 Hours</p>--%>
+                    <%--                                        </div>--%>
+                    <%--                                    </li>--%>
+                    <%--                                    <li class="to-do-item">--%>
+                    <%--                                        <div class="form-check user-checkbox">--%>
+                    <%--                                            <input class="checkbox_animated check-it" type="checkbox" value=""--%>
+                    <%--                                                   id="flexCheckDefault2">--%>
+                    <%--                                        </div>--%>
+                    <%--                                        <div class="to-do-list-name">--%>
+                    <%--                                            <strong>Create invoice</strong>--%>
+                    <%--                                            <p>8 Hours</p>--%>
+                    <%--                                        </div>--%>
+                    <%--                                    </li>--%>
+                    <%--                                    <li class="to-do-item">--%>
+                    <%--                                        <div class="form-check user-checkbox">--%>
+                    <%--                                            <input class="checkbox_animated check-it" type="checkbox" value=""--%>
+                    <%--                                                   id="flexCheckDefault3">--%>
+                    <%--                                        </div>--%>
+                    <%--                                        <div class="to-do-list-name">--%>
+                    <%--                                            <strong>Meeting with Alisa</strong>--%>
+                    <%--                                            <p>8 Hours</p>--%>
+                    <%--                                        </div>--%>
+                    <%--                                    </li>--%>
 
-                                    <li class="to-do-item">
-                                        <form class="row g-2">
-                                            <div class="col-8">
-                                                <input type="text" class="form-control" id="name"
-                                                       placeholder="Enter Task Name">
-                                            </div>
-                                            <div class="col-4">
-                                                <button type="submit" class="btn btn-primary w-100 h-100">Add
-                                                    task
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <%--                                    <li class="to-do-item">--%>
+                    <%--                                        <form class="row g-2">--%>
+                    <%--                                            <div class="col-8">--%>
+                    <%--                                                <input type="text" class="form-control" id="name"--%>
+                    <%--                                                       placeholder="Enter Task Name">--%>
+                    <%--                                            </div>--%>
+                    <%--                                            <div class="col-4">--%>
+                    <%--                                                <button type="submit" class="btn btn-primary w-100 h-100">Add--%>
+                    <%--                                                    task--%>
+                    <%--                                                </button>--%>
+                    <%--                                            </div>--%>
+                    <%--                                        </form>--%>
+                    <%--                                    </li>--%>
+                    <%--                                </ul>--%>
+                    <%--                            </div>--%>
+                    <%--                        </div>--%>
+                    <%--                    </div>--%>
                     <!-- To Do List end-->
                 </div>
             </div>

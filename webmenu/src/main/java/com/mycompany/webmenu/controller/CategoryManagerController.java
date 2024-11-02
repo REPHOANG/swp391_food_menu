@@ -8,6 +8,7 @@ package com.mycompany.webmenu.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.CategoryDAO;
 import com.mycompany.webmenu.dto.CategoryDto;
 import com.mycompany.webmenu.utils.Constants;
@@ -39,11 +40,11 @@ public class CategoryManagerController extends HttpServlet {
         if (productAction == null) {
             productAction = "categoryListManager";
         }
+        CategoryDAO categoryDao = new CategoryDAO();
         switch (productAction) {
             case "categoryListManager": {
-                CategoryDAO categoryDao = new CategoryDAO();
                 int pageNo = 1; // Trang mặc định
-                int pageSize = 3; // Số sản phẩm trên mỗi trang
+                int pageSize = 10; // Số sản phẩm trên mỗi trang
                 // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
                 String pageParam = request.getParameter("page");
                 if (pageParam != null) {
@@ -66,9 +67,14 @@ public class CategoryManagerController extends HttpServlet {
             }
             case "detailCategory": {
                 Integer productId = Integer.parseInt(request.getParameter("categoryId"));
-                CategoryDAO categoryDao = new CategoryDAO();
                 request.setAttribute("category", categoryDao.getCategoryDetail(productId));
                 request.getRequestDispatcher(Constants.ADD_NEW_CATEGORY_JSP).forward(request, response);
+                break;
+            }
+            case "filterCategory": {
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(categoryDao.getListAllCategory());
+                response.getWriter().write(menuJson);
                 break;
             }
             default:

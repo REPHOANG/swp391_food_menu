@@ -101,7 +101,7 @@
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
-                                            <th>Avatar</th>
+<%--                                            <th>Avatar</th>--%>
                                             <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Phone number</th>
@@ -112,12 +112,12 @@
                                         <tbody>
                                         <c:forEach var="staff" items="${staffs}">
                                             <tr>
-                                                <td>
-                                                    <div class="table-image">
-                                                        <img src="<c:url value='${user.avatarUrl}' />"
-                                                             class="img-fluid" alt="">
-                                                    </div>
-                                                </td>
+<%--                                                <td>--%>
+<%--                                                    <div class="table-image">--%>
+<%--                                                        <img src="<c:url value='${user.avatarUrl}' />"--%>
+<%--                                                             class="img-fluid" alt="">--%>
+<%--                                                    </div>--%>
+<%--                                                </td>--%>
                                                 <td>${staff.fullName}</td>
                                                 <td>${staff.email}</td>
                                                 <td>${staff.phone}</td>

@@ -59,6 +59,89 @@ public class ProductDAO {
         }
     }
 
+    public List<ProductDto> getListAllProduct(
+            int page, int pageSize, String productName,
+            Double priceFrom, Double priceTo, List<Integer> listCategoryIds
+    ) throws SQLException {
+        int offset = (page - 1) * pageSize;
+        StringBuilder sql = new StringBuilder(
+                "SELECT x1.product_id AS productId, x1.name, x1.price, x1.description, " +
+                        "x1.created_by AS createdBy, x1.created_at AS createAt, " +
+                        "x2.url AS urlImage, x3.category_id AS categoryId, x3.name AS categoryName " +
+                        "FROM Products x1 " +
+                        "LEFT JOIN ImageProducts x2 ON (x2.product_id = x1.product_id AND x2.is_main_image = 1) " +
+                        "JOIN Categories x3 ON x3.category_id = x1.category_id " +
+                        "WHERE 1=1 "
+        );
+
+        // Thêm điều kiện lọc nếu có
+        List<Object> parameters = new ArrayList<>();
+        if (productName != null && !productName.isEmpty()) {
+            sql.append("AND x1.name LIKE ? ");
+            parameters.add("%" + productName + "%");
+        }
+        if (priceFrom != null) {
+            sql.append("AND x1.price >= ? ");
+            parameters.add(priceFrom);
+        }
+        if (priceTo != null) {
+            sql.append("AND x1.price <= ? ");
+            parameters.add(priceTo);
+        }
+        if (listCategoryIds != null && !listCategoryIds.isEmpty()) {
+            sql.append("AND x3.category_id IN (");
+            sql.append(listCategoryIds.stream().map(id -> "?").collect(Collectors.joining(", ")));
+            sql.append(") ");
+            parameters.addAll(listCategoryIds);
+        }
+
+        // Thêm điều kiện phân trang
+        sql.append("ORDER BY x1.product_id DESC ");
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        // Thêm offset và pageSize vào danh sách tham số
+        parameters.add(offset);
+        parameters.add(pageSize);
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql.toString())) {
+
+            // Thiết lập tham số cho PreparedStatement
+            for (int i = 0; i < parameters.size(); i++) {
+                stm.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                List<ProductDto> list = new ArrayList<>();
+
+                // Lặp qua kết quả truy vấn
+                while (rs.next()) {
+                    ProductDto dto = new ProductDto();
+                    dto.setProductId(rs.getInt("productId"));
+                    dto.setPrice(rs.getDouble("price"));
+                    dto.setName(rs.getString("name"));
+                    dto.setDescription(rs.getString("description"));
+                    dto.setCreatedBy(rs.getInt("createdBy"));
+                    dto.setCreateAt(rs.getDate("createAt"));
+                    dto.setCategoryId(rs.getInt("categoryId"));
+                    dto.setCategoryName(rs.getString("categoryName"));
+
+                    // Tạo đối tượng ImageProductDTO cho ảnh chính
+                    ImageProductDto imageProductDTO = new ImageProductDto();
+                    imageProductDTO.setUrl(rs.getString("urlImage"));
+                    dto.setMainImg(imageProductDTO);
+
+                    list.add(dto);
+                }
+                return list;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
     // Phương thức để đếm tổng số sản phẩm
     public int getTotalProductCount() {
         String query = "SELECT COUNT(product_id) AS total FROM Products";
@@ -74,6 +157,55 @@ public class ProductDAO {
         }
         return 0; // Trả về 0 nếu không có sản phẩm
     }
+
+    public int getTotalProductCount(String productName, Double priceFrom, Double priceTo, List<Integer> listCategoryIds) {
+        StringBuilder query = new StringBuilder("SELECT COUNT(product_id) AS total FROM Products WHERE 1=1");
+        // Thêm điều kiện lọc nếu các tham số không null
+        if (productName != null && !productName.isEmpty()) {
+            query.append(" AND product_name LIKE ?");
+        }
+        if (priceFrom != null) {
+            query.append(" AND price >= ?");
+        }
+        if (priceTo != null) {
+            query.append(" AND price <= ?");
+        }
+        if (listCategoryIds != null && !listCategoryIds.isEmpty()) {
+            query.append(" AND category_id IN (");
+            query.append("?,".repeat(listCategoryIds.size()).replaceAll(",$", "")); // Tạo danh sách các dấu hỏi tương ứng với số lượng ID
+            query.append(")");
+        }
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+            int paramIndex = 1;
+            // Thiết lập các giá trị tham số
+            if (productName != null && !productName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + productName + "%"); // Sử dụng LIKE với ký tự đại diện
+            }
+            if (priceFrom != null) {
+                stmt.setDouble(paramIndex++, priceFrom);
+            }
+            if (priceTo != null) {
+                stmt.setDouble(paramIndex++, priceTo);
+            }
+            if (listCategoryIds != null && !listCategoryIds.isEmpty()) {
+                for (Integer categoryId : listCategoryIds) {
+                    stmt.setInt(paramIndex++, categoryId); // Thêm từng ID trong danh sách category
+                }
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total"); // Trả về tổng số sản phẩm
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0; // Trả về 0 nếu có lỗi
+        }
+        return 0; // Trả về 0 nếu không có sản phẩm
+    }
+
 
     @SneakyThrows
     public ProductDto getProductDetail(Integer productId) {
