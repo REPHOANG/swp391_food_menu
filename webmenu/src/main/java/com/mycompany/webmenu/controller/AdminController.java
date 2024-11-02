@@ -62,8 +62,10 @@ public class AdminController extends HttpServlet {
         request.setAttribute("totalRevenue", orderDao.getTotalRevenue());
         request.setAttribute("totalOrders", orderDao.getTotalOrders());
         request.setAttribute("totalProducts", productDao.getTotalProductCount());
-        request.setAttribute("totalCustomers", userDao.getTotalUserCount(RoleUserType.USER.getId()));
+        request.setAttribute("totalCustomers", userDao.getTotalUserCount(RoleUserType.USER.getId(), null));
         request.setAttribute("listAllCategory", categoryDao.getListAllCategory());
+        request.setAttribute("bestSellingProduct", orderDao.getTop5BestSellingProducts());
+        request.setAttribute("recentOrders", orderDao.getRecentOrders());
         request.getRequestDispatcher(Constants.ADMIN_PAGE).forward(request, response);
     }
 

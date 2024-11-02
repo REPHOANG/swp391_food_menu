@@ -18,24 +18,29 @@ import java.util.*;
 public class UserDAO {
 
     @SneakyThrows
-    public List<UserDto> getListUserManager(int page, int pageSize, int roleId) {
+    public List<UserDto> getListUserManager(int page, int pageSize, int roleId, String email) {
         int offset = (page - 1) * pageSize;
-        String sql = "SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName ,x1.accumulated_points as accumulatedPoints " +
+        // Xây dựng câu truy vấn SQL động dựa trên giá trị của `email`
+        StringBuilder sql = new StringBuilder("SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName, x1.accumulated_points as accumulatedPoints " +
                 "FROM Users x1 " +
-                "WHERE x1.role_id = ? " +
-                "ORDER BY x1.user_id DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                "WHERE x1.role_id = ? ");
+
+        if (email != null && !email.isEmpty()) {
+            sql.append("AND x1.email LIKE ? ");
+        }
+        sql.append("ORDER BY x1.user_id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         List<UserDto> list = new ArrayList<>();
-
-        // Sử dụng try-with-resources để tự động đóng kết nối và statement
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-            // Thiết lập tham số cho PreparedStatement
-            stm.setInt(1, roleId);
-            stm.setInt(2, offset);
-            stm.setInt(3, pageSize);
-
-            // Thực thi truy vấn
+             PreparedStatement stm = conn.prepareStatement(sql.toString())) {
+            // Thiết lập các tham số cho PreparedStatement
+            int paramIndex = 1;
+            stm.setInt(paramIndex++, roleId);
+            if (email != null && !email.isEmpty()) {
+                stm.setString(paramIndex++, "%" + email + "%"); // Thêm ký tự đại diện cho tìm kiếm mờ
+            }
+            stm.setInt(paramIndex++, offset);
+            stm.setInt(paramIndex, pageSize);
+            // Thực thi truy vấn và xử lý kết quả
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     UserDto dto = new UserDto();
@@ -50,28 +55,41 @@ public class UserDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log lỗi để debug
+            e.printStackTrace(); // Log lỗi để dễ dàng debug
         }
         return list;
     }
 
 
     @SneakyThrows
-    public int getTotalUserCount(int roleId) {
-        String query = "SELECT COUNT(user_id) AS total FROM Users WHERE role_id = ?";
+    public int getTotalUserCount(int roleId, String email) {
+        // Xây dựng câu truy vấn động
+        StringBuilder query = new StringBuilder("SELECT COUNT(user_id) AS total FROM Users WHERE role_id = ?");
+        // Thêm điều kiện cho email nếu có
+        if (email != null && !email.isEmpty()) {
+            query.append(" AND email LIKE ?");
+        }
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, roleId);
+             PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+            // Thiết lập các tham số cho PreparedStatement
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, roleId);
+            // Thêm email vào tham số nếu có giá trị
+            if (email != null && !email.isEmpty()) {
+                stmt.setString(paramIndex, "%" + email + "%"); // Tìm kiếm mờ với ký tự đại diện
+            }
+            // Thực thi truy vấn và xử lý kết quả
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("total");  // Trả về tổng số người dùng
+                    return rs.getInt("total"); // Trả về tổng số người dùng
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log lỗi để debug
+            e.printStackTrace(); // Log lỗi để dễ dàng debug
         }
-        return 0;
+        return 0; // Trả về 0 nếu không có người dùng hoặc có lỗi
     }
+
 
     public ArrayList<UserDto> getAll() throws SQLException {
         String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName, accumulated_points as accumulatedPoints" +
@@ -343,7 +361,6 @@ public class UserDAO {
         }
     }
 
-
     public static String generatePassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
         Random random = new Random();
@@ -520,18 +537,4 @@ public class UserDAO {
         }
     }
 
-    public int getTotalProductCount() {
-        String query = "SELECT COUNT(product_id) AS total FROM Products";
-        try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
-            if (rs.next()) {
-                return rs.getInt("total"); // Trả về tổng số sản phẩm ngay lập tức
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Ghi lại lỗi nếu có
-            return 0; // Ném lại lỗi để xử lý ở nơi gọi
-        }
-        return 0; // Trả về 0 nếu không có sản phẩm
-    }
 }

@@ -1,7 +1,9 @@
 package com.mycompany.webmenu.dao;
 
+import com.mycompany.webmenu.dto.BestSellingProductDto;
 import com.mycompany.webmenu.dto.OrderDto;
 import com.mycompany.webmenu.dto.OrderDetailDto;
+import com.mycompany.webmenu.dto.RecentOrders;
 import com.mycompany.webmenu.enums.StatusOrderType;
 import com.mycompany.webmenu.enums.StatusTablesType;
 import com.mycompany.webmenu.utils.DBUtil;
@@ -407,5 +409,68 @@ public class OrderDAO {
             return 0;
         }
         return 0;
+    }
+
+    public List<BestSellingProductDto> getTop5BestSellingProducts() {
+        List<BestSellingProductDto> bestSellingProducts = new ArrayList<>();
+        String query = "SELECT x1.name            AS productName,\n" +
+                "       x1.price,\n" +
+                "       COUNT(x2.order_id) AS orders,\n" +
+                "       SUM(x2.quantity)   AS amount\n" +
+                "FROM Products x1\n" +
+                "JOIN OrderDetails x2 ON x2.product_id = x1.product_id\n" +
+                "join Orders x3 on x3.order_id = x2.order_id\n" +
+                "where FORMAT(x3.order_date, 'yyyyMMdd') = FORMAT(GETDATE(), 'yyyyMMdd')\n" +
+                "GROUP BY x1.product_id, x1.name, x1.price\n" +
+                "ORDER BY amount desc, orders desc, x1.name desc\n" +
+                "OFFSET 0 ROWS FETCH FIRST 5 ROWS ONLY;";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                BestSellingProductDto dto = new BestSellingProductDto();
+                dto.setProductName(rs.getString("productName"));
+                dto.setPrice(rs.getDouble("price"));
+                dto.setOrders(rs.getInt("orders"));
+                dto.setAmount(rs.getInt("amount"));
+                bestSellingProducts.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi để debug
+        }
+        return bestSellingProducts;
+    }
+
+    public List<RecentOrders> getRecentOrders() {
+        List<RecentOrders> recentOrdersList = new ArrayList<>();
+
+        String query = "SELECT COALESCE(x2.full_name, x1.user_name) AS userName, " +
+                "       x1.order_date, " +
+                "       x1.order_total, " +
+                "       x1.order_status " +
+                "FROM Orders x1 " +
+                "LEFT JOIN Users x2 ON x2.user_id = x1.user_id " +
+                "ORDER BY x1.order_date DESC " +
+                "OFFSET 0 ROWS FETCH FIRST 5 ROWS ONLY";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                RecentOrders recentOrder = new RecentOrders();
+                recentOrder.setUserName(rs.getString("userName"));
+                recentOrder.setOrderDate(rs.getDate("order_date"));
+                recentOrder.setOrderTotal(rs.getDouble("order_total"));
+                recentOrder.setOrderStatus(rs.getInt("order_status"));
+
+                recentOrdersList.add(recentOrder);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi để debug
+        }
+
+        return recentOrdersList;
     }
 }
