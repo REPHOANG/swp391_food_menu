@@ -34,9 +34,10 @@ public class ViewProfileController extends HttpServlet {
             viewProfileAction = "profileActionUser";
         }
         UserDto user = (UserDto) session.getAttribute("user");
-        System.out.println("profileUser " + user);
         UserDAO userDao = new UserDAO();
-        session.setAttribute("profileUser", userDao.getUserById(user.getUserId()));
+        user = userDao.getUserById(user.getUserId());
+        System.out.println("profileUser " + user);
+        session.setAttribute("profileUser", user);
         switch (viewProfileAction) {
             case "profileActionAdmin": {
                 request.getRequestDispatcher(Constants.VIEW_PROFILE_ADMIN_JSP).forward(request, response);

@@ -34,6 +34,9 @@ public class TableManagerController extends HttpServlet {
         if (productAction == null) {
             productAction = "tableListManager";
         }
+        if (message == null) {
+            message = (String) request.getAttribute("message");
+        }
         TableDAO tableDao = new TableDAO();
         switch (productAction) {
             case "tableListManager": {
@@ -70,6 +73,17 @@ public class TableManagerController extends HttpServlet {
                 String menuJson = gson.toJson(listSelectedTableUser);
                 response.getWriter().write(menuJson);
                 return;
+            }
+            case "deleteTable": {
+                Integer tableId = Integer.parseInt(request.getParameter("tableId"));
+                Boolean isDeleted = tableDao.markTableAsDeleted(tableId);
+                if (isDeleted) {
+                    request.setAttribute("message", "Table has been successfully deleted");
+                } else {
+                    request.setAttribute("message", "Table not found with the provided ID or it has already been deleted");
+                }
+                request.getRequestDispatcher("TableManagerController?tableAction=tableListManager").forward(request, response);
+                break;
             }
             default:
                 throw new AssertionError();
@@ -112,15 +126,5 @@ public class TableManagerController extends HttpServlet {
             request.getRequestDispatcher(Constants.ADD_NEW_TABLE_JSP).forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

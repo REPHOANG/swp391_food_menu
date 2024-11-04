@@ -32,6 +32,9 @@ public class ProductManagerController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String productAction = request.getParameter("productAction");
         String message = request.getParameter("message");
+        if (message == null) {
+            message = (String) request.getAttribute("message");
+        }
         if (productAction == null) {
             productAction = "productListManager";
         }
@@ -82,6 +85,17 @@ public class ProductManagerController extends HttpServlet {
                 Integer productId = Integer.parseInt(request.getParameter("productId"));
                 request.setAttribute("product", productDAO.getProductDetail(productId));
                 request.getRequestDispatcher(Constants.PRODUCT_DETAIL_USER_JSP).forward(request, response);
+                break;
+            }
+            case "deleteProduct": {
+                Integer productId = Integer.parseInt(request.getParameter("productId"));
+                Boolean isDeleted = productDAO.markProductAsDeleted(productId);
+                if (isDeleted) {
+                    request.setAttribute("message", "Product has been successfully deleted");
+                } else {
+                    request.setAttribute("message", "Product not found with the provided ID or it has already been deleted");
+                }
+                request.getRequestDispatcher("ProductManagerController?productAction=productListManager").forward(request, response);
                 break;
             }
             default:

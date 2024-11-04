@@ -123,6 +123,11 @@
                                                                     <i class="ri-eye-line"></i>
                                                                 </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="<c:url value="ProductManagerController?productAction=deleteProduct&productId=${product.productId}"/>">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a>
+                                                            </li>
                                                         </ul>
                                                     </td>
                                                 </tr>

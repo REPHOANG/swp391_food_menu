@@ -19,7 +19,7 @@ public class ProductDAO {
                 "x2.url AS urlImage, x3.category_id AS categoryId, x3.name AS categoryName " +
                 "FROM Products x1 " +
                 "LEFT JOIN ImageProducts x2 ON (x2.product_id = x1.product_id AND x2.is_main_image = 1) " +
-                "JOIN Categories x3 ON x3.category_id = x1.category_id " +
+                "JOIN Categories x3 ON x3.category_id = x1.category_id where x1.is_deleted = 0 " +
                 "ORDER BY x1.product_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -71,7 +71,7 @@ public class ProductDAO {
                         "FROM Products x1 " +
                         "LEFT JOIN ImageProducts x2 ON (x2.product_id = x1.product_id AND x2.is_main_image = 1) " +
                         "JOIN Categories x3 ON x3.category_id = x1.category_id " +
-                        "WHERE 1=1 "
+                        "WHERE x1.is_deleted = 0 "
         );
 
         // Thêm điều kiện lọc nếu có
@@ -144,7 +144,7 @@ public class ProductDAO {
 
     // Phương thức để đếm tổng số sản phẩm
     public int getTotalProductCount() {
-        String query = "SELECT COUNT(product_id) AS total FROM Products";
+        String query = "SELECT COUNT(product_id) AS total FROM Products where is_deleted = 0";
         try (Connection conn = DBUtil.getConnection(); // Sử dụng try-with-resources để tự động đóng kết nối
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) { // Tự động đóng statement và result set
@@ -159,10 +159,10 @@ public class ProductDAO {
     }
 
     public int getTotalProductCount(String productName, Double priceFrom, Double priceTo, List<Integer> listCategoryIds) {
-        StringBuilder query = new StringBuilder("SELECT COUNT(product_id) AS total FROM Products WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT COUNT(product_id) AS total FROM Products WHERE is_deleted = 0");
         // Thêm điều kiện lọc nếu các tham số không null
         if (productName != null && !productName.isEmpty()) {
-            query.append(" AND product_name LIKE ?");
+            query.append(" AND name LIKE ?");
         }
         if (priceFrom != null) {
             query.append(" AND price >= ?");
@@ -172,14 +172,14 @@ public class ProductDAO {
         }
         if (listCategoryIds != null && !listCategoryIds.isEmpty()) {
             query.append(" AND category_id IN (");
-            query.append("?,".repeat(listCategoryIds.size()).replaceAll(",$", "")); // Tạo danh sách các dấu hỏi tương ứng với số lượng ID
+            query.append(listCategoryIds.stream().map(id -> "?").collect(Collectors.joining(", "))); // Tạo dấu hỏi chỗ trống
             query.append(")");
         }
-
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+
             int paramIndex = 1;
-            // Thiết lập các giá trị tham số
+            // Thiết lập giá trị cho các tham số
             if (productName != null && !productName.isEmpty()) {
                 stmt.setString(paramIndex++, "%" + productName + "%"); // Sử dụng LIKE với ký tự đại diện
             }
@@ -194,16 +194,17 @@ public class ProductDAO {
                     stmt.setInt(paramIndex++, categoryId); // Thêm từng ID trong danh sách category
                 }
             }
+            // Thực hiện truy vấn và lấy tổng số lượng sản phẩm
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("total"); // Trả về tổng số sản phẩm
+                    return rs.getInt("total"); // Trả về tổng số lượng sản phẩm
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0; // Trả về 0 nếu có lỗi
+            return 0; // Trả về 0 nếu có lỗi xảy ra
         }
-        return 0; // Trả về 0 nếu không có sản phẩm
+        return 0; // Trả về 0 nếu không có sản phẩm nào
     }
 
 
@@ -505,4 +506,25 @@ public class ProductDAO {
         return isSuccess;
     }
 
+    public Boolean markProductAsDeleted(int productId) {
+        String sql = "UPDATE Products SET is_deleted = 1 WHERE product_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Thiết lập giá trị cho tham số `category_id`
+            pstmt.setInt(1, productId);
+            // Thực hiện truy vấn cập nhật
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Cập nhật thành công, productId = " + productId + " đã được đánh dấu là bị xóa.");
+                return true;
+            } else {
+                System.out.println("Không tìm thấy category với productId = " + productId);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

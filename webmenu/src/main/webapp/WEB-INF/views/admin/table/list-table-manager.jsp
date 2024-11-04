@@ -113,6 +113,11 @@
                                                                     <i class="ri-eye-line"></i>
                                                                 </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="<c:url value='TableManagerController?tableAction=deleteTable&tableId=${table.tableId}'/>">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a>
+                                                            </li>
                                                         </ul>
                                                     </td>
                                                 </tr>

@@ -4,10 +4,7 @@ import com.mycompany.webmenu.dto.CategoryDto;
 import com.mycompany.webmenu.utils.DBUtil;
 import lombok.SneakyThrows;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +12,7 @@ public class CategoryDAO {
 
     @SneakyThrows
     public List<CategoryDto> getListAllCategory() {
-        String sql = "SELECT category_id, name,description FROM Categories";
+        String sql = "SELECT category_id, name,description FROM Categories where is_deleted = 0";
         Connection conn = DBUtil.getConnection();
         PreparedStatement stm = conn.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
@@ -36,7 +33,7 @@ public class CategoryDAO {
     public List<CategoryDto> getListCategoryManager(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         String sql = "SELECT x1.category_id AS categoryId, x1.name AS categoryName, x1.description AS categoryDescription " +
-                "FROM Categories x1 " +
+                "FROM Categories x1 where x1.is_deleted = 0" +
                 "ORDER BY x1.category_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         Connection conn = DBUtil.getConnection();
@@ -78,7 +75,7 @@ public class CategoryDAO {
 
     @SneakyThrows
     public int getTotalCategoryCount() {
-        String query = "SELECT COUNT(category_id) AS total FROM Categories";
+        String query = "SELECT COUNT(category_id) AS total FROM Categories where is_deleted = 0";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
@@ -117,6 +114,28 @@ public class CategoryDAO {
             stmt.close();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Boolean markCategoryAsDeleted(int categoryId) {
+        String sql = "UPDATE Categories SET is_deleted = 1 WHERE category_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Thiết lập giá trị cho tham số `category_id`
+            pstmt.setInt(1, categoryId);
+            // Thực hiện truy vấn cập nhật
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Cập nhật thành công, category_id = " + categoryId + " đã được đánh dấu là bị xóa.");
+                return true;
+            } else {
+                System.out.println("Không tìm thấy category với category_id = " + categoryId);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật dữ liệu: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

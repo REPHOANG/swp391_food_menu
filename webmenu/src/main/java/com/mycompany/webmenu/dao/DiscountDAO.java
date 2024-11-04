@@ -26,7 +26,7 @@ public class DiscountDAO {
                 "       quantity,\n" +
                 "       rm_quantity\n" +
                 "FROM Discounts\n" +
-                "WHERE quantity > rm_quantity\n" +
+                "WHERE quantity > rm_quantity and is_deleted = 0 \n" +
                 "and FORMAT(start_date, 'yyyyMMdd') <= FORMAT(GETDATE(), 'yyyyMMdd')\n" +
                 "and FORMAT(GETDATE(), 'yyyyMMdd')  <= FORMAT(end_date, 'yyyyMMdd')\n" +
                 "ORDER BY discount_id DESC";
@@ -61,7 +61,7 @@ public class DiscountDAO {
         int offset = (page - 1) * pageSize;
         String sql = "SELECT discount_id, discount_code, name, description, discount_percent, max_discount_value, " +
                 "min_discount_value, start_date, end_date, quantity, rm_quantity " +
-                "FROM Discounts " +
+                "FROM Discounts where is_deleted = 0 " +
                 "ORDER BY discount_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -98,7 +98,7 @@ public class DiscountDAO {
 
     @SneakyThrows
     public int getTotalDiscountCount() {
-        String query = "select count(discount_id) as total from Discounts";
+        String query = "select count(discount_id) as total from Discounts where is_deleted = 0";
         Connection conn = DBUtil.getConnection();
         PreparedStatement stmt = conn.prepareStatement(query);
         ResultSet rs = stmt.executeQuery();
@@ -298,4 +298,25 @@ public class DiscountDAO {
         }
     }
 
+    public Boolean markDiscountsAsDeleted(int discountId) {
+        String sql = "update Discounts set is_deleted = 1 where discount_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Thiết lập giá trị cho tham số `category_id`
+            pstmt.setInt(1, discountId);
+            // Thực hiện truy vấn cập nhật
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Cập nhật thành công, discountId = " + discountId + " đã được đánh dấu là bị xóa.");
+                return true;
+            } else {
+                System.out.println("Không tìm thấy discount với discountId = " + discountId);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
