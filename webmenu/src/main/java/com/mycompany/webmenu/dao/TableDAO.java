@@ -16,7 +16,7 @@ public class TableDAO {
     public List<TableDto> getListTableManager(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         String sql = "SELECT x1.table_id AS tableId, x1.table_name AS tableName, x1.status, x1.capacity " +
-                "FROM Tables x1 " +
+                "FROM Tables x1 where x1.is_deleted = 0 " +
                 "ORDER BY x1.table_id DESC " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         Connection conn = DBUtil.getConnection();
@@ -39,7 +39,7 @@ public class TableDAO {
 
     public List<TableDto> getListAllTable() {
         String sql = "SELECT x1.table_id AS tableId, x1.table_name AS tableName, x1.status, x1.capacity " +
-                "FROM Tables x1 " +
+                "FROM Tables x1 where x1.is_deleted = 0 " +
                 "ORDER BY x1.table_id DESC";
         List<TableDto> list = new ArrayList<>();
         try (Connection conn = DBUtil.getConnection();
@@ -62,7 +62,7 @@ public class TableDAO {
 
     @SneakyThrows
     public int getTotalTableCount() {
-        String query = "SELECT COUNT(table_id) AS total FROM Tables";
+        String query = "SELECT COUNT(table_id) AS total FROM Tables where is_deleted = 0";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
@@ -143,7 +143,7 @@ public class TableDAO {
     @SneakyThrows
     public TableDto getTableDetail(Integer tableId) {
         String sql = "SELECT x1.table_id AS tableId, x1.table_name AS tableName, x1.status, x1.capacity " +
-                "FROM Tables x1 WHERE x1.table_id = ?";
+                "FROM Tables x1 WHERE x1.table_id = ? and x1.is_deleted = 0 ";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, tableId);
@@ -161,4 +161,25 @@ public class TableDAO {
         return null;
     }
 
+    public Boolean markTableAsDeleted(int tableId) {
+        String sql = "update Tables set is_deleted = 1 where table_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Thiết lập giá trị cho tham số `category_id`
+            pstmt.setInt(1, tableId);
+            // Thực hiện truy vấn cập nhật
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Cập nhật thành công, tableId = " + tableId + " đã được đánh dấu là bị xóa.");
+                return true;
+            } else {
+                System.out.println("Không tìm thấy table với tableId = " + tableId);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

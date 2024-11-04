@@ -37,6 +37,10 @@ public class CategoryManagerController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String productAction = request.getParameter("categoryAction");
         String message = request.getParameter("message");
+        if (message == null) {
+            message = (String) request.getAttribute("message");
+        }
+
         if (productAction == null) {
             productAction = "categoryListManager";
         }
@@ -75,6 +79,17 @@ public class CategoryManagerController extends HttpServlet {
                 Gson gson = new Gson();
                 String menuJson = gson.toJson(categoryDao.getListAllCategory());
                 response.getWriter().write(menuJson);
+                break;
+            }
+            case "deleteCategory": {
+                Integer categoryId = Integer.parseInt(request.getParameter("categoryId"));
+                Boolean isDeleted = categoryDao.markCategoryAsDeleted(categoryId);
+                if (isDeleted) {
+                    request.setAttribute("message", "Category has been successfully deleted");
+                } else {
+                    request.setAttribute("message", "Category not found with the provided ID or it has already been deleted");
+                }
+                request.getRequestDispatcher("CategoryManagerController?categoryAction=categoryListManager").forward(request, response);
                 break;
             }
             default:

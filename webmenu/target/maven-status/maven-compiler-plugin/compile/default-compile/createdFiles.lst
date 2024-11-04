@@ -3,6 +3,7 @@ com\mycompany\webmenu\utils\DBUtil.class
 com\mycompany\webmenu\controller\ViewCartController.class
 com\mycompany\webmenu\dao\UserDAO.class
 com\mycompany\webmenu\dto\OrderDto$OrderDtoBuilder.class
+com\mycompany\webmenu\dto\BestSellingProductDto.class
 com\mycompany\webmenu\dto\ImageProductDto$ImageProductDtoBuilder.class
 com\mycompany\webmenu\dto\OrderDetailDto$OrderDetailDtoBuilder.class
 com\mycompany\webmenu\controller\UserController.class
@@ -26,6 +27,7 @@ com\mycompany\webmenu\dto\TableDto$TableDtoBuilder.class
 com\mycompany\webmenu\dto\UserDto.class
 com\mycompany\webmenu\controller\OrderUserController.class
 com\mycompany\webmenu\enums\StatusTablesType.class
+com\mycompany\webmenu\dto\RecentOrders.class
 com\mycompany\webmenu\dao\DiscountDAO.class
 com\mycompany\webmenu\controller\DiscountManagerController.class
 com\mycompany\webmenu\controller\LoginController.class

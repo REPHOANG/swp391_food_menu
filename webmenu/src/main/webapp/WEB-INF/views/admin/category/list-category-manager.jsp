@@ -92,7 +92,6 @@
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
                                             <tr>
-<%--                                                <th>Category Id</th>--%>
                                                 <th>Category Name</th>
                                                 <th>Option</th>
                                             </tr>
@@ -101,13 +100,17 @@
                                             <tbody>
                                             <c:forEach var="category" items="${categorys}">
                                                 <tr>
-<%--                                                    <td>${category.categoryId}</td>--%>
                                                     <td>${category.name}</td>
                                                     <td>
                                                         <ul>
                                                             <li>
                                                                 <a href="<c:url value="CategoryManagerController?categoryAction=detailCategory&categoryId=${category.categoryId}"/>">
                                                                     <i class="ri-eye-line"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="<c:url value="CategoryManagerController?categoryAction=deleteCategory&categoryId=${category.categoryId}"/>">
+                                                                    <i class="ri-delete-bin-line"></i>
                                                                 </a>
                                                             </li>
                                                         </ul>

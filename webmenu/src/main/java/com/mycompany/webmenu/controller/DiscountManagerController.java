@@ -31,6 +31,9 @@ public class DiscountManagerController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String productAction = request.getParameter("discountAction");
         String message = request.getParameter("message");
+        if (message == null) {
+            message = (String) request.getAttribute("message");
+        }
         if (productAction == null) {
             productAction = "discountListManager";
         }
@@ -91,6 +94,17 @@ public class DiscountManagerController extends HttpServlet {
                 // Ghi JSON vào phản hồi
                 response.getWriter().write(jsonResponse);
                 return;
+            }
+            case "deleteDiscount": {
+                Integer discountId = Integer.parseInt(request.getParameter("discountId"));
+                Boolean isDeleted = discountDAO.markDiscountsAsDeleted(discountId);
+                if (isDeleted) {
+                    request.setAttribute("message", "Discount has been successfully deleted");
+                } else {
+                    request.setAttribute("message", "Discount not found with the provided ID or it has already been deleted");
+                }
+                request.getRequestDispatcher("DiscountManagerController?discountAction=discountListManager").forward(request, response);
+                break;
             }
             default:
                 throw new AssertionError();
