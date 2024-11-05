@@ -40,7 +40,7 @@
             <li class="sidebar-list">
                 <a class="sidebar-link sidebar-title link-nav" href="<c:url value="ProductManagerController"/>">
                     <i class="ri-store-3-line"></i>
-                    <span>Prodcts</span>
+                    <span>Products</span>
                 </a>
             </li>
             <li class="sidebar-list">
