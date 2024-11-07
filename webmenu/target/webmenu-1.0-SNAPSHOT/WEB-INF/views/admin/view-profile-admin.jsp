@@ -81,8 +81,7 @@
                                     <div class="card-header-2">
                                         <h5>Profile</h5>
                                     </div>
-                                    <span style="color: #0baf9a; font-size: 18px;">${messageSuccessful}</span>
-                                    <span style="color: red; font-size: 18px;">${messageFailed}</span>
+                                    
                                     <form class="theme-form theme-form-2 mega-form"
                                           action="./ViewProfileController?viewProfileAction=profileActionAdmin"
                                           method="post">
@@ -112,7 +111,8 @@
                                         <div class="modal-footer">
                                             <input type="submit" class="btn btn-success" value="Save">
                                         </div>
-                                    </form>
+                                    </form><span style="color: #0baf9a; font-size: 18px;">${messageSuccessful}</span>
+                                    <span style="color: red; font-size: 18px;">${messageFailed}</span>
                                 </div>
                             </div>
                         </div>
@@ -170,6 +170,7 @@
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script>
+    //Kiểm tra dữ liệu đầu vào
     document.querySelector('form').addEventListener('submit', function (event) {
         const inputField = document.querySelector('input[name="name"]');
         if (!inputField.value.trim()) {
