@@ -86,9 +86,7 @@
                                         <%--                                                    <i data-feather="trending-up"></i>8.5%</span>--%>
                                         </h4>
                                     </div>
-                                    <div class="align-self-center text-center">
-                                        <i class="ri-database-2-line"></i>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -105,9 +103,7 @@
                                             <%--                                                    <i data-feather="trending-down"></i>8.5%</span>--%>
                                         </h4>
                                     </div>
-                                    <div class="align-self-center text-center">
-                                        <i class="ri-shopping-bag-3-line"></i>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -126,9 +122,7 @@
                                         </h4>
                                     </div>
 
-                                    <div class="align-self-center text-center">
-                                        <i class="ri-chat-3-line"></i>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -146,9 +140,7 @@
                                         </h4>
                                     </div>
 
-                                    <div class="align-self-center text-center">
-                                        <i class="ri-user-add-line"></i>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

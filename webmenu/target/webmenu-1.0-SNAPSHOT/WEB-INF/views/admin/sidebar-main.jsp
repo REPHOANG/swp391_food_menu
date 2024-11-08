@@ -23,7 +23,7 @@
                 <span>Orders</span>
             </a>
         </li>
-<%--        <c:if test="${sessionScope.user != null && sessionScope.user.roleId == 1}">--%>
+        <c:if test="${sessionScope.user != null && sessionScope.user.roleId == 1}">
             <li class="sidebar-list">
                 <a class="sidebar-link sidebar-title link-nav"
                    href="<c:url value="UserController?userAction=userManagerAdmin"/>">
@@ -61,7 +61,7 @@
                     <span>Tables</span>
                 </a>
             </li>
-<%--        </c:if>--%>
+        </c:if>
     </ul>
 </div>
 <div class="right-arrow" id="right-arrow">
