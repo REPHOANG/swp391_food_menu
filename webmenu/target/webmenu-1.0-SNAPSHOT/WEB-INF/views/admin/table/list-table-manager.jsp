@@ -37,6 +37,30 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/admin/css/vendors/bootstrap.css"/>"/>
     <!-- App css -->
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/admin/css/style.css"/>"/>
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center; /* Căn giữa nội dung */
+            gap: 4px; /* Khoảng cách giữa các nút nhỏ hơn */
+            padding: 6px 0; /* Padding nhỏ hơn */
+        }
+
+        .page-btn {
+            padding: 6px 10px; /* Giảm padding */
+            margin: 1px; /* Giảm margin */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            font-size: 12px; /* Giảm kích thước font */
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            font-weight: bold;
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+    </style>
 </head>
 <body>
 <!-- tap on top start-->
@@ -87,6 +111,14 @@
                                                 ${message}
                                         </div>
                                     </c:if>
+                                    <div>
+                                        <p>Search: <input type="search" id="search" class="" placeholder></p>
+                                        <p>Status: <select id="status-selection">
+                                            <option value="">Unknown</option>
+                                            <option value="0">Available</option>
+                                            <option value="1">In Use</option>
+                                        </select></p>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
@@ -99,56 +131,9 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <c:forEach var="table" items="${tables}">
-                                                <tr>
-                                                    <td>${table.tableName}</td>
-                                                    <td>
-                                                            ${table.status == 0 ? 'Available' : table.status == 1 ? 'In Use' : table.status == 2 ? 'Reserved' : 'Unknown'}
-                                                    </td>
-                                                    <td>${table.capacity}</td>
-                                                    <td>
-                                                        <ul>
-                                                            <li>
-                                                                <a href="<c:url value='TableManagerController?tableAction=detailTable&tableId=${table.tableId}'/>">
-                                                                    <i class="ri-eye-line"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="<c:url value='TableManagerController?tableAction=deleteTable&tableId=${table.tableId}'/>">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
                                             </tbody>
                                         </table>
-                                        <div>
-                                            <c:if test="${currentPage > 1}">
-                                                <a href="TableManagerController?page=${currentPage - 1}">Previous</a>
-                                            </c:if>
-                                            <c:set var="startPage" value="${currentPage - 2}"/>
-                                            <c:set var="endPage" value="${currentPage + 2}"/>
-                                            <c:if test="${startPage < 1}">
-                                                <c:set var="startPage" value="1"/>
-                                                <c:set var="endPage" value="${5 > totalPages ? totalPages : 5}"/>
-                                            </c:if>
-                                            <c:if test="${endPage > totalPages}">
-                                                <c:set var="endPage" value="${totalPages}"/>
-                                                <c:set var="startPage" value="${endPage - 4 > 1 ? endPage - 4 : 1}"/>
-                                            </c:if>
-                                            <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                                                <c:if test="${i == currentPage}">
-                                                    <strong>${i}</strong> <!-- Trang hiện tại -->
-                                                </c:if>
-                                                <c:if test="${i != currentPage}">
-                                                    <a href="TableManagerController?page=${i}">${i}</a> <!-- Các trang khác -->
-                                                </c:if>
-                                            </c:forEach>
-                                            <c:if test="${currentPage < totalPages}">
-                                                <a href="TableManagerController?page=${currentPage + 1}">Next</a>
-                                            </c:if>
+                                        <div id="pagination" class="pagination">
                                         </div>
                                     </div>
                                 </div>
@@ -247,5 +232,6 @@
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
+<script src="<c:url value="/assets/admin/list-table-manager.js"/>"></script>
 </body>
 </html>

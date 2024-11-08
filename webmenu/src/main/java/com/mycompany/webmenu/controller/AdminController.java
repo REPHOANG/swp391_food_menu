@@ -8,6 +8,7 @@ package com.mycompany.webmenu.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.CategoryDAO;
 import com.mycompany.webmenu.dao.OrderDAO;
 import com.mycompany.webmenu.dao.ProductDAO;
@@ -37,19 +38,43 @@ public class AdminController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        String adminAction = request.getParameter("adminAction");
+        if (adminAction == null) {
+            adminAction = "home";
+        }
+        UserDAO userDao = new UserDAO();
         OrderDAO orderDao = new OrderDAO();
         ProductDAO productDao = new ProductDAO();
-        UserDAO userDao = new UserDAO();
         CategoryDAO categoryDao = new CategoryDAO();
-        request.setAttribute("totalRevenue", orderDao.getTotalRevenue());
-        request.setAttribute("totalOrders", orderDao.getTotalOrders());
-        request.setAttribute("totalProducts", productDao.getTotalProductCount());
-        request.setAttribute("totalCustomers", userDao.getTotalUserCount(RoleUserType.USER.getId(), null));
-        request.setAttribute("listAllCategory", categoryDao.getListAllCategory());
-        request.setAttribute("bestSellingProduct", orderDao.getTop5BestSellingProducts());
-        request.setAttribute("recentOrders", orderDao.getRecentOrders());
-        request.getRequestDispatcher(Constants.ADMIN_PAGE).forward(request, response);
+        switch (adminAction) {
+            case "home": {
+                request.setAttribute("totalRevenue", orderDao.getTotalRevenue());
+                request.setAttribute("totalOrders", orderDao.getTotalOrders());
+                request.setAttribute("totalProducts", productDao.getTotalProductCount());
+                request.setAttribute("totalCustomers", userDao.getTotalUserCount(RoleUserType.USER.getId(), null, null));
+                request.setAttribute("listAllCategory", categoryDao.getListAllCategory());
+                request.getRequestDispatcher(Constants.ADMIN_PAGE).forward(request, response);
+                break;
+            }
+            case "bestSellingProduct": {
+                String startDate = request.getParameter("startDate");
+                String endDate = request.getParameter("endDate");
+                var bestSellingProduct = orderDao.getTop5BestSellingProducts(startDate, endDate);
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(bestSellingProduct);
+                response.getWriter().write(menuJson);
+                break;
+            }
+            case "recentOrders": {
+                String startDate = request.getParameter("startDate");
+                String endDate = request.getParameter("endDate");
+                var bestSellingProduct = orderDao.getRecentOrders(startDate, endDate);
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(bestSellingProduct);
+                response.getWriter().write(menuJson);
+                break;
+            }
+        }
     }
 
    

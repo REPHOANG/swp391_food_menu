@@ -81,7 +81,7 @@
                                     <div class="card-header-2">
                                         <h5>Profile</h5>
                                     </div>
-                                    
+
                                     <form class="theme-form theme-form-2 mega-form"
                                           action="./ViewProfileController?viewProfileAction=profileActionAdmin"
                                           method="post">
@@ -98,7 +98,8 @@
                                             <label class="form-label-title col-sm-3 mb-0">Phone number</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" placeholder="Phone number"
-                                                       name="phone" value="${profileUser.phone}">
+                                                       name="phone" value="${profileUser.phone}" id="phone">
+                                                <div id="phone-error" style="color: red; display: none;">Please enter valid phone format</div>
                                             </div>
                                         </div>
                                         <div class="mb-4 row align-items-center">
@@ -109,7 +110,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <input type="submit" class="btn btn-success" value="Save">
+                                            <input type="submit" class="btn btn-success" value="Save" id="save-btn" disabled >
                                         </div>
                                     </form><span style="color: #0baf9a; font-size: 18px;">${messageSuccessful}</span>
                                     <span style="color: red; font-size: 18px;">${messageFailed}</span>
@@ -170,6 +171,21 @@
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script>
+
+    const phoneRegex = /^(0[3|5|7|8|9][0-9]{8})$/; // Regex cho số điện thoại Việt Nam
+    const phoneInput = document.getElementById("phone");
+    const phoneError = document.getElementById("phone-error");
+    const saveButton = document.getElementById("save-btn");
+    document.getElementById('phone').addEventListener("input", function() {
+        const phoneValue = this.value;
+        if (phoneRegex.test(phoneValue)) {
+            phoneError.style.display = "none";  // Ẩn lỗi
+            saveButton.disabled = false;  // Bật nút Save
+        } else {
+            phoneError.style.display = "block";  // Hiển thị lỗi
+            saveButton.disabled = true;  // Vô hiệu hóa nút Save
+        }
+    });
     //Kiểm tra dữ liệu đầu vào
     document.querySelector('form').addEventListener('submit', function (event) {
         const inputField = document.querySelector('input[name="name"]');

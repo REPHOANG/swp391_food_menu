@@ -35,7 +35,7 @@ public class UserController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8"); 
+        response.setContentType("text/html;charset=UTF-8");
         String userAction = request.getParameter("userAction"); // Lấy tham số "userAction" từ request để xác định hành động của người dùng
         HttpSession session = request.getSession(); // Khởi tạo session để lưu trữ và truy xuất thông tin phiên người dùng
         UserDAO uDAO = new UserDAO(); // Tạo một đối tượng `UserDAO` để tương tác với cơ sở dữ liệu liên quan đến người dùng
@@ -56,7 +56,7 @@ public class UserController extends HttpServlet {
                     } else {
                         UserDto user = uDAO.login(email); // Gọi phương thức `login` để kiểm tra thông tin đăng nhập từ cơ sở dữ liệu
                         if (user == null) { // Nếu người dùng không tồn tại
-                            String avatarURL = request.getParameter("picture"); // Lấy URL avatar 
+                            String avatarURL = request.getParameter("picture"); // Lấy URL avatar
                             user = uDAO.insertNewUser(email, avatarURL); // Thêm người dùng mới vào cơ sở dữ liệu
                         }
                         session.setAttribute("user", user); // Lưu trữ thông tin người dùng vào session
@@ -77,8 +77,8 @@ public class UserController extends HttpServlet {
                 }
 
                 case "updateProfile": { // Nếu `userAction` là "updateProfile"
-                    String fullName = request.getParameter("username"); 
-                    String phone = request.getParameter("phone"); 
+                    String fullName = request.getParameter("username");
+                    String phone = request.getParameter("phone");
                     String email = request.getParameter("email");
                     String urlAvatar = request.getParameter("urlAvatar").replace("/avatar/", "%2Favatar%2F");
                     uDAO.updateProfile(email, fullName, phone, urlAvatar); // Cập nhật thông tin hồ sơ người dùng trong cơ sở dữ liệu
@@ -100,15 +100,18 @@ public class UserController extends HttpServlet {
                     int itemsPerPage = Integer.parseInt(request.getParameter("itemsPerPage")); // Lấy số lượng phần tử trên mỗi trang từ request
                     String emailParam = request.getParameter("email"); // Lấy email từ request (nếu có)
                     String email = (emailParam != null && !emailParam.isEmpty() && !Objects.equals(emailParam, "null")) ? emailParam : null;
+                    String statusParam = request.getParameter("status");
+                    Boolean status = (statusParam != null && !statusParam.isEmpty() && !Objects.equals(statusParam, "null")) ? Boolean.valueOf(statusParam) : null;
 
-                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId(), email); // Lấy tổng số người dùng dựa trên email
+                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId(), email,status); // Lấy tổng số người dùng dựa trên email
                     int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage); // Tính tổng số trang
                     Map<String, Object> result = new HashMap<>(); // Tạo một `Map` để chứa kết quả
-                    result.put("items", uDAO.getListUserManager(currentPage, itemsPerPage, RoleUserType.USER.getId(), email)); // Thêm danh sách người dùng vào kết quả
+                    result.put("items", uDAO.getListUserManager(currentPage, itemsPerPage, RoleUserType.USER.getId(), email,status)); // Thêm danh sách người dùng vào kết quả
                     result.put("totalPages", totalPages); // Thêm tổng số trang vào kết quả
 
                     String menuJson = gson.toJson(result); // Chuyển `result` sang JSON
-                    response.getWriter().write(menuJson); // Trả JSON về client
+                    // Trả về JSON cho client
+                    response.getWriter().write(menuJson);
                     break;
                 }
             }

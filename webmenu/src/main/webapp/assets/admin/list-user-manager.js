@@ -1,11 +1,10 @@
 handleSearchInput()
-// Gọi hàm xử lý tìm kiếm khi trang được tải
-
-let email = null; // Khởi tạo biến email để lưu giá trị tìm kiếm
-let currentPage = 1; // Trang hiện tại bắt đầu từ 1
-let itemsPerPage = 10;  // Số sản phẩm mỗi trang hiển thị
-const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị trong phân trang
-loadUserList(currentPage) // Tải danh sách người dùng lần đầu tiên khi trang được mở
+let email = null;
+let status = null;
+let currentPage = 1;
+let itemsPerPage = 10;  // Số sản phẩm mỗi trang
+const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
+loadUserList(currentPage)
 
 // Hàm xử lý khi nhập vào ô tìm kiếm
 function handleSearchInput() {
@@ -29,11 +28,13 @@ function loadUserList(page) {
     if (email) {
         url += `&email=` + email; // Thêm tham số email vào URL nếu có
     }
-    console.log("url " + url) // In URL ra console để kiểm tra
-
-    // Lấy giỏ hàng từ localStorage (không dùng trong hàm này)
+    if (status) {
+        url += `&status=` + status;
+    }
+    console.log("url " + url)
+    // Lấy giỏ hàng từ localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     fetch(url) // Gọi API với URL đã tạo
         .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
         .then(data => {
@@ -44,13 +45,16 @@ function loadUserList(page) {
                 const row = document.createElement("tr"); // Tạo một hàng mới cho mỗi người dùng
                 // Lấy các giá trị email, phone, address từ đối tượng user, nếu không có thì để chuỗi rỗng
                 const emailCell = user.email ? user.email : '';
+                const fullName = user.fullName ? user.fullName : '';
                 const phoneCell = user.phone ? user.phone : '';
                 const addressCell = user.address ? user.address : '';
-
+                const isDeleted = user.isDeleted ? user.isDeleted : '';
                 row.innerHTML = `
                     <td>${emailCell}</td>
+                    <td>${fullName}</td>
                     <td>${phoneCell}</td>
                     <td>${addressCell}</td>
+                     <td>${isDeleted === true ? 'Deleted' : 'Active'}</td>  <!-- Show "Deleted" or "Active" text -->
                     <td>
                         <ul>
                             <li>
@@ -122,3 +126,27 @@ function createPagination(totalPages) {
         pagination.appendChild(nextButton); // Thêm nút vào phân trang
     }
 }
+
+// Lấy phần tử select bằng ID
+const statusSelection = document.getElementById("status-selection");
+
+// Thêm một sự kiện để phát hiện thay đổi trong lựa chọn
+statusSelection.addEventListener("change", function () {
+    // Lấy giá trị đã chọn
+    const selectedValue = statusSelection.value;
+    // Thực hiện các hành động dựa trên giá trị đã chọn
+    if (selectedValue === "true") {
+        status = 'true';
+        console.log("Trạng thái: Kích hoạt");
+        // Thêm logic cho trạng thái 'Kích hoạt' tại đây
+    } else if (selectedValue === "false") {
+        console.log("Trạng thái: Vô hiệu hóa");
+        status = 'false';
+        // Thêm logic cho trạng thái 'Vô hiệu hóa' tại đây
+    } else {
+        status = null;
+        console.log("Trạng thái: Không xác định");
+        // Thêm logic cho trạng thái 'Không xác định' tại đây
+    }
+    loadUserList(1)
+});

@@ -1,5 +1,12 @@
+<%@ page import="com.mycompany.webmenu.enums.StatusOrderType" %>
+<%@ page import="com.mycompany.webmenu.dto.OrderDto" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    // Lấy trạng thái hiện tại của đơn hàng từ orderDetail
+    OrderDto orderDetail = (OrderDto) request.getAttribute("orderDetail");
+    Integer currentStatus = orderDetail != null ? orderDetail.getOrderStatus() : null;
+%>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -37,6 +44,30 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/admin/css/vendors/bootstrap.css"/>"/>
     <!-- App css -->
     <link rel="stylesheet" type="text/css" href="<c:url value="/assets/admin/css/style.css"/>"/>
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center; /* Căn giữa nội dung */
+            gap: 4px; /* Khoảng cách giữa các nút nhỏ hơn */
+            padding: 6px 0; /* Padding nhỏ hơn */
+        }
+
+        .page-btn {
+            padding: 6px 10px; /* Giảm padding */
+            margin: 1px; /* Giảm margin */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            font-size: 12px; /* Giảm kích thước font */
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            font-weight: bold;
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+    </style>
 </head>
 <body>
 <!-- tap on top start-->
@@ -89,6 +120,10 @@
                                                 ${message}
                                         </div>
                                     </c:if>
+                                    <div>
+                                        <p>Search: <input type="search" id="search" class="" placeholder></p>
+                                        <p>Category: <select id="category-selection"></select></p>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
@@ -100,65 +135,10 @@
                                                 <th>Option</th>
                                             </tr>
                                             </thead>
-
                                             <tbody>
-                                            <c:forEach var="product" items="${products}">
-                                                <tr>
-                                                    <td>
-                                                        <div class="table-image">
-                                                            <c:if test="${not empty product.mainImg and not empty product.mainImg.url}">
-                                                                <img src="<c:url value='${product.mainImg.url}' />"
-                                                                     class="img-fluid" alt="">
-                                                            </c:if>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>${product.name}</td>
-                                                    <td>${product.categoryName}</td>
-                                                    <td>${product.price}</td>
-                                                    <td>
-                                                        <ul>
-                                                            <li>
-                                                                <a href="<c:url value="ProductManagerController?productAction=detailProduct&productId=${product.productId}"/>">
-                                                                    <i class="ri-eye-line"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="<c:url value="ProductManagerController?productAction=deleteProduct&productId=${product.productId}"/>">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
                                             </tbody>
                                         </table>
-                                        <div>
-                                            <c:if test="${currentPage > 1}">
-                                                <a href="ProductManagerController?page=${currentPage - 1}">Previous</a>
-                                            </c:if>
-                                            <c:set var="startPage" value="${currentPage - 2}"/>
-                                            <c:set var="endPage" value="${currentPage + 2}"/>
-                                            <c:if test="${startPage < 1}">
-                                                <c:set var="startPage" value="1"/>
-                                                <c:set var="endPage" value="${5 > totalPages ? totalPages : 5}"/>
-                                            </c:if>
-                                            <c:if test="${endPage > totalPages}">
-                                                <c:set var="endPage" value="${totalPages}"/>
-                                                <c:set var="startPage" value="${endPage - 4 > 1 ? endPage - 4 : 1}"/>
-                                            </c:if>
-                                            <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                                                <c:if test="${i == currentPage}">
-                                                    <strong>${i}</strong> <!-- Trang hiện tại -->
-                                                </c:if>
-                                                <c:if test="${i != currentPage}">
-                                                    <a href="ProductManagerController?page=${i}">${i}</a> <!-- Các trang khác -->
-                                                </c:if>
-                                            </c:forEach>
-                                            <c:if test="${currentPage < totalPages}">
-                                                <a href="ProductManagerController?page=${currentPage + 1}">Next</a>
-                                            </c:if>
+                                        <div id="pagination" class="pagination">
                                         </div>
                                     </div>
                                 </div>
@@ -257,5 +237,6 @@
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
+<script src="<c:url value="/assets/user/list-product-manager.js"/>"></script>
 </body>
 </html>

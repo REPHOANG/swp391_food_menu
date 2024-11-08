@@ -49,9 +49,9 @@ public class StaffController extends HttpServlet {
                 if (pageParam != null) {
                     pageNo = Integer.parseInt(pageParam);
                 }
-                int totalStaffs = userDao.getTotalUserCount(RoleUserType.STAFF.getId(), null);
+                int totalStaffs = userDao.getTotalUserCount(RoleUserType.STAFF.getId(), null, null);
                 int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
-                request.setAttribute("staffs", userDao.getListUserManager(pageNo, pageSize, RoleUserType.STAFF.getId(), null));
+                request.setAttribute("staffs", userDao.getListUserManager(pageNo, pageSize, RoleUserType.STAFF.getId(), null, null));
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("currentPage", pageNo);
                 request.setAttribute("message", message);
