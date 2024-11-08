@@ -144,44 +144,7 @@
 
                         <div class="ms-auto d-flex align-items-center">
                             <div class="category-dropdown me-md-3">
-                                <%--                                <h5 class="text-content">Sort By :</h5>--%>
-                                <%--                                <div class="dropdown">--%>
-                                <%--                                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton1"--%>
-                                <%--                                            data-bs-toggle="dropdown">--%>
-                                <%--                                        <span>Most Popular</span> <i class="fa-solid fa-angle-down"></i>--%>
-                                <%--                                    </button>--%>
-                                <%--                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="pop"--%>
-                                <%--                                               href="javascript:void(0)">Popularity</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="low" href="javascript:void(0)">Low - High--%>
-                                <%--                                                Price</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="high" href="javascript:void(0)">High - Low--%>
-                                <%--                                                Price</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="rating" href="javascript:void(0)">Average--%>
-                                <%--                                                Rating</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="aToz" href="javascript:void(0)">A - Z--%>
-                                <%--                                                Order</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="zToa" href="javascript:void(0)">Z - A--%>
-                                <%--                                                Order</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                        <li>--%>
-                                <%--                                            <a class="dropdown-item" id="off" href="javascript:void(0)">% Off ---%>
-                                <%--                                                Hight To--%>
-                                <%--                                                Low</a>--%>
-                                <%--                                        </li>--%>
-                                <%--                                    </ul>--%>
-                                <%--                                </div>--%>
+                               
                             </div>
 
                             <div class="grid-option grid-option-2">
@@ -224,11 +187,6 @@
                                    id="searchProductName"
                                    aria-label="Product Name">
                         </div>
-
-                        <%--                        <div class="col-xl-3 col-md-6">--%>
-                        <%--                            <button id="Filter-product" onclick="filterProduct()"><span>Apply Filters</span></button>--%>
-                        <%--                        </div>--%>
-
                     </div>
                 </div>
 
@@ -304,54 +262,67 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
 <script type="text/javascript">
-    const userSelectedTable = {
-        tableId: '${userSelectedTable.tableId}',
-        tableName: '${userSelectedTable.tableName}',
-        status: '${userSelectedTable.status}',
-        capacity: '${userSelectedTable.capacity}'
-    }
-    let priceFrom = null;
-    let priceTo = null;
-    let productName = null;
-    let categoryIds = [];
-    viewCartHeaderDisplay()
-    $(function () {
-        var $range = $(".js-range-slider"),
-            $priceDisplay = $(".js-price-display"),
-            instance,
-            min = 0,
-            max = 10000000,
-            from = priceFrom,
-            to = priceTo;
-        $range.ionRangeSlider({
-            type: "double",
-            min: min,
-            max: max,
-            from: from,
-            to: to,
-            prefix: "$. ",
-            step: 50000,
-            prettify_enabled: true,
-            prettify_separator: ".",
-            values_separator: " - ",
-            force_edges: true,
-            onStart: updatePriceDisplay,
-            onChange: updatePriceDisplay
-        });
-        instance = $range.data("ionRangeSlider");
+  // Đối tượng `userSelectedTable` lưu trữ thông tin về bàn mà người dùng đã chọn, bao gồm id, tên, trạng thái, và sức chứa.
+const userSelectedTable = {
+    tableId: '${userSelectedTable.tableId}',
+    tableName: '${userSelectedTable.tableName}',
+    status: '${userSelectedTable.status}',
+    capacity: '${userSelectedTable.capacity}'
+}
 
-        function updatePriceDisplay(data) {
-            priceFrom = data.from;
-            priceTo = data.to;
-            filterProduct()
-            $priceDisplay.val(formatNumber(data.from) + " - " + formatNumber(data.to));
-        }
+// Khởi tạo các biến để lọc sản phẩm theo giá, tên sản phẩm và danh sách id danh mục.
+let priceFrom = null;
+let priceTo = null;
+let productName = null;
+let categoryIds = [];
 
-        // Định dạng số với dấu chấm (.)
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+// Gọi hàm hiển thị header của giỏ hàng.
+viewCartHeaderDisplay()
+
+// Khi trang đã tải xong, thực hiện các thao tác sau.
+$(function () {
+    // Khởi tạo các biến đại diện cho thanh trượt giá và phần hiển thị giá.
+    var $range = $(".js-range-slider"),  // Đối tượng jQuery cho thanh trượt giá.
+        $priceDisplay = $(".js-price-display"),  // Đối tượng jQuery cho phần hiển thị giá.
+        instance,  // Lưu trữ đối tượng thanh trượt giá sau khi khởi tạo.
+        min = 0,  // Giá trị tối thiểu cho thanh trượt.
+        max = 1000000,  // Giá trị tối đa cho thanh trượt.
+        from = priceFrom,  // Giá trị bắt đầu.
+        to = priceTo;  // Giá trị kết thúc.
+
+    // Khởi tạo thanh trượt ionRangeSlider với các tùy chọn.
+    $range.ionRangeSlider({
+        type: "double",  // Loại thanh trượt "double" với hai đầu.
+        min: min,  // Giá trị tối thiểu.
+        max: max,  // Giá trị tối đa.
+        from: from,  // Giá trị ban đầu của đầu từ.
+        to: to,  // Giá trị ban đầu của đầu đến.
+        prefix: "$. ",  // Ký tự hiển thị trước giá.
+        step: 10000,  // Bước giá trị mỗi khi di chuyển thanh trượt.
+        prettify_enabled: true,  // Bật định dạng giá trị.
+        prettify_separator: ".",  // Sử dụng dấu chấm để phân tách hàng nghìn.
+        values_separator: " - ",  // Ký tự phân cách giữa hai giá trị.
+        force_edges: true,  // Đặt đầu trượt ở mép của thanh trượt nếu vượt quá giới hạn.
+        onStart: updatePriceDisplay,  // Hàm được gọi khi thanh trượt khởi tạo.
+        onChange: updatePriceDisplay  // Hàm được gọi khi thay đổi giá trị thanh trượt.
     });
+
+    // Lấy đối tượng thanh trượt sau khi đã khởi tạo.
+    instance = $range.data("ionRangeSlider");
+
+    // Hàm cập nhật phần hiển thị giá và lọc sản phẩm khi thanh trượt thay đổi.
+    function updatePriceDisplay(data) {
+        priceFrom = data.from;  // Cập nhật giá trị `priceFrom` từ thanh trượt.
+        priceTo = data.to;  // Cập nhật giá trị `priceTo` từ thanh trượt.
+        filterProduct()  // Gọi hàm `filterProduct` để lọc sản phẩm dựa trên giá.
+        $priceDisplay.val(formatNumber(data.from) + " - " + formatNumber(data.to));  // Hiển thị giá trị từ và đến trên UI.
+    }
+
+    // Hàm định dạng số với dấu chấm để phân tách hàng nghìn.
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");  // Thêm dấu chấm vào vị trí hàng nghìn trong số.
+    }
+});
 
 </script>
 </script>

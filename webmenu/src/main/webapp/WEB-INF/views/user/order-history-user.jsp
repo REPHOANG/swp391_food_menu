@@ -79,36 +79,7 @@
                     <div class="table-responsive-xl">
                         <table class="table">
                             <tbody id="table_body">
-                            <%--                            <tr class="product-box-contain">--%>
-                            <%--                                <td class="product-detail">--%>
-                            <%--                                    <h4 class="table-title text-content">Order Name</h4>--%>
-                            <%--                                    <h5>$35.10--%>
-                            <%--                                        <del class="text-content">$45.68</del>--%>
-                            <%--                                    </h5>--%>
-                            <%--                                </td>--%>
-                            <%--                                <td class="product-detail">--%>
-                            <%--                                    <h4 class="table-title text-content">Order Date</h4>--%>
-                            <%--                                    <h5>$35.10--%>
-                            <%--                                        <del class="text-content">$45.68</del>--%>
-                            <%--                                    </h5>--%>
-                            <%--                                </td>--%>
-                            <%--                                <td class="product-detail">--%>
-                            <%--                                    <h4 class="table-title text-content">Total Price</h4>--%>
-                            <%--                                    <h5>$35.10--%>
-                            <%--                                        <del class="text-content">$45.68</del>--%>
-                            <%--                                    </h5>--%>
-                            <%--                                </td>--%>
-                            <%--                                <td class="product-detail">--%>
-                            <%--                                    <h4 class="table-title text-content">Status</h4>--%>
-                            <%--                                    <h5>$35.10--%>
-                            <%--                                        <del class="text-content">$45.68</del>--%>
-                            <%--                                    </h5>--%>
-                            <%--                                </td>--%>
-                            <%--                                <td class="save-remove">--%>
-                            <%--                                    <h4 class="table-title text-content">Action</h4>--%>
-                            <%--                                    <a class="save notifi-wishlist" href="">Detail</a>--%>
-                            <%--                                </td>--%>
-                            <%--                            </tr>--%>
+                           
                             </tbody>
                         </table>
                     </div>
@@ -274,7 +245,7 @@
                     optionCell.appendChild(optionTitle);
                     // Liên kết "Save for later"
                     const saveLink = document.createElement("a");
-                    saveLink.classList.add("save", "notifi-wishlist");
+                    saveLink.classList.add("save", "notifi-wishlist","btn","btn-primary");
                     const detailUrl = `/webmenu/OrderManagerController?orderAction=detailOrderUser&orderId=` + item.orderId;
                     saveLink.href = detailUrl;
                     saveLink.textContent = "Detail";
@@ -297,6 +268,9 @@
         if (currentPage > 1) {
             const prevButton = document.createElement("button");
             prevButton.textContent = "Previous";
+            prevButton.style.backgroundColor = "none";
+            prevButton.style.border = "none";
+            prevButton.style.color = "green";
             prevButton.onclick = () => {
                 currentPage -= 1; // Giảm currentPage khi nhấn Previous
                 loadOrdersList(currentPage);
@@ -320,10 +294,14 @@
                 currentPage = i; // Cập nhật currentPage khi chọn trang mới
                 loadOrdersList(currentPage);
             };
-
+            pageButton.style.backgroundColor = "none";
+            pageButton.style.border = "none";
+            pageButton.style.color = "green";
             if (i === currentPage) {
                 pageButton.disabled = true; // Vô hiệu hóa nút của trang hiện tại
                 pageButton.classList.add("active"); // Thêm lớp CSS để đánh dấu trang hiện tại
+                pageButton.style.backgroundColor = "green";
+                pageButton.style.color = "white";
             }
             pagination.appendChild(pageButton);
         }
@@ -336,6 +314,9 @@
                 currentPage += 1; // Tăng currentPage khi nhấn Next
                 loadOrdersList(currentPage);
             };
+            nextButton.style.backgroundColor = "none";
+            nextButton.style.border = "none";
+            nextButton.style.color = "green";
             pagination.appendChild(nextButton);
         }
     }

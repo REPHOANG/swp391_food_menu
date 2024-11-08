@@ -188,6 +188,7 @@
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script>
+    //Kiểm tra dữ liệu đầu vào
     document.querySelector('form').addEventListener('submit', function (event) {
         // Mảng chứa tên các trường input cần kiểm tra
         const inputNames = ['tableName', 'status', 'capacity'];

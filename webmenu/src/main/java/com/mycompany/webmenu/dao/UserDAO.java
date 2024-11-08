@@ -118,14 +118,11 @@ public class UserDAO {
         return 0; // Trả về 0 nếu không có người dùng hoặc có lỗi
     }
 
-
     public ArrayList<UserDto> getAll() throws SQLException {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName, accumulated_points as accumulatedPoints" +
-                "FROM Users";
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name AS fullName, accumulated_points as accumulatedPoints"
+                + "FROM Users";
         ArrayList<UserDto> list = new ArrayList<>();
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
             while (rs.next()) {
                 UserDto u = new UserDto();
                 u.setUserId(rs.getInt("user_id"));
@@ -152,12 +149,11 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto login(String email) {
-        String sql = "SELECT user_id, email, phone, address, avatar_url AS avatarUrl, role_id, full_name AS fullName ,accumulated_points as accumulatedPoints" +
-                "FROM Users WHERE email = ?";
+        String sql = "SELECT user_id, email, phone, address, avatar_url AS avatarUrl, role_id, full_name AS fullName ,accumulated_points as accumulatedPoints"
+                + "FROM Users WHERE email = ?";
 
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
             // Thiết lập giá trị cho câu lệnh SQL
             stm.setString(1, email);
@@ -202,11 +198,10 @@ public class UserDAO {
     @SneakyThrows
     public UserDto signUpUser(String email, String fullName, String password) {
         String insertSql = "INSERT INTO Users (role_id, email, full_name, password) VALUES (?, ?, ?, ?)";
-        String selectSql = "SELECT user_id, role_id, email, full_name, phone, address, avatar_url " +
-                "FROM Users WHERE user_id = ?";
+        String selectSql = "SELECT user_id, role_id, email, full_name, phone, address, avatar_url "
+                + "FROM Users WHERE user_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement insertStm = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement insertStm = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             // Thực hiện câu lệnh INSERT
             insertStm.setInt(1, RoleUserType.USER.getId()); // role_id cho người dùng
@@ -250,12 +245,11 @@ public class UserDAO {
         }
         return null;
     }
-
+    //Nhận trực tiếp các giá trị
     public void updateProfile(String email, String fullName, String phone, String avatarUrl) throws SQLException {
         String sql = "UPDATE Users SET phone = ?, full_name = ?, avatar_url = ? WHERE email = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
             stm.setString(1, phone);       // Cập nhật số điện thoại
             stm.setString(2, fullName);    // Cập nhật họ và tên
@@ -268,11 +262,10 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto getUserById(Integer id) {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password,accumulated_points as accumulatedPoints " +
-                "FROM Users " +
-                "WHERE user_id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name, password,accumulated_points as accumulatedPoints "
+                + "FROM Users "
+                + "WHERE user_id = ?";
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, id);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -300,11 +293,10 @@ public class UserDAO {
     }
 
     public UserDto loginAdmin(String email, String password) {
-        String sql = "SELECT user_id, role_id, email, phone, address, avatar_url AS avatarUrl, full_name AS fullName, password,accumulated_points as accumulatedPoints " +
-                "FROM Users WHERE email = ? AND password = ?";
+        String sql = "SELECT user_id, role_id, email, phone, address, avatar_url AS avatarUrl, full_name AS fullName, password,accumulated_points as accumulatedPoints "
+                + "FROM Users WHERE email = ? AND password = ?";
         // Sử dụng try-with-resources để tự động đóng các tài nguyên sau khi kết thúc
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             // Thiết lập giá trị cho câu lệnh SQL
             stm.setString(1, email);
             stm.setString(2, password);
@@ -403,8 +395,7 @@ public class UserDAO {
     // Cập nhật mật khẩu mới cho người dùng
     public Boolean updatePassword(int userId, String newPassword) throws SQLException {
         String query = "UPDATE Users SET password = ? WHERE user_id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, newPassword); // Nên mã hóa mật khẩu nếu cần
             stmt.setInt(2, userId);
             int rowsUpdated = stmt.executeUpdate();
@@ -521,11 +512,10 @@ public class UserDAO {
 
     @SneakyThrows
     public UserDto getUserByToken(String token) {
-        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name " +
-                "FROM Users " +
-                "WHERE token_reset_password = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        String sql = "SELECT user_id, role_id, email, phone, birth_date AS birthDate, address, avatar_url AS avatarUrl, full_name "
+                + "FROM Users "
+                + "WHERE token_reset_password = ?";
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setString(1, token);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -549,11 +539,10 @@ public class UserDAO {
         }
         return null;  // Trả về null nếu không tìm thấy người dùng với token được cung cấp
     }
-
+    //Nhận một đối tượng UserDto làm tham số, trong đó chứa các thuộc tính
     public Boolean updateProfile(UserDto userDto) {
         String query = "update Users set full_name = ?,phone = ?,address = ? where user_id = ? ";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, userDto.getFullName()); // Nên mã hóa mật khẩu nếu cần
             stmt.setString(2, userDto.getPhone()); // Nên mã hóa mật khẩu nếu cần
             stmt.setString(3, userDto.getAddress()); // Nên mã hóa mật khẩu nếu cần

@@ -29,7 +29,7 @@ function viewCartHeaderDisplay() {
                                 <h5>${item.name}</h5>
                             </a>
                             <h6><span>${item.quantity} x</span> ${formatVND(item.price)}</h6>
-                            <button class="" onclick="removeProductCart(${item.productId})">
+                            <button class="btn btn-danger" style="margin: 0 80px;" onclick="removeProductCart(${item.productId})">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>

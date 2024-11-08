@@ -8,25 +8,25 @@ loadUserList(currentPage)
 
 // Hàm xử lý khi nhập vào ô tìm kiếm
 function handleSearchInput() {
-    const searchInput = document.getElementById("search");
+    const searchInput = document.getElementById("search"); // Lấy thẻ input với id là "search"
     searchInput.addEventListener("input", function () {
-        const newValue = this.value;
+        const newValue = this.value; // Lấy giá trị mới từ ô input
         if (newValue) {
-            email = newValue;
-            loadUserList(1)
+            email = newValue; // Cập nhật giá trị email nếu có input
+            loadUserList(1) // Tải lại danh sách từ trang đầu tiên khi có tìm kiếm
         } else {
-            email = null;
-            loadUserList(1)
+            email = null; // Đặt lại email là null nếu input trống
+            loadUserList(1) // Tải lại danh sách từ trang đầu tiên khi xóa input
         }
     });
 }
 
-// Hàm tải và hiển List User
+// Hàm tải và hiển thị danh sách người dùng
 function loadUserList(page) {
-    currentPage = page;
-    let url = `/webmenu/UserController?userAction=userManagerAdminApi&page=` + currentPage + `&itemsPerPage=` + itemsPerPage;
+    currentPage = page; // Cập nhật số trang hiện tại
+    let url = `/webmenu/UserController?userAction=userManagerAdminApi&page=` + currentPage + `&itemsPerPage=` + itemsPerPage; // URL API để lấy danh sách người dùng
     if (email) {
-        url += `&email=` + email;
+        url += `&email=` + email; // Thêm tham số email vào URL nếu có
     }
     if (status) {
         url += `&status=` + status;
@@ -34,14 +34,16 @@ function loadUserList(page) {
     console.log("url " + url)
     // Lấy giỏ hàng từ localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    fetch(url)
-        .then(response => response.json())
+
+    fetch(url) // Gọi API với URL đã tạo
+        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
         .then(data => {
-            const tbody = document.querySelector("tbody");
+            const tbody = document.querySelector("tbody"); // Lấy phần tử tbody của bảng
             tbody.innerHTML = ""; // Xóa nội dung cũ của bảng
+
             data.items.forEach(user => {
-                const row = document.createElement("tr");
-                // Chỉ hiển thị dữ liệu nếu có giá trị, nếu không thì để trống
+                const row = document.createElement("tr"); // Tạo một hàng mới cho mỗi người dùng
+                // Lấy các giá trị email, phone, address từ đối tượng user, nếu không có thì để chuỗi rỗng
                 const emailCell = user.email ? user.email : '';
                 const fullName = user.fullName ? user.fullName : '';
                 const phoneCell = user.phone ? user.phone : '';
@@ -57,40 +59,40 @@ function loadUserList(page) {
                         <ul>
                             <li>
                                 <a href="/webmenu/OrderManagerController?orderAction=orderListManager&userId=${user.userId}">
-                                    <i class="ri-eye-line"></i>
+                                    <i class="ri-eye-line"></i> <!-- Icon mắt để xem -->
                                 </a>
                             </li>
                         </ul>
                     </td>
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(row); // Thêm hàng vào tbody
             });
 
             // Tạo các nút phân trang
             createPagination(data.totalPages);
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error)); // Xử lý lỗi khi gọi API
 }
 
 // Hàm tạo các nút phân trang
 function createPagination(totalPages) {
-    const pagination = document.getElementById("pagination");
-    pagination.innerHTML = ""; // Xóa phân trang cũ
+    const pagination = document.getElementById("pagination"); // Lấy phần tử pagination
+    pagination.innerHTML = ""; // Xóa các nút phân trang cũ
 
-    // Nút "Previous"
+    // Nút "Previous" (trước)
     if (currentPage > 1) {
         const prevButton = document.createElement("button");
-        prevButton.textContent = "Previous";
+        prevButton.textContent = "Previous"; // Gán nội dung cho nút
         prevButton.onclick = () => {
-            currentPage -= 1; // Giảm currentPage khi nhấn Previous
-            loadUserList(currentPage);
+            currentPage -= 1; // Giảm giá trị currentPage khi nhấn nút trước
+            loadUserList(currentPage); // Tải lại danh sách người dùng
         };
-        pagination.appendChild(prevButton);
+        pagination.appendChild(prevButton); // Thêm nút vào phân trang
     }
 
     // Tính toán `startPage` và `endPage` để giới hạn tối đa 5 trang hiển thị
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2)); // Tính trang bắt đầu
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1); // Tính trang kết thúc
 
     // Điều chỉnh `startPage` nếu `endPage` ít hơn 5 trang
     if (endPage - startPage + 1 < maxVisiblePages) {
@@ -100,28 +102,28 @@ function createPagination(totalPages) {
     // Tạo các nút trang từ `startPage` đến `endPage`
     for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement("button");
-        pageButton.textContent = i;
+        pageButton.textContent = i; // Gán số trang vào nội dung nút
         pageButton.onclick = () => {
             currentPage = i; // Cập nhật currentPage khi chọn trang mới
-            loadUserList(currentPage);
+            loadUserList(currentPage); // Tải lại danh sách người dùng
         };
 
         if (i === currentPage) {
             pageButton.disabled = true; // Vô hiệu hóa nút của trang hiện tại
             pageButton.classList.add("active"); // Thêm lớp CSS để đánh dấu trang hiện tại
         }
-        pagination.appendChild(pageButton);
+        pagination.appendChild(pageButton); // Thêm nút vào phân trang
     }
 
-    // Nút "Next"
+    // Nút "Next" (tiếp)
     if (currentPage < totalPages) {
         const nextButton = document.createElement("button");
-        nextButton.textContent = "Next";
+        nextButton.textContent = "Next"; // Gán nội dung cho nút
         nextButton.onclick = () => {
-            currentPage += 1; // Tăng currentPage khi nhấn Next
-            loadUserList(currentPage);
+            currentPage += 1; // Tăng currentPage khi nhấn nút tiếp
+            loadUserList(currentPage); // Tải lại danh sách người dùng
         };
-        pagination.appendChild(nextButton);
+        pagination.appendChild(nextButton); // Thêm nút vào phân trang
     }
 }
 
