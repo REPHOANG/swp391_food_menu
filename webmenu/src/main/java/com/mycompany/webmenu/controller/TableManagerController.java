@@ -7,7 +7,10 @@ package com.mycompany.webmenu.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.mycompany.webmenu.dao.TableDAO;
@@ -40,19 +43,6 @@ public class TableManagerController extends HttpServlet {
         TableDAO tableDao = new TableDAO();
         switch (productAction) {
             case "tableListManager": {
-                int pageNo = 1;
-                int pageSize = 10;
-                String pageParam = request.getParameter("page");
-                if (pageParam != null) {
-                    pageNo = Integer.parseInt(pageParam);
-                }
-                List<TableDto> list = tableDao.getListTableManager(pageNo, pageSize);
-                int total = tableDao.getTotalTableCount();
-                int totalPages = (int) Math.ceil((double) total / pageSize);
-                request.setAttribute("tables", list);
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("currentPage", pageNo);
-                request.setAttribute("message", message);
                 request.getRequestDispatcher(Constants.LIST_TABLE_MANAGER).forward(request, response);
                 break;
             }
@@ -73,6 +63,28 @@ public class TableManagerController extends HttpServlet {
                 String menuJson = gson.toJson(listSelectedTableUser);
                 response.getWriter().write(menuJson);
                 return;
+            }
+            case "tableListManagerApi": {
+                int currentPage = Integer.parseInt(request.getParameter("page"));
+                int itemsPerPage = Integer.parseInt(request.getParameter("itemsPerPage"));
+
+                String tableNameParam = request.getParameter("tableName");
+                String tableName = (tableNameParam != null && !tableNameParam.isEmpty() && !Objects.equals(tableNameParam, "null")) ? tableNameParam : null;
+                String statusIdParam = request.getParameter("statusId");
+                Integer statusId = (statusIdParam != null && !statusIdParam.isEmpty() && !Objects.equals(statusIdParam, "null")) ? Integer.valueOf(statusIdParam) : null;
+
+                List<TableDto> listSelectedTableUser = tableDao.getListTableManager(currentPage, itemsPerPage, tableName, statusId);
+
+                int totalProducts = tableDao.getTotalTableCount(tableName, statusId);
+                int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("items", listSelectedTableUser);
+                result.put("totalPages", totalPages);
+                Gson gson = new Gson();
+                String menuJson = gson.toJson(result);
+                response.getWriter().write(menuJson);
+                break;
             }
             case "deleteTable": {
                 Integer tableId = Integer.parseInt(request.getParameter("tableId"));

@@ -15,7 +15,7 @@
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="<c:url value="/assets/admin/images/favicon.png" /> " type="image/x-icon">
     <link rel="shortcut icon" href="<c:url value="/assets/admin/images/favicon.png"/>" type="image/x-icon">
-    <title>Fastkart - Dashboard</title>
+    <title>4FOOD - Dashboard</title>
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
           rel="stylesheet">
@@ -202,6 +202,8 @@
                             <div class="card-header card-header-top card-header--2 px-0 pt-0">
                                 <div class="card-header-title">
                                     <h4>Best Selling Product</h4>
+                                    <p>Start Date: <input type="date" id="start-date-best-selling"></p>
+                                    <p>End Date: <input type="date" id="end-date-best-selling"></p>
                                 </div>
                             </div>
 
@@ -210,38 +212,36 @@
                                     <div class="table-responsive">
                                         <table class="best-selling-table w-image
                                             w-image
-                                            w-image table border-0">
+                                            w-image table border-0" id="table-best-selling-product">
                                             <tbody>
-                                            <c:forEach var="product" items="${bestSellingProduct}">
-                                                <tr>
-                                                    <td>
-                                                        <div class="product-name">
-                                                            <h5>${product.productName}</h5>
-                                                        </div>
-                                                    </td>
+                                            <tr>
+                                                <td>
+                                                    <div class="product-name">
+                                                        <h5>${product.productName}</h5>
+                                                    </div>
+                                                </td>
 
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Price</h6>
-                                                            <h5>${product.price}</h5>
-                                                        </div>
-                                                    </td>
+                                                <td>
+                                                    <div class="product-detail-box">
+                                                        <h6>Price</h6>
+                                                        <h5>${product.price}</h5>
+                                                    </div>
+                                                </td>
 
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Orders</h6>
-                                                            <h5>${product.orders}</h5>
-                                                        </div>
-                                                    </td>
+                                                <td>
+                                                    <div class="product-detail-box">
+                                                        <h6>Orders</h6>
+                                                        <h5>${product.orders}</h5>
+                                                    </div>
+                                                </td>
 
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Amount</h6>
-                                                            <h5>${product.amount}</h5>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
+                                                <td>
+                                                    <div class="product-detail-box">
+                                                        <h6>Amount</h6>
+                                                        <h5>${product.amount}</h5>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -258,46 +258,17 @@
                             <div class="card-header card-header-top card-header--2 px-0 pt-0">
                                 <div class="card-header-title">
                                     <h4>Recent Orders</h4>
+                                    <p>Start Date: <input type="date" id="start-date-recent-orders"></p>
+                                    <p>End Date: <input type="date" id="end-date-recent-orders"></p>
                                 </div>
                             </div>
 
                             <div class="card-body p-0">
                                 <div>
                                     <div class="table-responsive">
-                                        <table class="best-selling-table table border-0">
+                                        <table class="best-selling-table table border-0" id="table-recent-orders">
                                             <tbody>
-                                            <c:forEach var="recent" items="${recentOrders}">
-                                                <tr>
-                                                    <td>
-                                                        <div class="best-product-box">
-                                                            <h5>${recent.userName}</h5>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Date Placed</h6>
-                                                            <h5>${recent.orderDate}</h5>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Price</h6>
-                                                            <h5><fmt:formatNumber value="${recent.orderTotal}"
-                                                                                  type="number" groupingUsed="true"/>
-                                                                ₫</h5>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="product-detail-box">
-                                                            <h6>Order Status</h6>
-                                                            <h5>${recent.orderStatusDescription}</h5>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
+                                            <!-- Dữ liệu sẽ được thêm vào đây bởi JS -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -556,7 +527,7 @@
 <!-- ratio js -->
 <script src="<c:url value="/assets/admin/js/ratio.js"/>"></script>
 <!-- sidebar effect -->
-<script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
+<%--<script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>--%>
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script type="text/javascript">
@@ -566,5 +537,6 @@
         currency: 'VND'
     });
 </script>
+<script src="<c:url value="/assets/admin/home-admin.js"/>"></script>
 </body>
 </html>

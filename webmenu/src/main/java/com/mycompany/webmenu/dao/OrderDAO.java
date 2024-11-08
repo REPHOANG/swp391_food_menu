@@ -12,19 +12,21 @@ import lombok.SneakyThrows;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDAO {
 
     @SneakyThrows
-    public List<OrderDto> getListOrderManager(int page, int pageSize, String userName, Integer orderStatus, Integer userId) {
+    public List<OrderDto> getListOrderManager(int page, int pageSize, String userName, Integer orderStatus, Integer userId, String sortColumn, String sortDirection) {
         int offset = (page - 1) * pageSize;
 
         // Xây dựng câu truy vấn SQL động
         StringBuilder sql = new StringBuilder("SELECT x1.order_id AS orderId, x1.user_id AS userId, ")
                 .append("COALESCE(x2.full_name, x1.user_name) AS userName, ")
-                .append("x1.table_id AS tableId,x3.table_name AS tableName, x1.discount_id AS discountId, ")
+                .append("x1.table_id AS tableId, x3.table_name AS tableName, x1.discount_id AS discountId, ")
                 .append("x1.order_date AS orderDate, x1.order_status AS orderStatus, ")
                 .append("x1.delivery_address AS deliveryAddress, x1.order_note AS orderNote, ")
                 .append("x1.order_total AS orderTotal, x1.shipping_fee AS shippingFee ")
@@ -41,12 +43,24 @@ public class OrderDAO {
             sql.append("AND x1.order_status = ? ");
         }
         if (userId != null) {
-            sql.append("AND x1.user_id = ? "); // Thêm điều kiện tìm kiếm cho userId
+            sql.append("AND x1.user_id = ? ");
+        }
+
+        // Thêm câu lệnh sắp xếp dựa trên tham số `sortColumn` và `sortDirection`
+        if (sortColumn != null && !sortColumn.isEmpty()) {
+            sql.append("ORDER BY ").append(sortColumn).append(" ");
+            if ("DESC".equalsIgnoreCase(sortDirection)) {
+                sql.append("DESC ");
+            } else {
+                sql.append("ASC ");
+            }
+        } else {
+            // Sắp xếp mặc định nếu không có cột sắp xếp được chỉ định
+            sql.append("ORDER BY x1.order_date DESC ");
         }
 
         // Thêm điều kiện phân trang
-        sql.append("ORDER BY x1.order_date DESC ")
-                .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
         // Thiết lập kết nối và câu lệnh PreparedStatement
         try (Connection conn = DBUtil.getConnection();
@@ -61,7 +75,7 @@ public class OrderDAO {
                 stm.setInt(paramIndex++, orderStatus);
             }
             if (userId != null) {
-                stm.setInt(paramIndex++, userId); // Thiết lập giá trị cho userId
+                stm.setInt(paramIndex++, userId);
             }
 
             // Thiết lập giá trị LIMIT và OFFSET cho phân trang
@@ -99,6 +113,7 @@ public class OrderDAO {
             return new ArrayList<>(); // Trả về danh sách rỗng trong trường hợp có lỗi
         }
     }
+
 
     public int getTotalOrderCount(String userName, Integer orderStatus, Integer userId) {
         StringBuilder query = new StringBuilder("SELECT COUNT(x1.order_id) AS total ")
@@ -411,7 +426,7 @@ public class OrderDAO {
         return 0;
     }
 
-    public List<BestSellingProductDto> getTop5BestSellingProducts() {
+    public List<BestSellingProductDto> getTop5BestSellingProducts(String startDate, String endDate) {
         List<BestSellingProductDto> bestSellingProducts = new ArrayList<>();
         String query = "SELECT x1.name            AS productName,\n" +
                 "       x1.price,\n" +
@@ -419,22 +434,33 @@ public class OrderDAO {
                 "       SUM(x2.quantity)   AS amount\n" +
                 "FROM Products x1\n" +
                 "JOIN OrderDetails x2 ON x2.product_id = x1.product_id\n" +
-                "join Orders x3 on x3.order_id = x2.order_id\n" +
-                "where FORMAT(x3.order_date, 'yyyyMMdd') = FORMAT(GETDATE(), 'yyyyMMdd')\n" +
+                "JOIN Orders x3 ON x3.order_id = x2.order_id\n" +
+                "WHERE FORMAT(x3.order_date, 'yyyy-MM-dd') BETWEEN ? AND ?\n" + // Lọc theo ngày bắt đầu và kết thúc
                 "GROUP BY x1.product_id, x1.name, x1.price\n" +
-                "ORDER BY amount desc, orders desc, x1.name desc\n" +
+                "ORDER BY amount DESC, orders DESC, x1.name DESC\n" +
                 "OFFSET 0 ROWS FETCH FIRST 5 ROWS ONLY;";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                BestSellingProductDto dto = new BestSellingProductDto();
-                dto.setProductName(rs.getString("productName"));
-                dto.setPrice(rs.getDouble("price"));
-                dto.setOrders(rs.getInt("orders"));
-                dto.setAmount(rs.getInt("amount"));
-                bestSellingProducts.add(dto);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Định dạng lại startDate và endDate thành yyyy-MM-dd
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedStartDate = startDate;
+            String formattedEndDate = endDate;
+
+            // Chuyển đổi sang java.sql.Date
+            stmt.setDate(1, java.sql.Date.valueOf(formattedStartDate));
+            stmt.setDate(2, java.sql.Date.valueOf(formattedEndDate));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    BestSellingProductDto dto = new BestSellingProductDto();
+                    dto.setProductName(rs.getString("productName"));
+                    dto.setPrice(rs.getDouble("price"));
+                    dto.setOrders(rs.getInt("orders"));
+                    dto.setAmount(rs.getInt("amount"));
+                    bestSellingProducts.add(dto);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Log lỗi để debug
@@ -442,30 +468,37 @@ public class OrderDAO {
         return bestSellingProducts;
     }
 
-    public List<RecentOrders> getRecentOrders() {
+    public List<RecentOrders> getRecentOrders(String startDate, String endDate) {
         List<RecentOrders> recentOrdersList = new ArrayList<>();
 
+        // Cập nhật câu truy vấn SQL với điều kiện WHERE để lọc theo ngày
         String query = "SELECT COALESCE(x2.full_name, x1.user_name) AS userName, " +
                 "       x1.order_date, " +
                 "       x1.order_total, " +
                 "       x1.order_status " +
                 "FROM Orders x1 " +
                 "LEFT JOIN Users x2 ON x2.user_id = x1.user_id " +
+                "WHERE FORMAT(x1.order_date, 'yyyy-MM-dd') BETWEEN ? AND ? " +  // Lọc theo ngày trong khoảng startDate và endDate
                 "ORDER BY x1.order_date DESC " +
                 "OFFSET 0 ROWS FETCH FIRST 5 ROWS ONLY";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            while (rs.next()) {
-                RecentOrders recentOrder = new RecentOrders();
-                recentOrder.setUserName(rs.getString("userName"));
-                recentOrder.setOrderDate(rs.getDate("order_date"));
-                recentOrder.setOrderTotal(rs.getDouble("order_total"));
-                recentOrder.setOrderStatus(rs.getInt("order_status"));
+            // Chuyển startDate và endDate sang định dạng chuẩn của SQL (yyyy-MM-dd)
+            stmt.setString(1, startDate);  // Thiết lập tham số đầu tiên là startDate
+            stmt.setString(2, endDate);    // Thiết lập tham số thứ hai là endDate
 
-                recentOrdersList.add(recentOrder);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    RecentOrders recentOrder = new RecentOrders();
+                    recentOrder.setUserName(rs.getString("userName"));
+                    recentOrder.setOrderDate(rs.getDate("order_date"));
+                    recentOrder.setOrderTotal(rs.getDouble("order_total"));
+                    recentOrder.setOrderStatus(rs.getInt("order_status"));
+
+                    recentOrdersList.add(recentOrder);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Log lỗi để debug

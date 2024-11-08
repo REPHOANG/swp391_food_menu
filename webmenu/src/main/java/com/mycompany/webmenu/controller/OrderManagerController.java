@@ -61,8 +61,14 @@ public class OrderManagerController extends HttpServlet {
                 Integer userId = (userIdParam != null && !userIdParam.isEmpty() && !Objects.equals(userIdParam, "null"))
                         ? Integer.parseInt(userIdParam) : null;
 
+                String sortColumnParam = request.getParameter("sortColumn");
+                String sortColumn = (sortColumnParam != null && !sortColumnParam.isEmpty() && !Objects.equals(sortColumnParam, "null")) ? sortColumnParam : null;
 
-                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize, userName, orderStatus, userId);
+                String sortDirectionParam = request.getParameter("sortDirection");
+                String sortDirection = (sortDirectionParam != null && !sortDirectionParam.isEmpty() && !Objects.equals(sortDirectionParam, "null")) ? sortDirectionParam : null;
+
+
+                List<OrderDto> categoryList = orderDAO.getListOrderManager(pageNo, pageSize, userName, orderStatus, userId, sortColumn, sortDirection);
                 int totalProducts = orderDAO.getTotalOrderCount(userName, orderStatus, userId);
                 int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 

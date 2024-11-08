@@ -102,10 +102,13 @@ public class UserController extends HttpServlet {
                     String emailParam = request.getParameter("email");
                     String email = (emailParam != null && !emailParam.isEmpty() && !Objects.equals(emailParam, "null")) ? emailParam : null;
 
-                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId(), email);
+                    String statusParam = request.getParameter("status");
+                    Boolean status = (statusParam != null && !statusParam.isEmpty() && !Objects.equals(statusParam, "null")) ? Boolean.valueOf(statusParam) : null;
+
+                    int totalProducts = uDAO.getTotalUserCount(RoleUserType.USER.getId(), email, status);
                     int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
                     Map<String, Object> result = new HashMap<>();
-                    result.put("items", uDAO.getListUserManager(currentPage, itemsPerPage, RoleUserType.USER.getId(), email));
+                    result.put("items", uDAO.getListUserManager(currentPage, itemsPerPage, RoleUserType.USER.getId(), email, status));
                     result.put("totalPages", totalPages);
                     // Chuyển danh sách món ăn thành JSON
                     String menuJson = gson.toJson(result);

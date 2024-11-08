@@ -1,5 +1,6 @@
 handleSearchInput()
 let email = null;
+let status = null;
 let currentPage = 1;
 let itemsPerPage = 10;  // Số sản phẩm mỗi trang
 const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
@@ -27,6 +28,9 @@ function loadUserList(page) {
     if (email) {
         url += `&email=` + email;
     }
+    if (status) {
+        url += `&status=` + status;
+    }
     console.log("url " + url)
     // Lấy giỏ hàng từ localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -39,13 +43,16 @@ function loadUserList(page) {
                 const row = document.createElement("tr");
                 // Chỉ hiển thị dữ liệu nếu có giá trị, nếu không thì để trống
                 const emailCell = user.email ? user.email : '';
+                const fullName = user.fullName ? user.fullName : '';
                 const phoneCell = user.phone ? user.phone : '';
                 const addressCell = user.address ? user.address : '';
-
+                const isDeleted = user.isDeleted ? user.isDeleted : '';
                 row.innerHTML = `
                     <td>${emailCell}</td>
+                    <td>${fullName}</td>
                     <td>${phoneCell}</td>
                     <td>${addressCell}</td>
+                     <td>${isDeleted === true ? 'Deleted' : 'Active'}</td>  <!-- Show "Deleted" or "Active" text -->
                     <td>
                         <ul>
                             <li>
@@ -64,7 +71,6 @@ function loadUserList(page) {
         })
         .catch(error => console.error('Error:', error));
 }
-
 
 // Hàm tạo các nút phân trang
 function createPagination(totalPages) {
@@ -118,3 +124,27 @@ function createPagination(totalPages) {
         pagination.appendChild(nextButton);
     }
 }
+
+// Lấy phần tử select bằng ID
+const statusSelection = document.getElementById("status-selection");
+
+// Thêm một sự kiện để phát hiện thay đổi trong lựa chọn
+statusSelection.addEventListener("change", function () {
+    // Lấy giá trị đã chọn
+    const selectedValue = statusSelection.value;
+    // Thực hiện các hành động dựa trên giá trị đã chọn
+    if (selectedValue === "true") {
+        status = 'true';
+        console.log("Trạng thái: Kích hoạt");
+        // Thêm logic cho trạng thái 'Kích hoạt' tại đây
+    } else if (selectedValue === "false") {
+        console.log("Trạng thái: Vô hiệu hóa");
+        status = 'false';
+        // Thêm logic cho trạng thái 'Vô hiệu hóa' tại đây
+    } else {
+        status = null;
+        console.log("Trạng thái: Không xác định");
+        // Thêm logic cho trạng thái 'Không xác định' tại đây
+    }
+    loadUserList(1)
+});

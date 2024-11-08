@@ -41,27 +41,8 @@ public class ProductManagerController extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
         switch (productAction) {
             case "productListManager": {
-                int pageNo = 1; // Trang mặc định
-                int pageSize = 10; // Số sản phẩm trên mỗi trang
-                // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
-                String pageParam = request.getParameter("page");
-                if (pageParam != null) {
-                    pageNo = Integer.parseInt(pageParam);
-                }
-                try {
-                    List<ProductDto> productList = productDAO.getListAllProduct(pageNo, pageSize);
-                    int totalProducts = productDAO.getTotalProductCount();
-                    int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-                    request.setAttribute("products", productList);
-                    request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("currentPage", pageNo);
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher(Constants.LIST_PRODUCT_MANAGER_JSP).forward(request, response);
-                    break;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-                }
+                request.getRequestDispatcher(Constants.LIST_PRODUCT_MANAGER_JSP).forward(request, response);
+                break;
             }
             case "addProduct": {
                 CategoryDAO categoryDao = new CategoryDAO();

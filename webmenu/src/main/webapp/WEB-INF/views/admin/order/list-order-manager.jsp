@@ -82,8 +82,11 @@
                                     <h5>Orders List</h5>
                                     <div>
                                         <input type="text" value="${userId}" id="data-user-id" style="display: none;">
-                                        <p>Search : <input type="search" id="search" class="" placeholder>
-                                        </p>
+                                        <p>Search : <input type="search" id="search" class="" placeholder></p>
+                                        <p>Sort OrderDate : <select id="sort-selection">
+                                            <option value="asc">Oldest</option>
+                                            <option value="desc">Newest</option>
+                                        </select></p>
                                     </div>
                                     <div>
                                         <p>Status : <select id="status-selection">
@@ -226,6 +229,8 @@
     let itemsPerPage = 10;  // Số sản phẩm mỗi trang
     let maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
     let userName = null;
+    let sortColumn = 'order_date';
+    let sortDirection = 'asc';
     let orderStatus = document.getElementById("status-selection").value;
     let userId = document.getElementById("data-user-id").value;
     loadOrdersList(currentPage)
@@ -246,6 +251,12 @@
         // Chỉ thêm userId vào URL nếu nó có giá trị
         if (userId) {
             url += `&userId=` + userId;
+        }
+        if (sortColumn) {
+            url += `&sortColumn=` + sortColumn;
+        }
+        if (sortDirection) {
+            url += `&sortDirection=` + sortDirection;
         }
         console.log("loadOrdersList url " + url);
         fetch(url)
@@ -412,6 +423,13 @@
             loadOrdersList(currentPage)
         });
     }
+
+    document.getElementById("sort-selection").addEventListener("change", function () {
+        sortDirection = this.value;
+        // Gọi hàm để lấy danh sách đơn hàng với `sortDirection`
+        console.log("sortDirection " + sortDirection)
+        loadOrdersList(1)
+    });
 </script>
 </body>
 </html>

@@ -18,16 +18,21 @@ import java.util.*;
 public class UserDAO {
 
     @SneakyThrows
-    public List<UserDto> getListUserManager(int page, int pageSize, int roleId, String email) {
+    public List<UserDto> getListUserManager(int page, int pageSize, int roleId, String email, Boolean status) {
         int offset = (page - 1) * pageSize;
         // Xây dựng câu truy vấn SQL động dựa trên giá trị của `email`
-        StringBuilder sql = new StringBuilder("SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName, x1.accumulated_points as accumulatedPoints " +
+        StringBuilder sql = new StringBuilder("SELECT x1.user_id, x1.email, x1.phone, x1.address, x1.avatar_url AS avatarUrl, x1.full_name AS fullName, x1.accumulated_points as accumulatedPoints, x1.is_deleted as isDeleted " +
                 "FROM Users x1 " +
                 "WHERE x1.role_id = ? ");
 
         if (email != null && !email.isEmpty()) {
-            sql.append("AND x1.email LIKE ? ");
+            sql.append("AND (x1.email LIKE ? OR x1.phone LIKE ? OR x1.address LIKE ? OR x1.full_name LIKE ?) ");
         }
+        // Thêm điều kiện cho status nếu có
+        if (status != null) {
+            sql.append("AND is_deleted = ? ");
+        }
+
         sql.append("ORDER BY x1.user_id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         List<UserDto> list = new ArrayList<>();
         try (Connection conn = DBUtil.getConnection();
@@ -36,7 +41,15 @@ public class UserDAO {
             int paramIndex = 1;
             stm.setInt(paramIndex++, roleId);
             if (email != null && !email.isEmpty()) {
-                stm.setString(paramIndex++, "%" + email + "%"); // Thêm ký tự đại diện cho tìm kiếm mờ
+                String likeQuery = "%" + email + "%"; // Add wildcard for LIKE query
+                stm.setString(paramIndex++, likeQuery);  // Email search
+                stm.setString(paramIndex++, likeQuery);  // Phone search
+                stm.setString(paramIndex++, likeQuery);  // Address search
+                stm.setString(paramIndex++, likeQuery);  // Full name search
+            }
+            // Thêm status vào tham số nếu có giá trị
+            if (status != null) {
+                stm.setBoolean(paramIndex++, status);
             }
             stm.setInt(paramIndex++, offset);
             stm.setInt(paramIndex, pageSize);
@@ -51,6 +64,7 @@ public class UserDAO {
                     dto.setAvatarUrl(rs.getString("avatarUrl"));
                     dto.setFullName(rs.getString("fullName"));
                     dto.setAccumulatedPoints(rs.getDouble("accumulatedPoints"));
+                    dto.setIsDeleted(rs.getBoolean("isDeleted"));
                     list.add(dto);
                 }
             }
@@ -62,12 +76,16 @@ public class UserDAO {
 
 
     @SneakyThrows
-    public int getTotalUserCount(int roleId, String email) {
+    public int getTotalUserCount(int roleId, String email, Boolean status) {
         // Xây dựng câu truy vấn động
         StringBuilder query = new StringBuilder("SELECT COUNT(user_id) AS total FROM Users WHERE role_id = ?");
         // Thêm điều kiện cho email nếu có
         if (email != null && !email.isEmpty()) {
-            query.append(" AND email LIKE ?");
+            query.append("AND (email LIKE ? OR phone LIKE ? OR address LIKE ? OR full_name LIKE ?) ");
+        }
+        // Thêm điều kiện cho status nếu có
+        if (status != null) {
+            query.append("AND is_deleted = ? ");
         }
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
@@ -76,8 +94,18 @@ public class UserDAO {
             stmt.setInt(paramIndex++, roleId);
             // Thêm email vào tham số nếu có giá trị
             if (email != null && !email.isEmpty()) {
-                stmt.setString(paramIndex, "%" + email + "%"); // Tìm kiếm mờ với ký tự đại diện
+                String likeQuery = "%" + email + "%"; // Add wildcard for LIKE query
+                stmt.setString(paramIndex++, likeQuery);  // Email search
+                stmt.setString(paramIndex++, likeQuery);  // Phone search
+                stmt.setString(paramIndex++, likeQuery);  // Address search
+                stmt.setString(paramIndex++, likeQuery);  // Full name search
             }
+
+            // Thêm status vào tham số nếu có giá trị
+            if (status != null) {
+                stmt.setBoolean(paramIndex++, status);
+            }
+
             // Thực thi truy vấn và xử lý kết quả
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {

@@ -18,4 +18,5 @@ public class UserDto {
     private String fullName;      // Họ và tên của người dùng
     private String password;      // Mật khẩu của người dùng
     private Double accumulatedPoints;
+    private Boolean isDeleted;
 }

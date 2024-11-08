@@ -64,11 +64,12 @@
                                                name="fullName" value="${profileUser.fullName}">
                                     </div>
                                 </div>
+                                <!-- Phone Number -->
                                 <div class="mb-4 row align-items-center">
                                     <label class="form-label-title col-sm-3 mb-0">Phone number</label>
                                     <div class="col-sm-9">
-                                        <input class="form-control" type="text" placeholder="Phone number"
-                                               name="phone" value="${profileUser.phone}">
+                                        <input class="form-control" type="text" placeholder="Phone number" name="phone" id="phone" value="${profileUser.phone}">
+                                        <div id="phone-error" style="color: red; display: none;">Please enter valid phone format</div>
                                     </div>
                                 </div>
                                 <div class="mb-4 row align-items-center">
@@ -79,7 +80,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <input type="submit" class="btn btn-success" value="Save">
+                                    <input type="submit" class="btn btn-success" value="Save" id="save-btn" disabled >
                                 </div>
                             </form>
                         </div>
@@ -121,12 +122,26 @@
 <script src="<c:url value="/assets/user/js/slick/slick.js"/>"></script>
 <script src="<c:url value="/assets/user/js/slick/slick-animation.min.js"/>"></script>
 <script src="<c:url value="/assets/user/js/slick/custom_slick.js"/>"></script>
-<!-- Lazyload Js -->
-<script src="<c:url value="/assets/user/js/lazysizes.min.js"/>"></script>
 <!-- script js -->
-<script src="<c:url value="/assets/user/js/script.js"/>"></script>
+<%--<script src="<c:url value="/assets/user/js/script.js"/>"></script>--%>
+<script src="<c:url value="/assets/user/cart-local-storage.js"/>"></script>
 <script src="<c:url value="/assets/user/top-header.js"/>"></script>
 <script type="text/javascript">
+    const phoneRegex = /^(0[3|5|7|8|9][0-9]{8})$/; // Regex cho số điện thoại Việt Nam
+    const phoneInput = document.getElementById("phone");
+    const phoneError = document.getElementById("phone-error");
+    const saveButton = document.getElementById("save-btn");
+    document.getElementById('phone').addEventListener("input", function() {
+        const phoneValue = this.value;
+        if (phoneRegex.test(phoneValue)) {
+            phoneError.style.display = "none";  // Ẩn lỗi
+            saveButton.disabled = false;  // Bật nút Save
+        } else {
+            phoneError.style.display = "block";  // Hiển thị lỗi
+            saveButton.disabled = true;  // Vô hiệu hóa nút Save
+        }
+    });
+
     viewCartHeaderDisplay()
 </script>
 </body>
