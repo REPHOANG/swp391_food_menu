@@ -97,82 +97,31 @@
                                             ${message}
                                     </div>
                                 </c:if>
+                                <div>
+                                    <p>Search : <input type="search" id="search" class="" placeholder></p>
+                                    <p>Status: <select id="status-selection">
+                                        <option value="">Unknown</option>
+                                        <option value="false">Active</option>
+                                        <option value="true">Disabled</option>
+                                    </select></p>
+                                </div>
                                 <div class="table-responsive table-product">
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
-<%--                                            <th>Avatar</th>--%>
                                             <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Phone number</th>
                                             <th>Address</th>
+                                            <th>Status</th>
                                             <th>Option</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <c:forEach var="staff" items="${staffs}">
-                                            <tr>
-<%--                                                <td>--%>
-<%--                                                    <div class="table-image">--%>
-<%--                                                        <img src="<c:url value='${user.avatarUrl}' />"--%>
-<%--                                                             class="img-fluid" alt="">--%>
-<%--                                                    </div>--%>
-<%--                                                </td>--%>
-                                                <td>${staff.fullName}</td>
-                                                <td>${staff.email}</td>
-                                                <td>${staff.phone}</td>
-                                                <td>${staff.address}</td>
-                                                <td>
-                                                    <ul>
-                                                        <li>
-                                                            <a href="<c:url value="StaffController?staffAction=staffDetail&staffId=${staff.userId}"/>">
-                                                                <i class="ri-eye-line"></i>
-                                                            </a>
-                                                        </li>
-
-                                                            <%--                                                        <li>--%>
-                                                            <%--                                                            <a href="javascript:void(0)">--%>
-                                                            <%--                                                                <i class="ri-pencil-line"></i>--%>
-                                                            <%--                                                            </a>--%>
-                                                            <%--                                                        </li>--%>
-
-                                                            <%--                                                        <li>--%>
-                                                            <%--                                                            <a href="javascript:void(0)" data-bs-toggle="modal"--%>
-                                                            <%--                                                               data-bs-target="#exampleModalToggle">--%>
-                                                            <%--                                                                <i class="ri-delete-bin-line"></i>--%>
-                                                            <%--                                                            </a>--%>
-                                                            <%--                                                        </li>--%>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
                                         </tbody>
                                     </table>
-                                    <div>
-                                        <c:if test="${currentPage > 1}">
-                                            <a href="StaffController?page=${currentPage - 1}">Previous</a>
-                                        </c:if>
-                                        <c:set var="startPage" value="${currentPage - 2}"/>
-                                        <c:set var="endPage" value="${currentPage + 2}"/>
-                                        <c:if test="${startPage < 1}">
-                                            <c:set var="startPage" value="1"/>
-                                            <c:set var="endPage" value="${5 > totalPages ? totalPages : 5}"/>
-                                        </c:if>
-                                        <c:if test="${endPage > totalPages}">
-                                            <c:set var="endPage" value="${totalPages}"/>
-                                            <c:set var="startPage" value="${endPage - 4 > 1 ? endPage - 4 : 1}"/>
-                                        </c:if>
-                                        <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                                            <c:if test="${i == currentPage}">
-                                                <strong>${i}</strong> <!-- Trang hiện tại -->
-                                            </c:if>
-                                            <c:if test="${i != currentPage}">
-                                                <a href="StaffController?page=${i}">${i}</a> <!-- Các trang khác -->
-                                            </c:if>
-                                        </c:forEach>
-                                        <c:if test="${currentPage < totalPages}">
-                                            <a href="StaffController?page=${currentPage + 1}">Next</a>
-                                        </c:if>
+                                    <div id="pagination" class="pagination">
+                                        <!-- Nút phân trang sẽ được tạo động trong JavaScript -->
                                     </div>
                                 </div>
                             </div>
@@ -262,5 +211,6 @@
 <script src="<c:url value="/assets/admin/js/sidebareffect.js"/>"></script>
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
+<script src="<c:url value="/assets/admin/list-staff.js"/>"></script>
 </body>
 </html>

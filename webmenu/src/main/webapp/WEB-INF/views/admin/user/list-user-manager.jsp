@@ -75,11 +75,6 @@
                                     <h5>User List</h5>
                                     <div>
                                         <p>Search : <input type="search" id="search" class="" placeholder></p>
-                                        <p>Status: <select id="status-selection">
-                                            <option value="">Unknown</option>
-                                            <option value="false">Active</option>
-                                            <option value="true">Disabled</option>
-                                        </select></p>
                                     </div>
                                 </div>
                                 <div>
@@ -91,7 +86,6 @@
                                                 <th>Full Name</th>
                                                 <th>Phone</th>
                                                 <th>Address</th>
-                                                <th>Status</th>
                                                 <th>Option</th>
                                             </tr>
                                             </thead>

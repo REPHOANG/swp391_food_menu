@@ -245,6 +245,7 @@ public class UserDAO {
         }
         return null;
     }
+
     //Nhận trực tiếp các giá trị
     public void updateProfile(String email, String fullName, String phone, String avatarUrl) throws SQLException {
         String sql = "UPDATE Users SET phone = ?, full_name = ?, avatar_url = ? WHERE email = ?";
@@ -539,6 +540,7 @@ public class UserDAO {
         }
         return null;  // Trả về null nếu không tìm thấy người dùng với token được cung cấp
     }
+
     //Nhận một đối tượng UserDto làm tham số, trong đó chứa các thuộc tính
     public Boolean updateProfile(UserDto userDto) {
         String query = "update Users set full_name = ?,phone = ?,address = ? where user_id = ? ";
@@ -547,6 +549,18 @@ public class UserDAO {
             stmt.setString(2, userDto.getPhone()); // Nên mã hóa mật khẩu nếu cần
             stmt.setString(3, userDto.getAddress()); // Nên mã hóa mật khẩu nếu cần
             stmt.setInt(4, userDto.getUserId());
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0; // Nếu cập nhật thành công
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public Boolean updateStatus(Integer userId, Boolean isDeleted) {
+        String query = "update Users set is_deleted = ? where user_id = ? ";
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setBoolean(1, isDeleted);
+            stmt.setInt(2, userId);
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0; // Nếu cập nhật thành công
         } catch (SQLException e) {

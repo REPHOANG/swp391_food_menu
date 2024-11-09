@@ -42,19 +42,6 @@ public class StaffController extends HttpServlet {
         UserDAO userDao = new UserDAO();
         switch (staffAction) {
             case "staffListManager": {
-                int pageNo = 1; // Trang mặc định
-                int pageSize = 10; // Số sản phẩm trên mỗi trang
-                // Lấy số trang từ yêu cầu, nếu không có thì dùng giá trị mặc định
-                String pageParam = request.getParameter("page");
-                if (pageParam != null) {
-                    pageNo = Integer.parseInt(pageParam);
-                }
-                int totalStaffs = userDao.getTotalUserCount(RoleUserType.STAFF.getId(), null, null);
-                int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
-                request.setAttribute("staffs", userDao.getListUserManager(pageNo, pageSize, RoleUserType.STAFF.getId(), null, null));
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("currentPage", pageNo);
-                request.setAttribute("message", message);
                 request.getRequestDispatcher(Constants.LIST_STAFF).forward(request, response);
                 break;
             }
@@ -68,6 +55,16 @@ public class StaffController extends HttpServlet {
                 UserDto staff = userDao.getUserById(staffId);
                 request.setAttribute("staff", staff);
                 request.getRequestDispatcher(Constants.ADD_NEW_STAFF_JSP).forward(request, response);
+                break;
+            }
+            case "updateStatusStaff": {
+                Integer staffId = Integer.parseInt(request.getParameter("staffId"));
+                Boolean status = Boolean.valueOf(request.getParameter("status"));
+                userDao.updateStatus(staffId, status);
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\": true, \"status\": \"Staff\", \"message\": \"successfully\"}");
                 break;
             }
             default:
