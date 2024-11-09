@@ -177,13 +177,29 @@
 <!-- Theme js -->
 <script src="<c:url value="/assets/admin/js/script.js"/>"></script>
 <script>
+    //Kiểm tra dữ liệu đầu vào
     document.querySelector('form').addEventListener('submit', function (event) {
-        const inputField = document.querySelector('input[name="name"]');
-        if (!inputField.value.trim()) {
-            event.preventDefault(); // Prevent form submission
-            inputField.classList.add('is-invalid'); // Bootstrap class for invalid state
-        } else {
-            inputField.classList.remove('is-invalid');
+        // Mảng chứa tên các trường input cần kiểm tra
+        const inputNames = ['fullName', 'email'];
+        let isValid = true; // Biến theo dõi trạng thái hợp lệ của form
+        // Lặp qua tất cả các input và select trong form
+        document.querySelectorAll('input, select').forEach(function (input) {
+            const inputName = input.getAttribute('name'); // Lấy tên của input hoặc select
+            if (inputNames.includes(inputName)) {
+                // Kiểm tra nếu input rỗng hoặc không hợp lệ
+                if (!input.value.trim()) {
+                    event.preventDefault(); // Ngăn form được submit nếu có trường không hợp lệ
+                    input.classList.add('is-invalid'); // Thêm class Bootstrap cho trạng thái không hợp lệ
+                    isValid = false; // Đánh dấu là không hợp lệ
+                } else {
+                    input.classList.remove('is-invalid'); // Xóa class nếu trường hợp lệ
+                }
+            }
+        });
+        // Nếu form không hợp lệ, ngăn chặn submit và hiển thị thông báo
+        if (!isValid) {
+            event.preventDefault(); // Ngăn form submit
+            console.log('Form contains invalid inputs');
         }
     });
 </script>
